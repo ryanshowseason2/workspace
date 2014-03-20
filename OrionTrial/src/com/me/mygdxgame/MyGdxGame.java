@@ -39,56 +39,12 @@ public class MyGdxGame extends Game {
 		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
 		sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2);
 		
-		setScreen(new CombatScreen());
+		CombatScreen screen = new CombatScreen();
+		setScreen(screen);
 		//music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/8.12.mp3", FileType.Internal));
 		//music.setLooping(true);
 		//music.play();
-		Gdx.input.setInputProcessor(new InputAdapter() 
-		{
-			@Override
-			public boolean keyUp (int keycode) 
-			{
-				if (keycode == Keys.ENTER && Gdx.app.getType() == ApplicationType.WebGL) 
-				{
-					if (!Gdx.graphics.isFullscreen()) 
-						Gdx.graphics.setDisplayMode(Gdx.graphics.getDisplayModes()[0]);
-				}
-				return true;
-			}
-			
-			public boolean keyDown (int keycode) 
-			{
-				if(Gdx.input.isKeyPressed(Keys.A)) {
-		            cam.zoom += 0.02;
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.Q)) {
-		            cam.zoom -= 0.02;
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.LEFT)) {
-		            if (cam.position.x > WIDTH / 2)
-		                cam.translate(-3, 0, 0);
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.RIGHT)) {
-		            if (cam.position.x < 1024 - WIDTH / 2)
-		                cam.translate(3, 0, 0);
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.DOWN)) {
-		            if (cam.position.y > HEIGHT / 2)
-		                cam.translate(0, -3, 0);
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.UP)) {
-		            if (cam.position.y < 1024 - HEIGHT / 2)
-		                cam.translate(0, 3, 0);
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.W)) {
-		            cam.rotate(-.5f, 0, 0, 1);
-		        }
-		        if(Gdx.input.isKeyPressed(Keys.E)) {
-		            cam.rotate(.5f, 0, 0, 1);
-		        }
-				return true;
-			}
-		});
+		Gdx.input.setInputProcessor( screen.player );
 	}
 
 	@Override

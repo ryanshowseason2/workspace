@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.PlayerEntity;
 
 public class CombatScreen extends OrionScreen 
@@ -49,9 +50,10 @@ public class CombatScreen extends OrionScreen
     static int HEIGHT = 768;
     private Rectangle glViewport;
     BitmapFont font;
-    PlayerEntity player;
+    public PlayerEntity player;
     World w;
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    Asteroid asty;
     
 	public CombatScreen()
 	{
@@ -67,6 +69,7 @@ public class CombatScreen extends OrionScreen
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90);
+        asty = new Asteroid("data/asteroid.png", w, 30, 30 );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
 	}
 		
@@ -176,13 +179,14 @@ public class CombatScreen extends OrionScreen
      		
      		spriteBatch.begin();
     		player.Draw( spriteBatch );
+    		asty.Draw( spriteBatch );
     		spriteBatch.end();
      		
     		debugRenderer.render(w, cam.combined);
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-    		font.draw(spriteBatch, "x: " + cam.position.x + "y:" + cam.position.y, 0, 30);
+    		font.draw(spriteBatch, "boost juice: " + player.m_boostJuice, 0, 30);
     		spriteBatch.end();
     		
     		
