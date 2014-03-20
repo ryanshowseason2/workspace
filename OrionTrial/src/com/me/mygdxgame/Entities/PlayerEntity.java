@@ -22,17 +22,17 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		m_objectSprite.rotate((float) initialAngleAdjust);
 		m_body.setFixedRotation(true);
 		MassData data = m_body.getMassData();
-		data.mass = 100;
+		data.mass = 10;
 		m_body.setMassData(data);
 		m_body.setUserData(this);
 	}
 	
-	float m_maxVelocity = 20;
+	float m_maxVelocity = 50;
 	float m_angleDegrees = 0;
 	double m_angleRadians = 0;
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
-	public int m_boostJuice = 120000;
+	public int m_boostJuice = 12000;
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -40,7 +40,7 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
       Vector2 pos = m_body.getPosition();
       Vector3 vec = new Vector3( Gdx.input.getX(0), Gdx.input.getY(0) ,0 );
       cam.unproject( vec );
-      m_angleRadians = Math.atan2(vec.y - pos.y, vec.x - pos.x);
+      m_angleRadians = Math.atan2(vec.y - pos.y*29f, vec.x - pos.x*29f);
       
       float degrees = (float) (m_angleRadians * 180 / Math.PI);
       float difference = degrees - m_angleDegrees;
@@ -64,30 +64,30 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
       if (Gdx.input.isKeyPressed(Keys.D) ) 
       {
            
-          xForce = (float)(450f * Math.sin(m_angleRadians));
-          yForce = (float)(-450.0f * Math.cos(m_angleRadians));
+          xForce = (float)(45f * Math.sin(m_angleRadians));
+          yForce = (float)(-45.0f * Math.cos(m_angleRadians));
            
       }
       
             // apply left impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.S) ) 
       {          
-          xForce = (float)(-450f * Math.cos(m_angleRadians));
-          yForce = (float)(-450.0f * Math.sin(m_angleRadians));
+          xForce = (float)(-45f * Math.cos(m_angleRadians));
+          yForce = (float)(-45.0f * Math.sin(m_angleRadians));
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.W) ) 
       {
-          xForce = (float)(900f * Math.cos(m_angleRadians));
-          yForce = (float)(900.0f * Math.sin(m_angleRadians));
+          xForce = (float)(90f * Math.cos(m_angleRadians));
+          yForce = (float)(90.0f * Math.sin(m_angleRadians));
       }
       
       // apply stopping impulse
       if (Gdx.input.isKeyPressed(Keys.X) ) 
       {
-          xForce = (float)(-300.0f * m_body.getLinearVelocity().x);
-          yForce = (float)(-300.0f * m_body.getLinearVelocity().y);
+          xForce = (float)(-30.0f * m_body.getLinearVelocity().x);
+          yForce = (float)(-30.0f * m_body.getLinearVelocity().y);
       }
       
       if( Math.abs(vel) >= m_maxVelocity )
@@ -109,8 +109,8 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
       else
       {
     	  m_body.setLinearDamping(0f);
-    	  if( m_boostJuice < 125000 )
-    		  m_boostJuice += 200;
+    	  if( m_boostJuice < 12500 )
+    		  m_boostJuice += 20;
       }
       
       m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
@@ -124,7 +124,7 @@ public boolean keyDown(int keycode) {
 	if( keycode == m_lastKey &&
 		( d.getTime() - m_keyPressedMilliseconds ) < 300 &&
 		m_body.getLinearDamping() == 0 && 
-		m_boostJuice > 45000 )
+		m_boostJuice > 4500 )
 	{
 	  float xForce = 0;
 	  float yForce = 0;
@@ -132,35 +132,35 @@ public boolean keyDown(int keycode) {
       if (keycode == Keys.A ) 
       {          
            //m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
-           xForce =  (float)(-45000f * Math.sin(m_angleRadians));
-           yForce =  (float)(45000.0f * Math.cos(m_angleRadians));
-           m_boostJuice -= 45000;
+           xForce =  (float)(-15000f * Math.sin(m_angleRadians));
+           yForce =  (float)(15000.0f * Math.cos(m_angleRadians));
+           m_boostJuice -= 4500;
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if ( keycode == Keys.D ) 
       {
            
-          xForce = (float)(45000f * Math.sin(m_angleRadians));
-          yForce = (float)(-45000.0f * Math.cos(m_angleRadians));
-          m_boostJuice -= 45000;
+          xForce = (float)(15000f * Math.sin(m_angleRadians));
+          yForce = (float)(-15000.0f * Math.cos(m_angleRadians));
+          m_boostJuice -= 4500;
            
       }
 	      
       // apply left impulse, but only if max velocity is not reached yet
       if (keycode == Keys.S ) 
       {          
-          xForce = (float)(-45000f * Math.cos(m_angleRadians));
-          yForce = (float)(-45000.0f * Math.sin(m_angleRadians));
-          m_boostJuice -= 45000;
+          xForce = (float)(-15000f * Math.cos(m_angleRadians));
+          yForce = (float)(-15000.0f * Math.sin(m_angleRadians));
+          m_boostJuice -= 4500;
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if (keycode == Keys.W ) 
       {
-          xForce = (float)(45000f * Math.cos(m_angleRadians));
-          yForce = (float)(45000.0f * Math.sin(m_angleRadians));
-          m_boostJuice -= 45000;
+          xForce = (float)(15000f * Math.cos(m_angleRadians));
+          yForce = (float)(15000.0f * Math.sin(m_angleRadians));
+          m_boostJuice -= 4500;
       }
       
       Vector2 pos = m_body.getPosition();

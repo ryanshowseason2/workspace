@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.me.mygdxgame.Entities.Asteroid;
+import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 
 public class CombatScreen extends OrionScreen 
@@ -52,7 +53,7 @@ public class CombatScreen extends OrionScreen
     BitmapFont font;
     public PlayerEntity player;
     World w;
-    Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    MydebugRenderer debugRenderer = new MydebugRenderer();
     Asteroid asty;
     
 	public CombatScreen()
@@ -69,7 +70,7 @@ public class CombatScreen extends OrionScreen
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90);
-        asty = new Asteroid("data/asteroid.png", w, 30, 30 );
+        asty = new Asteroid("data/asteroid.png", w, 10, 10 );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
 	}
 		
@@ -125,7 +126,7 @@ public class CombatScreen extends OrionScreen
         gl.glViewport((int) glViewport.x, (int) glViewport.y,
                 (int) glViewport.width, (int) glViewport.height);
 
-        cam.position.set( player.m_body.getPosition().x, player.m_body.getPosition().y, 0);
+        cam.position.set( player.m_body.getPosition().x*29f, player.m_body.getPosition().y*29f, 0);
         cam.update();
         cam.apply(gl);
         
@@ -165,12 +166,14 @@ public class CombatScreen extends OrionScreen
      		spriteBatch.draw(parralax1, x*2048, 0);
      		spriteBatch.end();
      		*/
-     		DrawParralaxLayer( 40f, parralax1 );
-     		DrawParralaxLayer( 80f, parralax2 );
+     		DrawParralaxLayer( .25f, parralax1 );
+     		DrawParralaxLayer( .5f, parralax2 );
+     		
+     		//spriteBatch.setProjectionMatrix();
      		
      		// foreground layer, 1.0 parallax (move at full speed)
      		// layer is 2048x320
-     		spriteBatch.setProjectionMatrix(cam.calculateParallaxMatrix(1f, 1));
+     		spriteBatch.setProjectionMatrix(cam.calculateParallaxMatrix(1f, 1f));
      		spriteBatch.begin();
      		for (int i = 0; i < 9; i++) {
      			//spriteBatch.draw(parralax2, i * parralax2.getWidth() - 1024, -160);
@@ -183,10 +186,14 @@ public class CombatScreen extends OrionScreen
     		spriteBatch.end();
      		
     		debugRenderer.render(w, cam.combined);
+    		
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-    		font.draw(spriteBatch, "boost juice: " + player.m_boostJuice, 0, 30);
+     		font.draw(spriteBatch, "boost juice: " + player.m_boostJuice , 0, 120);
+     		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
+     		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
+     		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
     		spriteBatch.end();
     		
     		

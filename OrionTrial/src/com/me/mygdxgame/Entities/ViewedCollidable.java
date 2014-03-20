@@ -20,11 +20,12 @@ public class ViewedCollidable
     Sprite m_objectSprite;
     public Body m_body;
     double m_angle = 0;
+    public float m_drawScale = 29f;
 	   
 	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY )
 	   {
-	      m_objectXPosition = startX;
-	      m_objectYPosition = startY;
+	      m_objectXPosition = startX*29f;
+	      m_objectYPosition = startY*29f;
 	      m_objectAppearance = new Texture(Gdx.files.internal(appearanceLocation));
 	      m_objectSprite = new Sprite( m_objectAppearance );
 	      // First we create a body definition
@@ -32,14 +33,14 @@ public class ViewedCollidable
 	      // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 	      bodyDef.type = BodyType.DynamicBody;
 	      // Set our body's starting position in the world
-	      bodyDef.position.set(m_objectXPosition, m_objectYPosition);
+	      bodyDef.position.set(startX, startX);
 
 	      // Create our body in the world using our body definition
 	      m_body = world.createBody(bodyDef);
 
 	      // Create a circle shape and set its radius to 6
 	      CircleShape circle = new CircleShape();
-	      float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() ) / 2;
+	      float radius = Math.max(m_objectAppearance.getWidth() / 2 / 29f, m_objectAppearance.getHeight() ) / 2 / 29f;
 	      circle.setRadius(radius);
 
 	      // Create a fixture definition to apply our shape to
@@ -47,7 +48,7 @@ public class ViewedCollidable
 	      fixtureDef.shape = circle;
 	      fixtureDef.density = 0.1f; 
 	      fixtureDef.friction = 0f;
-	      fixtureDef.restitution = 0.6f; // Make it bounce a little bit
+	      fixtureDef.restitution = 0.1f; // Make it bounce a little bit
 
 	      // Create our fixture and attach it to the body
 	      Fixture fixture = m_body.createFixture(fixtureDef);
@@ -59,8 +60,8 @@ public class ViewedCollidable
 	   
 	   public void Draw( SpriteBatch renderer )
 	   {
-		   m_objectXPosition = m_body.getPosition().x;
-		   m_objectYPosition = m_body.getPosition().y;
+		   m_objectXPosition = m_body.getPosition().x*29f;
+		   m_objectYPosition = m_body.getPosition().y*29f;
 		   /*renderer.draw(m_objectAppearance,
 				   (Gdx.graphics.getWidth() - m_objectAppearance.getWidth()) / 2.0f,
 				   (Gdx.graphics.getHeight() - m_objectAppearance.getHeight()) / 2.0f
