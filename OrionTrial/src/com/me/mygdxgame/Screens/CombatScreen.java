@@ -1,5 +1,7 @@
 package com.me.mygdxgame.Screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,21 +11,27 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
+import com.me.mygdxgame.Entities.ViewedCollidable;
 
-public class CombatScreen extends OrionScreen 
+public class CombatScreen extends OrionScreen implements ContactListener
 {
 	public class ParallaxCamera extends OrthographicCamera {
 		Matrix4 parallaxView = new Matrix4();
 		Matrix4 parallaxCombined = new Matrix4();
 		Vector3 tmp = new Vector3();
-		Vector3 tmp2 = new Vector3();
+		Vector3 tmp2 = new Vector3();		
 
 		public ParallaxCamera (float viewportWidth, float viewportHeight) {
 			super(viewportWidth, viewportHeight);
@@ -55,6 +63,8 @@ public class CombatScreen extends OrionScreen
     World w;
     MydebugRenderer debugRenderer = new MydebugRenderer();
     Asteroid asty;
+    ArrayList<ViewedCollidable> m_deadThings = new ArrayList<ViewedCollidable>();
+	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
     
 	public CombatScreen()
 	{
@@ -72,6 +82,8 @@ public class CombatScreen extends OrionScreen
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90);
         asty = new Asteroid("data/asteroid.png", w, 10, 10 );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
+        w.setContactListener(this);
+        m_aliveThings.add((ViewedCollidable)asty);
 	}
 		
 	@Override
@@ -182,7 +194,21 @@ public class CombatScreen extends OrionScreen
      		
      		spriteBatch.begin();
     		player.Draw( spriteBatch );
-    		asty.Draw( spriteBatch );
+    		for(int i = 0; i < m_aliveThings.size(); i++)
+    		{
+    			ViewedCollidable tmp = (ViewedCollidable) m_aliveThings.get(i);
+    			
+    			if(tmp.m_integrity > 0 )
+    			{
+    				tmp.Draw(spriteBatch);
+    			}
+    			else
+    			{
+    				m_aliveThings.remove( i );
+    				i--;
+    				m_deadThings.add( tmp );
+    			}
+    		}
     		spriteBatch.end();
      		
     		debugRenderer.render(w, cam.combined);
@@ -190,13 +216,19 @@ public class CombatScreen extends OrionScreen
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
+     		font.draw(spriteBatch, "Integrity: " + asty.m_integrity , 0, 150);
      		font.draw(spriteBatch, "boost juice: " + player.m_boostJuice , 0, 120);
      		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
     		spriteBatch.end();
     		
-    		
+    		for(int i = 0; i < m_deadThings.size(); i++)
+    		{
+    			ViewedCollidable tmp = (ViewedCollidable) m_deadThings.get(i);
+    			w.destroyBody(tmp.m_body);
+    		}
+    		m_deadThings.clear();
 
 	}
 	
@@ -262,6 +294,40 @@ public class CombatScreen extends OrionScreen
 		parralax2.dispose();
 		spriteBatch.dispose();
 		font.dispose();
+	}
+
+	@Override
+	public void beginContact(Contact contact) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void endContact(Contact contact) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) 
+	{
+		// TODO Auto-generated method stub
+		Body body1 = contact.getFixtureA().getBody();
+		Body body2 = contact.getFixtureB().getBody();
+		ViewedCollidable object1 = (ViewedCollidable) body1.getUserData();
+		ViewedCollidable object2 = (ViewedCollidable) body2.getUserData();
+		float crashVelocity = Math.abs( body1.getLinearVelocity().dst(0, 0) - body2.getLinearVelocity().dst(0, 0) );
+		object1.damageCalc( object2, crashVelocity );
+		object2.damageCalc( object1, crashVelocity );
+	}
+
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) 
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

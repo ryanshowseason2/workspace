@@ -1,7 +1,11 @@
 package com.me.mygdxgame.Entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -12,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class ViewedCollidable 
+public abstract class ViewedCollidable 
 {
 	float m_objectXPosition;
 	float m_objectYPosition;
@@ -21,6 +25,8 @@ public class ViewedCollidable
     public Body m_body;
     double m_angle = 0;
     public float m_drawScale = 29f;
+    public float m_integrity = 1000f;
+    
 	   
 	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY )
 	   {
@@ -82,5 +88,12 @@ public class ViewedCollidable
 	   {
 	      m_objectXPosition = x;
 	      m_objectYPosition = y;
+	   }
+
+	   public abstract void damageCalc(ViewedCollidable object2, float crashVelocity);
+	   
+	   public void damageIntegrity(float damage)
+	   {
+		   m_integrity -= damage;
 	   }
 }

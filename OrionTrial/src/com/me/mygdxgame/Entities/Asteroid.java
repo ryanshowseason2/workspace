@@ -10,9 +10,16 @@ public class Asteroid extends ViewedCollidable {
 		// TODO Auto-generated constructor stub
 		
 		MassData data = m_body.getMassData();
-		data.mass = 500;
+		data.mass = 300;
 		m_body.setMassData(data);
 		m_body.setUserData(this);
+	}
+
+	@Override
+	public void damageCalc(ViewedCollidable object2, float crashVelocity) 
+	{
+		// TODO Auto-generated method stub
+		object2.damageIntegrity(crashVelocity * m_body.getMass() );
 	}
 
 }

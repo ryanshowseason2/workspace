@@ -5,6 +5,9 @@ import java.util.Date;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -24,7 +27,7 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		MassData data = m_body.getMassData();
 		data.mass = 10;
 		m_body.setMassData(data);
-		m_body.setUserData(this);
+		m_body.setUserData(this);		
 	}
 	
 	float m_maxVelocity = 50;
@@ -117,102 +120,107 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 
    }
 
-@Override
-public boolean keyDown(int keycode) {
-	// TODO Auto-generated method stub
-	Date d = new Date();
-	if( keycode == m_lastKey &&
-		( d.getTime() - m_keyPressedMilliseconds ) < 300 &&
-		m_body.getLinearDamping() == 0 && 
-		m_boostJuice > 4500 )
+	@Override
+	public boolean keyDown(int keycode) 
 	{
-	  float xForce = 0;
-	  float yForce = 0;
-		
-      if (keycode == Keys.A ) 
-      {          
-           //m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
-           xForce =  (float)(-15000f * Math.sin(m_angleRadians));
-           yForce =  (float)(15000.0f * Math.cos(m_angleRadians));
-           m_boostJuice -= 4500;
-      }
-
-      // apply right impulse, but only if max velocity is not reached yet
-      if ( keycode == Keys.D ) 
-      {
-           
-          xForce = (float)(15000f * Math.sin(m_angleRadians));
-          yForce = (float)(-15000.0f * Math.cos(m_angleRadians));
-          m_boostJuice -= 4500;
-           
-      }
+		Date d = new Date();
+		if( keycode == m_lastKey &&
+			( d.getTime() - m_keyPressedMilliseconds ) < 300 &&
+			m_body.getLinearDamping() == 0 && 
+			m_boostJuice > 4500 )
+		{
+		  float xForce = 0;
+		  float yForce = 0;
+			
+	      if (keycode == Keys.A ) 
+	      {          
+	           //m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
+	           xForce =  (float)(-15000f * Math.sin(m_angleRadians));
+	           yForce =  (float)(15000.0f * Math.cos(m_angleRadians));
+	           m_boostJuice -= 4500;
+	      }
+	
+	      // apply right impulse, but only if max velocity is not reached yet
+	      if ( keycode == Keys.D ) 
+	      {
+	           
+	          xForce = (float)(15000f * Math.sin(m_angleRadians));
+	          yForce = (float)(-15000.0f * Math.cos(m_angleRadians));
+	          m_boostJuice -= 4500;
+	           
+	      }
+		      
+	      // apply left impulse, but only if max velocity is not reached yet
+	      if (keycode == Keys.S ) 
+	      {          
+	          xForce = (float)(-15000f * Math.cos(m_angleRadians));
+	          yForce = (float)(-15000.0f * Math.sin(m_angleRadians));
+	          m_boostJuice -= 4500;
+	      }
+	
+	      // apply right impulse, but only if max velocity is not reached yet
+	      if (keycode == Keys.W ) 
+	      {
+	          xForce = (float)(15000f * Math.cos(m_angleRadians));
+	          yForce = (float)(15000.0f * Math.sin(m_angleRadians));
+	          m_boostJuice -= 4500;
+	      }
 	      
-      // apply left impulse, but only if max velocity is not reached yet
-      if (keycode == Keys.S ) 
-      {          
-          xForce = (float)(-15000f * Math.cos(m_angleRadians));
-          yForce = (float)(-15000.0f * Math.sin(m_angleRadians));
-          m_boostJuice -= 4500;
-      }
-
-      // apply right impulse, but only if max velocity is not reached yet
-      if (keycode == Keys.W ) 
-      {
-          xForce = (float)(15000f * Math.cos(m_angleRadians));
-          yForce = (float)(15000.0f * Math.sin(m_angleRadians));
-          m_boostJuice -= 4500;
-      }
-      
-      Vector2 pos = m_body.getPosition();
-      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
+	      Vector2 pos = m_body.getPosition();
+	      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
+		}
+		return true;
 	}
-	return true;
-}
-
-@Override
-public boolean keyUp(int keycode) 
-{
-	// TODO Auto-generated method stub
-	m_lastKey = keycode;
-	Date d = new Date();
-	m_keyPressedMilliseconds = d.getTime();
-	return true;
-}
-
-@Override
-public boolean keyTyped(char character) {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-@Override
-public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-@Override
-public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-@Override
-public boolean touchDragged(int screenX, int screenY, int pointer) {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-@Override
-public boolean mouseMoved(int screenX, int screenY) {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-@Override
-public boolean scrolled(int amount) {
-	// TODO Auto-generated method stub
-	return false;
-}
+	
+	@Override
+	public boolean keyUp(int keycode) 
+	{
+		m_lastKey = keycode;
+		Date d = new Date();
+		m_keyPressedMilliseconds = d.getTime();
+		return true;
+	}
+	
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public void damageCalc(ViewedCollidable object2, float crashVelocity) 
+	{
+		object2.damageIntegrity(crashVelocity * m_body.getMass() );	
+	}
 
 }
