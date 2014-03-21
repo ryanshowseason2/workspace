@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -26,7 +27,9 @@ public abstract class ViewedCollidable
     double m_angle = 0;
     public float m_drawScale = 29f;
     public float m_integrity = 1000f;
-    
+    ParticleEffect m_deathEffect = new ParticleEffect();
+    ParticleEffectPool m_deathEffectPool;
+    PooledEffect m_pooledDeathEffect;
 	   
 	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY )
 	   {
@@ -81,6 +84,12 @@ public abstract class ViewedCollidable
 				   false);*/
 		   m_objectSprite.setPosition(m_objectXPosition - m_objectAppearance.getWidth() / 2, m_objectYPosition - m_objectAppearance.getHeight() / 2 );
 		   m_objectSprite.draw( renderer );
+		   if( m_integrity <= 0 )
+		   {
+			   m_pooledDeathEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			   m_pooledDeathEffect.draw(renderer, 1f/60f );   
+		   }
+		   
 	      //renderer.draw( m_objectAppearance, m_objectXPosition - m_objectAppearance.getWidth() / 2, m_objectYPosition - m_objectAppearance.getHeight() / 2 );
 	   }
 	   
@@ -96,4 +105,16 @@ public abstract class ViewedCollidable
 	   {
 		   m_integrity -= damage;
 	   }
+
+	public boolean deathThroesDone() 
+	{
+		boolean dead =  m_pooledDeathEffect.isComplete(); 
+
+		if( dead )
+		{
+			m_pooledDeathEffect.free();
+		}
+		
+		return dead;
+	}
 }

@@ -1,5 +1,7 @@
 package com.me.mygdxgame.Entities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -13,6 +15,9 @@ public class Asteroid extends ViewedCollidable {
 		data.mass = 300;
 		m_body.setMassData(data);
 		m_body.setUserData(this);
+		m_deathEffect.load(Gdx.files.internal("data/explosionwhite.p"), Gdx.files.internal("data/"));
+		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
+		m_pooledDeathEffect = m_deathEffectPool.obtain();
 	}
 
 	@Override

@@ -28,6 +28,9 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		data.mass = 10;
 		m_body.setMassData(data);
 		m_body.setUserData(this);		
+		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));
+		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
+		m_pooledDeathEffect = m_deathEffectPool.obtain();
 	}
 	
 	float m_maxVelocity = 50;

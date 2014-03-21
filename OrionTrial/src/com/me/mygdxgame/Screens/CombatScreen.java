@@ -198,7 +198,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		{
     			ViewedCollidable tmp = (ViewedCollidable) m_aliveThings.get(i);
     			
-    			if(tmp.m_integrity > 0 )
+    			if(tmp.m_integrity > 0 || !tmp.deathThroesDone() )
     			{
     				tmp.Draw(spriteBatch);
     			}
@@ -329,5 +329,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }
