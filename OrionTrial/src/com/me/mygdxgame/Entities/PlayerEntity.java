@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -31,6 +32,10 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
 		m_pooledDeathEffect = m_deathEffectPool.obtain();
+		
+		m_engineEffect.load(Gdx.files.internal("data/engine.p"), Gdx.files.internal("data/"));
+		m_engineEffectPool = new ParticleEffectPool(m_engineEffect, 1, 2);
+		m_pooledEngineEffect = m_engineEffectPool.obtain();
 	}
 	
 	float m_maxVelocity = 50;
@@ -39,6 +44,10 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
 	public int m_boostJuice = 12000;
+	ParticleEffect m_engineEffect = new ParticleEffect();
+    ParticleEffectPool m_engineEffectPool;
+    PooledEffect m_pooledEngineEffect;
+	private boolean m_enginesEngaged = false;
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -166,11 +175,16 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 	      {
 	          xForce = (float)(15000f * Math.cos(m_angleRadians));
 	          yForce = (float)(15000.0f * Math.sin(m_angleRadians));
-	          m_boostJuice -= 4500;
+	          m_boostJuice -= 4500;	          
 	      }
 	      
 	      Vector2 pos = m_body.getPosition();
 	      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
+		}
+		
+		if( keycode == Keys.W )
+		{
+			m_enginesEngaged = true;
 		}
 		return true;
 	}
@@ -181,6 +195,12 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		m_lastKey = keycode;
 		Date d = new Date();
 		m_keyPressedMilliseconds = d.getTime();
+		
+		if( keycode == Keys.W )
+		{
+			m_enginesEngaged = false;
+			m_pooledEngineEffect.reset();
+		}
 		return true;
 	}
 	
@@ -225,5 +245,21 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 	{
 		object2.damageIntegrity(crashVelocity * m_body.getMass() );	
 	}
+	
+	@Override
+	public void Draw( SpriteBatch renderer )
+    {
+		super.Draw(renderer);
+		
+		if( m_enginesEngaged )
+		{
+			float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() ) / 2;
+			float xdelta = (float) (Math.cos(m_angleRadians) * radius);
+			float ydelta = (float) (Math.sin(m_angleRadians) * radius);
+			m_pooledEngineEffect.setPosition( m_objectXPosition - xdelta, m_objectYPosition - ydelta );
+			m_pooledEngineEffect.draw(renderer, 1f/60f);
+		}
+	
+    }
 
 }
