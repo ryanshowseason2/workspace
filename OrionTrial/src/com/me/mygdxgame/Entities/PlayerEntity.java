@@ -15,12 +15,13 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
 
-public class PlayerEntity extends ViewedCollidable implements InputProcessor
+public class PlayerEntity extends Ship implements InputProcessor
 {
 
 	public PlayerEntity(String appearanceLocation, World world, float startX,
-			float startY, float initialAngleAdjust ) {
-		super(appearanceLocation, world, startX, startY);
+			float startY, float initialAngleAdjust, float maxV ) 
+	{
+		super(appearanceLocation, world, startX, startY, maxV);
 		// TODO Auto-generated constructor stub
 		
 		m_objectSprite.rotate((float) initialAngleAdjust);
@@ -31,23 +32,13 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		m_body.setUserData(this);		
 		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
-		m_pooledDeathEffect = m_deathEffectPool.obtain();
-		
-		m_engineEffect.load(Gdx.files.internal("data/engine.p"), Gdx.files.internal("data/"));
-		m_engineEffectPool = new ParticleEffectPool(m_engineEffect, 1, 2);
-		m_pooledEngineEffect = m_engineEffectPool.obtain();
+		m_pooledDeathEffect = m_deathEffectPool.obtain();			
 	}
 	
-	float m_maxVelocity = 50;
-	float m_angleDegrees = 0;
-	double m_angleRadians = 0;
+	float m_angleDegrees = 0;	
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
-	public int m_boostJuice = 12000;
-	ParticleEffect m_engineEffect = new ParticleEffect();
-    ParticleEffectPool m_engineEffectPool;
-    PooledEffect m_pooledEngineEffect;
-	private boolean m_enginesEngaged = false;
+	
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -64,71 +55,60 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
       m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees ) );
       
       
-      float xForce = 0;
-      float yForce = 0;
+      //float xForce = 0;
+      //float yForce = 0;
       
       // apply left impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.A)) 
       {          
-           //m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
+           /*/m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
            xForce =  (float)(-450f * Math.sin(m_angleRadians));
-           yForce =  (float)(450.0f * Math.cos(m_angleRadians));
+           yForce =  (float)(450.0f * Math.cos(m_angleRadians));*/
+    	  ce.ThrottlePort();
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.D) ) 
       {
            
-          xForce = (float)(45f * Math.sin(m_angleRadians));
-          yForce = (float)(-45.0f * Math.cos(m_angleRadians));
+    	  /*xForce = (float)(45f * Math.sin(m_angleRadians));
+          yForce = (float)(-45.0f * Math.cos(m_angleRadians));*/
+    	  ce.ThrottleStarboard();
            
       }
       
             // apply left impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.S) ) 
       {          
-          xForce = (float)(-45f * Math.cos(m_angleRadians));
-          yForce = (float)(-45.0f * Math.sin(m_angleRadians));
+    	  /*xForce = (float)(-45f * Math.cos(m_angleRadians));
+          yForce = (float)(-45.0f * Math.sin(m_angleRadians));*/
+    	  ce.ThrottleBackward();
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.W) ) 
       {
-          xForce = (float)(90f * Math.cos(m_angleRadians));
-          yForce = (float)(90.0f * Math.sin(m_angleRadians));
+    	  /*xForce = (float)(90f * Math.cos(m_angleRadians));
+          yForce = (float)(90.0f * Math.sin(m_angleRadians));*/
+    	  ce.ThrottleForward();
       }
       
       // apply stopping impulse
       if (Gdx.input.isKeyPressed(Keys.X) ) 
       {
-          xForce = (float)(-30.0f * m_body.getLinearVelocity().x);
-          yForce = (float)(-30.0f * m_body.getLinearVelocity().y);
+    	  /*xForce = (float)(-30.0f * m_body.getLinearVelocity().x);
+          yForce = (float)(-30.0f * m_body.getLinearVelocity().y);*/
+    	  ce.EngineBrake();
       }
       
-      if( Math.abs(vel) >= m_maxVelocity )
+      if( Math.abs(vel) < me.m_maxVelocity )
       {
-    	  if( m_body.getLinearVelocity().x > 0 && xForce > 0 ||
-        	  m_body.getLinearVelocity().x < 0 && xForce < 0 )
-    	  {
-    		  xForce = 0;
-    	  }
-    	  
-    	  if( m_body.getLinearVelocity().y > 0 && yForce > 0 ||
-        	  m_body.getLinearVelocity().y < 0 && yForce < 0 )
-    	  {
-    		  yForce = 0;
-    	  }
-    	  
-    	  m_body.setLinearDamping( 4f );
-      }   
-      else
-      {
-    	  m_body.setLinearDamping(0f);
-    	  if( m_boostJuice < 12500 )
-    		  m_boostJuice += 20;
+    	  if( me.m_boostJuice < 100 )
+    		  me.m_boostJuice += .2;
       }
       
-      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
+      ce.ProcessVelocity();
+      //m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
 
    }
 
@@ -137,54 +117,56 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 	{
 		Date d = new Date();
 		if( keycode == m_lastKey &&
-			( d.getTime() - m_keyPressedMilliseconds ) < 300 &&
-			m_body.getLinearDamping() == 0 && 
-			m_boostJuice > 4500 )
+			( d.getTime() - m_keyPressedMilliseconds ) < 200 &&
+			me.m_boostJuice > 30 )
 		{
 		  float xForce = 0;
 		  float yForce = 0;
 			
 	      if (keycode == Keys.A ) 
 	      {          
-	           //m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
+	           /*/m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
 	           xForce =  (float)(-15000f * Math.sin(m_angleRadians));
 	           yForce =  (float)(15000.0f * Math.cos(m_angleRadians));
-	           m_boostJuice -= 4500;
+	           m_boostJuice -= 4500;*/
+	    	  me.ManeuverPort();
 	      }
 	
 	      // apply right impulse, but only if max velocity is not reached yet
 	      if ( keycode == Keys.D ) 
 	      {
-	           
+	           /*
 	          xForce = (float)(15000f * Math.sin(m_angleRadians));
 	          yForce = (float)(-15000.0f * Math.cos(m_angleRadians));
-	          m_boostJuice -= 4500;
-	           
+	          m_boostJuice -= 4500;*/
+	          me.ManeuverStarboard();
 	      }
 		      
 	      // apply left impulse, but only if max velocity is not reached yet
 	      if (keycode == Keys.S ) 
 	      {          
-	          xForce = (float)(-15000f * Math.cos(m_angleRadians));
+	          /*xForce = (float)(-15000f * Math.cos(m_angleRadians));
 	          yForce = (float)(-15000.0f * Math.sin(m_angleRadians));
-	          m_boostJuice -= 4500;
+	          m_boostJuice -= 4500;*/
+	    	  me.ManeuverBackward();
 	      }
 	
 	      // apply right impulse, but only if max velocity is not reached yet
 	      if (keycode == Keys.W ) 
 	      {
-	          xForce = (float)(15000f * Math.cos(m_angleRadians));
+	          /*xForce = (float)(15000f * Math.cos(m_angleRadians));
 	          yForce = (float)(15000.0f * Math.sin(m_angleRadians));
-	          m_boostJuice -= 4500;	          
+	          m_boostJuice -= 4500;	 */
+	    	  me.ManeuverForward();
 	      }
 	      
-	      Vector2 pos = m_body.getPosition();
-	      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
+	      /*Vector2 pos = m_body.getPosition();
+	      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);*/
 		}
 		
 		if( keycode == Keys.W )
 		{
-			m_enginesEngaged = true;
+			ce.EngageEngine();
 		}
 		return true;
 	}
@@ -198,8 +180,7 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
 		
 		if( keycode == Keys.W )
 		{
-			m_enginesEngaged = false;
-			m_pooledEngineEffect.reset();
+			ce.DisengageEngine();			
 		}
 		return true;
 	}
@@ -251,14 +232,10 @@ public class PlayerEntity extends ViewedCollidable implements InputProcessor
     {
 		super.Draw(renderer);
 		
-		if( m_enginesEngaged )
-		{
-			float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() ) / 2;
-			float xdelta = (float) (Math.cos(m_angleRadians) * radius);
-			float ydelta = (float) (Math.sin(m_angleRadians) * radius);
-			m_pooledEngineEffect.setPosition( m_objectXPosition - xdelta, m_objectYPosition - ydelta );
-			m_pooledEngineEffect.draw(renderer, 1f/60f);
-		}
+		
+		
+		ce.Draw(renderer);
+		
 	
     }
 

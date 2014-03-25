@@ -2,11 +2,13 @@ package com.me.mygdxgame.Screens;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -24,6 +26,12 @@ import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.badlogic.gdx.graphics.Color;
+
+import box2dlight.ConeLight;
+import box2dlight.Light;
+import box2dlight.PointLight;
+import box2dlight.RayHandler;
 
 public class CombatScreen extends OrionScreen implements ContactListener
 {
@@ -65,6 +73,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     Asteroid asty;
     ArrayList<ViewedCollidable> m_deadThings = new ArrayList<ViewedCollidable>();
 	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
+	RayHandler rayHandler;
     
 	public CombatScreen()
 	{
@@ -79,11 +88,49 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cam.position.set(WIDTH / 2, HEIGHT / 2, 0);
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
-        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90);
+        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f);
         asty = new Asteroid("data/asteroid.png", w, 10, 10 );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         m_aliveThings.add((ViewedCollidable)asty);
+        
+        /** BOX2D LIGHT STUFF BEGIN */
+        RayHandler.setGammaCorrection(true);
+        RayHandler.useDiffuseLight(true);
+        rayHandler = new RayHandler(w);
+        rayHandler.setAmbientLight(0.05f, 0.05f, 0.05f, 0.1f);
+        rayHandler.setCulling(true);
+        // rayHandler.setBlur(false);
+        rayHandler.setBlurNum(1);
+        //rayHandler.setShadows(true);
+        cam.update(true);
+
+        // rayHandler.setCombinedMatrix(camera.combined, camera.position.x,
+        // camera.position.y, camera.viewportWidth * camera.zoom,
+        // camera.viewportHeight * camera.zoom);
+        //for (int i = 0; i < BALLSNUM; i++) {
+        // final Color c = new Color(MathUtils.random()*0.4f,
+        // MathUtils.random()*0.4f,
+        // MathUtils.random()*0.4f, 1f);
+        Light light = new PointLight(rayHandler, 128);
+        Color color = new Color(1f,1f,1f,1f);
+        Light light2 = new ConeLight(rayHandler, 64, color,
+    			300, 0, 0, 0,
+    			15);
+        light.setDistance(300f);
+        light2.setDistance(800);
+        // Light light = new ConeLight(rayHandler, RAYS_PER_BALL, null,
+        // LIGHT_DISTANCE, 0, 0, 0, 60);
+        // light.setStaticLight(true);
+        light.attachToBody(player.m_body, 0f, 0f);
+        light2.attachToBody(player.m_body, 0f, 0f);
+       
+        light.setColor( 1, 1, 1, 1f);
+        // light.setColor(0.1f,0.1f,0.1f,0.1f);
+
+        //}
+        // new DirectionalLight(rayHandler, 24, new Color(0,0.4f,0,1f), -45);
+        /** BOX2D LIGHT STUFF END */
 	}
 		
 	@Override
@@ -131,16 +178,16 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	{
 		handleInput(); 
 		w.step(1/60f, 60, 20);
-        GL10 gl = Gdx.graphics.getGL10();
+        GL20 gl = Gdx.graphics.getGL20();
 
         // Camera --------------------- /
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         gl.glViewport((int) glViewport.x, (int) glViewport.y,
                 (int) glViewport.width, (int) glViewport.height);
 
         cam.position.set( player.m_body.getPosition().x*29f, player.m_body.getPosition().y*29f, 0);
         cam.update();
-        cam.apply(gl);
+        //cam.apply(gl);
         
 
 		/*viewMatrix.setToOrtho2D(0, 0, 480, 320);
@@ -210,6 +257,21 @@ public class CombatScreen extends OrionScreen implements ContactListener
     			}
     		}
     		spriteBatch.end();
+    		
+    		/** BOX2D LIGHT STUFF BEGIN */
+
+    		
+    		rayHandler.setCombinedMatrix(cam.combined, cam.position.x,
+    		cam.position.y, cam.viewportWidth * cam.zoom,
+    		cam.viewportHeight * cam.zoom);
+
+    		// rayHandler.setCombinedMatrix(camera.combined);
+    		//if (stepped)
+    		rayHandler.update();
+    		rayHandler.render();
+
+    		/** BOX2D LIGHT STUFF END */
+    		
      		
     		debugRenderer.render(w, cam.combined);
     		
@@ -217,7 +279,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
      		font.draw(spriteBatch, "Integrity: " + asty.m_integrity , 0, 150);
-     		font.draw(spriteBatch, "boost juice: " + player.m_boostJuice , 0, 120);
+     		font.draw(spriteBatch, "boost juice: " + player.me.m_boostJuice , 0, 120);
      		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);

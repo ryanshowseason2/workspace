@@ -25,6 +25,7 @@ public abstract class ViewedCollidable
     Sprite m_objectSprite;
     public Body m_body;
     double m_angle = 0;
+    double m_angleRadians = 0;
     public float m_drawScale = 29f;
     public float m_integrity = 1000f;
     ParticleEffect m_deathEffect = new ParticleEffect();
