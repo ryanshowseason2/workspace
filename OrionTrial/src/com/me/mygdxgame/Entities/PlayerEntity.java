@@ -35,7 +35,6 @@ public class PlayerEntity extends Ship implements InputProcessor
 		m_pooledDeathEffect = m_deathEffectPool.obtain();			
 	}
 	
-	float m_angleDegrees = 0;	
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
 	
@@ -168,6 +167,14 @@ public class PlayerEntity extends Ship implements InputProcessor
 		{
 			ce.EngageEngine();
 		}
+		
+		if( keycode == Keys.A ||
+			keycode == Keys.S ||
+			keycode == Keys.D )
+		{
+			ce.EngageAirJets();
+		}
+		
 		return true;
 	}
 	
@@ -182,6 +189,19 @@ public class PlayerEntity extends Ship implements InputProcessor
 		{
 			ce.DisengageEngine();			
 		}
+		
+		if( keycode == Keys.X )
+		{
+			ce.DisengageBrake();			
+		}
+		
+		if( keycode == Keys.A ||
+			keycode == Keys.S ||
+			keycode == Keys.D )
+		{
+			ce.DisengageAirJets();
+		}
+			
 		return true;
 	}
 	

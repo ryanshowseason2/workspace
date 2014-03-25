@@ -10,13 +10,30 @@ public abstract class CruiseEngine
 	Ship m_ship;
 	float m_maxVelocity;
 	boolean m_enginesEngaged = false;
+	boolean m_jetsEngaged = false;
+	boolean m_brakesEngaged = false;
+	float m_lastXForce;
+	float m_lastYForce;
 	
 	ParticleEffect m_engineEffect = new ParticleEffect();
     ParticleEffectPool m_engineEffectPool;
     PooledEffect m_pooledEngineEffect;
-	ParticleEffect m_engineTrailEffect = new ParticleEffect();
+    ParticleEffect m_engineTrailEffect = new ParticleEffect();
     ParticleEffectPool m_engineTrailEffectPool;
     PooledEffect m_pooledEngineTrailEffect;
+    
+    ParticleEffect m_airJetEffectRight = new ParticleEffect();
+    ParticleEffect m_airJetEffectDown = new ParticleEffect();
+    ParticleEffect m_airJetEffectLeft = new ParticleEffect();
+    ParticleEffect m_airJetEffectUp = new ParticleEffect();
+    ParticleEffectPool m_airJetEffectPoolRight;
+    PooledEffect m_pooledAirJetEffectRight;
+    ParticleEffectPool m_airJetEffectPoolDown;
+    PooledEffect m_pooledAirJetEffectDown;
+    ParticleEffectPool m_airJetEffectPoolLeft;
+    PooledEffect m_pooledAirJetEffectLeft;
+    ParticleEffectPool m_airJetEffectPoolUp;
+    PooledEffect m_pooledAirJetEffectUp;
     
 	public CruiseEngine( Ship s, float maxVelocity )
 	{
@@ -33,4 +50,9 @@ public abstract class CruiseEngine
 	public abstract void EngageEngine();
 	public abstract void ProcessVelocity();
 	public abstract void Draw( SpriteBatch renderer );
+	public abstract void EngageAirJets();
+	public abstract void DisengageAirJets();
+
+	public abstract void DisengageBrake();
+	
 }

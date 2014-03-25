@@ -14,6 +14,7 @@ public class Ship extends ViewedCollidable
 	ArrayList<CounterMeasure> m_longRangeCMS = new ArrayList< CounterMeasure >();
 	float m_maxVelocity;
 	
+	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV ) 
 	{
 		super(appearanceLocation, world, startX, startY);

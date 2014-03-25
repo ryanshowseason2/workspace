@@ -24,7 +24,7 @@ public abstract class ViewedCollidable
     Texture m_objectAppearance;
     Sprite m_objectSprite;
     public Body m_body;
-    double m_angle = 0;
+    float m_angleDegrees = 0;
     double m_angleRadians = 0;
     public float m_drawScale = 29f;
     public float m_integrity = 1000f;

@@ -19,6 +19,32 @@ public class ConventionalCruiseEngine extends CruiseEngine
 				
 		m_engineTrailEffectPool = new ParticleEffectPool(m_engineTrailEffect, 1, 2);
 		m_pooledEngineTrailEffect = m_engineTrailEffectPool.obtain();
+		
+		m_airJetEffectRight.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
+		m_airJetEffectDown.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
+		m_airJetEffectLeft.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
+		m_airJetEffectUp.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
+		
+		m_airJetEffectRight.getEmitters().get(0).setAttached(true);
+		m_airJetEffectRight.getEmitters().get(0).getAngle().setHigh(5f, -5f);
+		m_airJetEffectPoolRight = new ParticleEffectPool(m_airJetEffectRight, 1, 2);
+		m_pooledAirJetEffectRight = m_airJetEffectPoolRight.obtain();
+		
+		m_airJetEffectDown.getEmitters().get(0).setAttached(true);
+		m_airJetEffectDown.getEmitters().get(0).getAngle().setHigh(265f, 275f);
+		m_airJetEffectPoolDown = new ParticleEffectPool(m_airJetEffectDown, 1, 2);
+		m_pooledAirJetEffectDown = m_airJetEffectPoolDown.obtain();
+		
+		m_airJetEffectLeft.getEmitters().get(0).setAttached(true);
+		m_airJetEffectLeft.getEmitters().get(0).getAngle().setHigh(175f, 185f);
+		m_airJetEffectPoolLeft = new ParticleEffectPool(m_airJetEffectLeft, 1, 2);
+		m_pooledAirJetEffectLeft = m_airJetEffectPoolLeft.obtain();
+		
+		m_airJetEffectUp.getEmitters().get(0).setAttached(true);
+		m_airJetEffectUp.getEmitters().get(0).getAngle().setHigh(85f, 95f);
+		m_airJetEffectPoolUp = new ParticleEffectPool(m_airJetEffectUp, 1, 2);
+		m_pooledAirJetEffectUp = m_airJetEffectPoolUp.obtain();
+		
 	}
 	
 	public void ApplyThrust( float forceX, float forceY)
@@ -46,6 +72,8 @@ public class ConventionalCruiseEngine extends CruiseEngine
 			m_ship.m_body.setLinearDamping(0f);
 		}
 		
+		m_lastXForce = forceX;
+		m_lastYForce = forceY;
 		m_ship.m_body.applyForceToCenter(forceX, forceY, true);
 	}
 
@@ -129,6 +157,63 @@ public class ConventionalCruiseEngine extends CruiseEngine
 			m_pooledEngineTrailEffect.setPosition( m_ship.m_objectXPosition - xdelta, m_ship.m_objectYPosition - ydelta );
 			m_pooledEngineTrailEffect.draw(renderer, 1f/60f);
 		}
+		
+		if( m_jetsEngaged && !m_brakesEngaged )
+		{
+			
+			if( m_lastXForce > 0 && (m_ship.m_angleDegrees > 45f || m_ship.m_angleDegrees < -45f) )
+			{
+				m_pooledAirJetEffectLeft.setPosition( m_ship.m_objectXPosition - radius, m_ship.m_objectYPosition );
+				m_pooledAirJetEffectLeft.draw(renderer, 1f/60f);
+			}
+			
+			if( m_lastXForce < 0 && (m_ship.m_angleDegrees > 225f || m_ship.m_angleDegrees < 135f) )
+			{
+				m_pooledAirJetEffectRight.setPosition( m_ship.m_objectXPosition + radius, m_ship.m_objectYPosition );
+				m_pooledAirJetEffectRight.draw(renderer, 1f/60f);
+			}
+			
+			if( m_lastYForce > 0 && (m_ship.m_angleDegrees > 135f || m_ship.m_angleDegrees < 45f) )
+			{
+				m_pooledAirJetEffectDown.setPosition( m_ship.m_objectXPosition, m_ship.m_objectYPosition - radius );
+				m_pooledAirJetEffectDown.draw(renderer, 1f/60f);
+			}
+			
+			if( m_lastYForce < 0 && (m_ship.m_angleDegrees > 315f || m_ship.m_angleDegrees < 225f) )
+			{
+				m_pooledAirJetEffectUp.setPosition( m_ship.m_objectXPosition, m_ship.m_objectYPosition + radius );
+				m_pooledAirJetEffectUp.draw(renderer, 1f/60f);
+			}
+		}
+		
+		if( m_brakesEngaged )
+		{
+			
+			{
+				m_pooledAirJetEffectLeft.setPosition( m_ship.m_objectXPosition - radius, m_ship.m_objectYPosition );
+				m_pooledAirJetEffectLeft.draw(renderer, 1f/60f);
+			}
+			
+			
+			{
+				m_pooledAirJetEffectRight.setPosition( m_ship.m_objectXPosition + radius, m_ship.m_objectYPosition );
+				m_pooledAirJetEffectRight.draw(renderer, 1f/60f);
+			}
+			
+			
+			{
+				m_pooledAirJetEffectDown.setPosition( m_ship.m_objectXPosition, m_ship.m_objectYPosition - radius );
+				m_pooledAirJetEffectDown.draw(renderer, 1f/60f);
+			}
+			
+			
+			{
+				m_pooledAirJetEffectUp.setPosition( m_ship.m_objectXPosition, m_ship.m_objectYPosition + radius );
+				m_pooledAirJetEffectUp.draw(renderer, 1f/60f);
+			}
+		}
+		
+		
 	}
 
 	@Override
@@ -140,6 +225,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	    xForce = (float)(-30.0f * m_ship.m_body.getLinearVelocity().x);
         yForce = (float)(-30.0f * m_ship.m_body.getLinearVelocity().y);
 	    ApplyThrust( xForce, yForce );
+	    m_brakesEngaged = true;
 	}
 
 	@Override
@@ -152,6 +238,36 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		{
 			m_ship.m_body.setLinearDamping(0f);
 		}
+	}
+
+	@Override
+	public void EngageAirJets()
+	{
+		// TODO Auto-generated method stub
+		m_jetsEngaged = true;
+				
+	}
+
+	@Override
+	public void DisengageAirJets()
+	{
+		// TODO Auto-generated method stub
+		m_jetsEngaged = false;
+		m_pooledAirJetEffectRight.reset();
+		m_pooledAirJetEffectDown.reset();
+		m_pooledAirJetEffectLeft.reset();
+		m_pooledAirJetEffectUp.reset();
+	}
+
+	@Override
+	public void DisengageBrake()
+	{
+		// TODO Auto-generated method stub
+		m_brakesEngaged = false;
+		m_pooledAirJetEffectRight.reset();
+		m_pooledAirJetEffectDown.reset();
+		m_pooledAirJetEffectLeft.reset();
+		m_pooledAirJetEffectUp.reset();
 	}
 
 }

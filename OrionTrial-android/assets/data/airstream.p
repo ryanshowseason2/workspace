@@ -84,8 +84,8 @@ timeline0: 0.0
 active: true
 lowMin: 90.0
 lowMax: 90.0
-highMin: 10.0
-highMax: 0.0
+highMin: 5.0
+highMax: -5.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -125,7 +125,7 @@ timeline1: 0.2
 timeline2: 0.28767124
 timeline3: 0.47945204
 - Options - 
-attached: false
+attached: true
 continuous: true
 aligned: false
 additive: true
