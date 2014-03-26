@@ -177,7 +177,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	public void draw(float delta) 
 	{
 		handleInput(); 
-		w.step(1/60f, 60, 20);
+		
         GL20 gl = Gdx.graphics.getGL20();
 
         // Camera --------------------- /
@@ -284,7 +284,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
     		spriteBatch.end();
-    		
+    		w.step(1/60f, 60, 20);
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{
     			ViewedCollidable tmp = (ViewedCollidable) m_deadThings.get(i);

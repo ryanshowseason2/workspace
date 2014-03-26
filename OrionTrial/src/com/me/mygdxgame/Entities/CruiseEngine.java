@@ -12,6 +12,8 @@ public abstract class CruiseEngine
 	boolean m_enginesEngaged = false;
 	boolean m_jetsEngaged = false;
 	boolean m_brakesEngaged = false;
+	float m_airJetAttachX;
+	float m_airJetAttachY;
 	float m_lastXForce;
 	float m_lastYForce;
 	
