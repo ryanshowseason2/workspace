@@ -1,9 +1,11 @@
-package com.me.mygdxgame.Entities;
+package com.me.mygdxgame.Equipables;
+
+import com.me.mygdxgame.Entities.Ship;
 
 public abstract class ManeuverEngine 
 {
 	Ship m_ship;
-	float m_maxVelocity;
+	public float m_maxVelocity;
 	public float m_boostJuice = 100;
 	public ManeuverEngine( Ship s, float maxVelocity )
 	{

@@ -1,8 +1,9 @@
-package com.me.mygdxgame.Entities;
+package com.me.mygdxgame.Equipables;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.me.mygdxgame.Entities.Ship;
 
 public class ConventionalCruiseEngine extends CruiseEngine
 {
@@ -47,7 +48,12 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		
 	}
 	
-	public void ApplyThrust( float forceX, float forceY)
+	public void ApplyThrust( float forceX, float forceY )
+	{
+		ApplyThrust(forceX, forceY, false );
+	}
+	
+	public void ApplyThrust( float forceX, float forceY, boolean brakingOrForwardMotion )
 	{
 		float vel = m_ship.m_body.getLinearVelocity().dst(0, 0);
 		
@@ -72,8 +78,12 @@ public class ConventionalCruiseEngine extends CruiseEngine
 			m_ship.m_body.setLinearDamping(0f);
 		}
 		
-		m_lastXForce = forceX;
-		m_lastYForce = forceY;
+		if( !brakingOrForwardMotion )
+		{
+			m_lastXForce = forceX;
+			m_lastYForce = forceY;
+		}
+		
 		m_ship.m_body.applyForceToCenter(forceX, forceY, true);
 	}
 
@@ -86,7 +96,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	    xForce = (float)(90f * Math.cos(m_ship.m_angleRadians));
         yForce = (float)(90.0f * Math.sin(m_ship.m_angleRadians));
         
-        ApplyThrust( xForce, yForce );
+        ApplyThrust( xForce, yForce, true );
 	}
 
 	@Override
@@ -99,8 +109,8 @@ public class ConventionalCruiseEngine extends CruiseEngine
         yForce = (float)(-45.0f * Math.sin(m_ship.m_angleRadians));
         
         float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
-        m_airJetAttachX = m_ship.m_objectXPosition +(float)(radius * Math.cos(m_ship.m_angleRadians));
-        m_airJetAttachY = m_ship.m_objectYPosition +(float)(radius * Math.sin(m_ship.m_angleRadians));
+        m_airJetAttachX = m_ship.m_body.getPosition().x*29f +(float)(radius * Math.cos(m_ship.m_angleRadians));
+        m_airJetAttachY = m_ship.m_body.getPosition().y*29f +(float)(radius * Math.sin(m_ship.m_angleRadians));
         
 	    ApplyThrust( xForce, yForce );
 	}
@@ -116,8 +126,8 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	    ApplyThrust( xForce, yForce );
 	    
 	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
-        m_airJetAttachX = m_ship.m_objectXPosition +(float)(radius * Math.sin(m_ship.m_angleRadians));
-        m_airJetAttachY = m_ship.m_objectYPosition -(float)(radius * Math.cos(m_ship.m_angleRadians));
+	    m_airJetAttachX = m_ship.m_body.getPosition().x*29f +(float)(radius * Math.sin(m_ship.m_angleRadians));
+	    m_airJetAttachY = m_ship.m_body.getPosition().y*29f -(float)(radius * Math.cos(m_ship.m_angleRadians));
 	}
 
 	@Override
@@ -131,8 +141,8 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	    ApplyThrust( xForce, yForce );
 	    
 	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
-        m_airJetAttachX = m_ship.m_objectXPosition -(float)(radius * Math.sin(m_ship.m_angleRadians));
-        m_airJetAttachY = m_ship.m_objectYPosition +(float)(radius * Math.cos(m_ship.m_angleRadians));
+        m_airJetAttachX = m_ship.m_body.getPosition().x*29f -(float)(radius * Math.sin(m_ship.m_angleRadians));
+        m_airJetAttachY = m_ship.m_body.getPosition().y*29f +(float)(radius * Math.cos(m_ship.m_angleRadians));
 	}
 
 	@Override
@@ -171,7 +181,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 			m_pooledEngineTrailEffect.draw(renderer, 1f/60f);
 		}
 		
-		if( m_jetsEngaged && !m_brakesEngaged )
+		if( m_jetsEngaged  )
 		{
 			
 			if( m_lastXForce > 0 && (m_ship.m_angleDegrees > 45f || m_ship.m_angleDegrees < -45f) )
@@ -223,7 +233,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	    float yForce = 0;
 	    xForce = (float)(-30.0f * m_ship.m_body.getLinearVelocity().x);
         yForce = (float)(-30.0f * m_ship.m_body.getLinearVelocity().y);
-	    ApplyThrust( xForce, yForce );
+	    ApplyThrust( xForce, yForce, true );
 	    m_brakesEngaged = true;
 	}
 

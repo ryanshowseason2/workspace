@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.me.mygdxgame.Entities.Asteroid;
+import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
@@ -74,6 +75,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     ArrayList<ViewedCollidable> m_deadThings = new ArrayList<ViewedCollidable>();
 	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
 	RayHandler rayHandler;
+	EnemyShip shippy;
     
 	public CombatScreen()
 	{
@@ -93,6 +95,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         m_aliveThings.add((ViewedCollidable)asty);
+        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, 50, 1 );
+        m_aliveThings.add(shippy);
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);
@@ -176,6 +180,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	@Override
 	public void draw(float delta) 
 	{
+		w.step(1/60f, 60, 20);
 		handleInput(); 
 		
         GL20 gl = Gdx.graphics.getGL20();
@@ -278,13 +283,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-     		font.draw(spriteBatch, "Integrity: " + asty.m_integrity , 0, 150);
+     		font.draw(spriteBatch, "Integrity: " + shippy.m_integrity , 0, 150);
      		font.draw(spriteBatch, "boost juice: " + player.me.m_boostJuice , 0, 120);
      		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
     		spriteBatch.end();
-    		w.step(1/60f, 60, 20);
+    		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{
     			ViewedCollidable tmp = (ViewedCollidable) m_deadThings.get(i);
@@ -381,8 +386,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
 		ViewedCollidable object1 = (ViewedCollidable) body1.getUserData();
 		ViewedCollidable object2 = (ViewedCollidable) body2.getUserData();
 		float crashVelocity = Math.abs( body1.getLinearVelocity().dst(0, 0) - body2.getLinearVelocity().dst(0, 0) );
-		object1.damageCalc( object2, crashVelocity );
-		object2.damageCalc( object1, crashVelocity );
+		
+		if( object1 != null && object2 != null )
+		{
+			object1.damageCalc( object2, crashVelocity );
+			object2.damageCalc( object1, crashVelocity );
+		}
 	}
 
 	@Override

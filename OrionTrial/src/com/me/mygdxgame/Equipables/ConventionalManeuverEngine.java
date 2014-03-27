@@ -1,6 +1,7 @@
-package com.me.mygdxgame.Entities;
+package com.me.mygdxgame.Equipables;
 
 import com.badlogic.gdx.math.Vector2;
+import com.me.mygdxgame.Entities.Ship;
 
 public class ConventionalManeuverEngine extends ManeuverEngine
 {

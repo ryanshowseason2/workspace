@@ -1,9 +1,10 @@
-package com.me.mygdxgame.Entities;
+package com.me.mygdxgame.Equipables;
 
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
+import com.me.mygdxgame.Entities.Ship;
 
 public abstract class CruiseEngine 
 {

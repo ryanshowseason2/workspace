@@ -19,13 +19,13 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class ViewedCollidable 
 {
-	float m_objectXPosition;
-	float m_objectYPosition;
-    Texture m_objectAppearance;
+	public float m_objectXPosition;
+	public float m_objectYPosition;
+    public Texture m_objectAppearance;
     Sprite m_objectSprite;
     public Body m_body;
-    float m_angleDegrees = 0;
-    double m_angleRadians = 0;
+    public float m_angleDegrees = 0;
+    public double m_angleRadians = 0;
     public float m_drawScale = 29f;
     public float m_integrity = 1000f;
     ParticleEffect m_deathEffect = new ParticleEffect();
@@ -43,7 +43,7 @@ public abstract class ViewedCollidable
 	      // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 	      bodyDef.type = BodyType.DynamicBody;
 	      // Set our body's starting position in the world
-	      bodyDef.position.set(startX, startX);
+	      bodyDef.position.set(startX, startY);
 
 	      // Create our body in the world using our body definition
 	      m_body = world.createBody(bodyDef);
