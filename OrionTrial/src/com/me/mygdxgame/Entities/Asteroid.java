@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Asteroid extends ViewedCollidable {
 
 	public Asteroid(String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
-		super(appearanceLocation, world, startX, startY, aliveThings);
+		super(appearanceLocation, world, startX, startY, aliveThings, 0);
 		// TODO Auto-generated constructor stub
 		
 		MassData data = m_body.getMassData();

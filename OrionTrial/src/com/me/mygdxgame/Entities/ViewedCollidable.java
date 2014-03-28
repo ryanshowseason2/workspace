@@ -33,8 +33,9 @@ public abstract class ViewedCollidable
     PooledEffect m_pooledDeathEffect;
     public int m_factionCode = 0;
 	   
-	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings )
+	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode )
 	   {
+		  m_factionCode = factionCode;
 	      m_objectXPosition = startX*29f;
 	      m_objectYPosition = startY*29f;
 	      m_objectAppearance = new Texture(Gdx.files.internal(appearanceLocation));
@@ -60,6 +61,7 @@ public abstract class ViewedCollidable
 	      fixtureDef.density = 0.1f; 
 	      fixtureDef.friction = 0f;
 	      fixtureDef.restitution = 0.1f; // Make it bounce a little bit
+	      fixtureDef.filter.groupIndex = (short) (m_factionCode * -1);
 
 	      // Create our fixture and attach it to the body
 	      Fixture fixture = m_body.createFixture(fixtureDef);
@@ -111,9 +113,14 @@ public abstract class ViewedCollidable
 
 	public boolean deathThroesDone() 
 	{
-		boolean dead =  m_pooledDeathEffect.isComplete(); 
+		boolean dead = true;
+		
+		if( m_pooledDeathEffect != null )
+		{
+			dead = m_pooledDeathEffect.isComplete(); 
+		}
 
-		if( dead )
+		if( dead && m_pooledDeathEffect != null )
 		{
 			m_pooledDeathEffect.free();
 		}

@@ -13,12 +13,13 @@ public class EnemyShip extends Ship
 	public EnemyShip(String appearanceLocation, World world, float startX,
 			float startY, float maxV, int factionCode, ArrayList<ViewedCollidable> aliveThings )
 	{
-		super(appearanceLocation, world, startX, startY, maxV, aliveThings);
+		super(appearanceLocation, world, startX, startY, maxV, aliveThings, factionCode);
 		// TODO Auto-generated constructor stub
 		m_factionCode = factionCode;
 		
 		MassData data = m_body.getMassData();
-		data.mass = 10;
+		data.mass = 1000;
+		m_integrity = 100000;
 		m_body.setMassData(data);
 		m_body.setUserData(this);		
 		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));

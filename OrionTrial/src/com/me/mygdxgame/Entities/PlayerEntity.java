@@ -22,7 +22,7 @@ public class PlayerEntity extends Ship implements InputProcessor
 	public PlayerEntity(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings ) 
 	{
-		super(appearanceLocation, world, startX, startY, maxV, aliveThings );
+		super(appearanceLocation, world, startX, startY, maxV, aliveThings, 1 );
 		// TODO Auto-generated constructor stub
 		
 		m_objectSprite.rotate((float) initialAngleAdjust);

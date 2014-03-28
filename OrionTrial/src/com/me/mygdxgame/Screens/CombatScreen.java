@@ -27,6 +27,7 @@ import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Equipables.MachineGun;
 import com.badlogic.gdx.graphics.Color;
 
 import box2dlight.ConeLight;
@@ -91,11 +92,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings);
+        player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 30 ) );
         asty = new Asteroid("data/asteroid.png", w, 10, 10, m_aliveThings );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //m_aliveThings.add((ViewedCollidable)asty);
-        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, 50, 1, m_aliveThings );
+        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, 50, 2, m_aliveThings );
         //m_aliveThings.add(shippy);
         
         /** BOX2D LIGHT STUFF BEGIN */

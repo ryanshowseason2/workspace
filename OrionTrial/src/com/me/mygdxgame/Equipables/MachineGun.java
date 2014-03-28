@@ -1,18 +1,21 @@
 package com.me.mygdxgame.Equipables;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class MachineGun extends CounterMeasure
 {
 
-	public MachineGun(World w, Ship s)
+	public MachineGun(World w, Ship s, ArrayList<ViewedCollidable> aliveThings, int range )
 	{
-		super(w, s);
+		super(w, s, aliveThings, range );
 		// TODO Auto-generated constructor stub
 	}
 
@@ -37,7 +40,15 @@ public class MachineGun extends CounterMeasure
 		
 		if( m_target != null )
 		{
-			
+			float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			float targetCenterX = m_target.m_body.getPosition().x;
+			float targetCenterY = m_target.m_body.getPosition().y;
+			Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
+			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
+			float xForce =  (float)(-1250f * Math.cos(angleRadians));
+	        float yForce =  (float)(-1250f * Math.sin(angleRadians));
+	        p.m_body.applyForceToCenter(xForce, yForce, true);
 		}
 	}
 

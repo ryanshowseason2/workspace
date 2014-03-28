@@ -1,5 +1,7 @@
 package com.me.mygdxgame.Equipables;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -17,11 +19,14 @@ public abstract class CounterMeasure implements QueryCallback
 	World m_world;
 	Ship m_ship;
 	ViewedCollidable m_target = null;
+	ArrayList<ViewedCollidable> m_aliveThings;
 	
-	public CounterMeasure( World w, Ship s )
+	public CounterMeasure( World w, Ship s, ArrayList<ViewedCollidable> aliveThings, int range )
 	{
 		m_world = w;
-		m_ship = s;		
+		m_ship = s;
+		m_aliveThings = aliveThings;
+		m_range = range;
 	}
 	
 	public abstract void AcquireAndFire();
