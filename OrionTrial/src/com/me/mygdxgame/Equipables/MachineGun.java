@@ -1,5 +1,6 @@
 package com.me.mygdxgame.Equipables;
 
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
@@ -17,11 +18,21 @@ public class MachineGun extends CounterMeasure
 	@Override
 	public void AcquireAndFire()
 	{
-		QueryCallback callback;
-		// TODO Auto-generated method stub
-		Fixture fixture;
-		fixture.
-		m_world.QueryAABB(callback, lowerX, lowerY, upperX, upperY);
+		if( m_target != null && m_target.m_integrity <= 0 )
+		{
+			m_target = null;
+		}
+		
+		if( m_target == null )
+		{
+			float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			
+			m_world.QueryAABB(this, centerX - m_range / 2,
+									centerY - m_range / 2,
+									centerX + m_range / 2,
+									centerY + m_range / 2 );
+		}
 	}
 
 	@Override
@@ -36,6 +47,21 @@ public class MachineGun extends CounterMeasure
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean reportFixture(Fixture fixture)
+	{
+		Body potentialTarget = fixture.getBody();
+		float distanceToPotential = potentialTarget.getPosition().dst(m_ship.m_body.getPosition() );
+		float di
+		
+		if( potentialTarget != m_ship.m_body && 
+				distanceToPotential <= m_range  )
+		{
+			
+		}
+		return true;
 	}
 
 }
