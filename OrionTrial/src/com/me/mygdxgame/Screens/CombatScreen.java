@@ -90,13 +90,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cam.position.set(WIDTH / 2, HEIGHT / 2, 0);
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
-        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f);
-        asty = new Asteroid("data/asteroid.png", w, 10, 10 );
+        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings);
+        asty = new Asteroid("data/asteroid.png", w, 10, 10, m_aliveThings );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
-        m_aliveThings.add((ViewedCollidable)asty);
-        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, 50, 1 );
-        m_aliveThings.add(shippy);
+        //m_aliveThings.add((ViewedCollidable)asty);
+        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, 50, 1, m_aliveThings );
+        //m_aliveThings.add(shippy);
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);
@@ -245,7 +245,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		spriteBatch.end();
      		
      		spriteBatch.begin();
-    		player.Draw( spriteBatch );
+    		//player.Draw( spriteBatch );
     		for(int i = 0; i < m_aliveThings.size(); i++)
     		{
     			ViewedCollidable tmp = (ViewedCollidable) m_aliveThings.get(i);

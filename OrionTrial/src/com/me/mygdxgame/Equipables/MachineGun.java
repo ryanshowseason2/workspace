@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Entities.Ship;
+import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class MachineGun extends CounterMeasure
 {
@@ -33,6 +34,11 @@ public class MachineGun extends CounterMeasure
 									centerX + m_range / 2,
 									centerY + m_range / 2 );
 		}
+		
+		if( m_target != null )
+		{
+			
+		}
 	}
 
 	@Override
@@ -54,13 +60,23 @@ public class MachineGun extends CounterMeasure
 	{
 		Body potentialTarget = fixture.getBody();
 		float distanceToPotential = potentialTarget.getPosition().dst(m_ship.m_body.getPosition() );
-		float di
+		float distanceToCurrentTarget = Float.MAX_VALUE;
+		ViewedCollidable vc = (ViewedCollidable) potentialTarget.getUserData();
+		
+		if(m_target != null)
+		{
+			distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
+		}
 		
 		if( potentialTarget != m_ship.m_body && 
-				distanceToPotential <= m_range  )
+			distanceToPotential <= m_range &&
+			distanceToPotential < distanceToCurrentTarget &&
+			m_ship.m_factionCode != vc.m_factionCode &&
+			vc.m_factionCode != 0 )
 		{
-			
+			m_target = (ViewedCollidable) potentialTarget.getUserData();
 		}
+		
 		return true;
 	}
 

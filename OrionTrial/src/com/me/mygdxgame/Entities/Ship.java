@@ -18,11 +18,11 @@ public class Ship extends ViewedCollidable
 	ArrayList<CounterMeasure> m_mediumRangeCMS = new ArrayList< CounterMeasure >();
 	ArrayList<CounterMeasure> m_longRangeCMS = new ArrayList< CounterMeasure >();
 	float m_maxVelocity;
-	int m_factionCode = 0;
 	
-	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV ) 
+	
+	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings ) 
 	{
-		super(appearanceLocation, world, startX, startY);
+		super(appearanceLocation, world, startX, startY, aliveThings );
 		// TODO Auto-generated constructor stub
 		m_maxVelocity = maxV;
 		me = new ConventionalManeuverEngine( this, maxV );

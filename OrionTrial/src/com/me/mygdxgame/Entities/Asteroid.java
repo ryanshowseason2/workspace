@@ -1,5 +1,7 @@
 package com.me.mygdxgame.Entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -7,8 +9,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Asteroid extends ViewedCollidable {
 
-	public Asteroid(String appearanceLocation, World world, float startX, float startY) {
-		super(appearanceLocation, world, startX, startY);
+	public Asteroid(String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
+		super(appearanceLocation, world, startX, startY, aliveThings);
 		// TODO Auto-generated constructor stub
 		
 		MassData data = m_body.getMassData();

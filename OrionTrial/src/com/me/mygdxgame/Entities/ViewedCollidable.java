@@ -31,8 +31,9 @@ public abstract class ViewedCollidable
     ParticleEffect m_deathEffect = new ParticleEffect();
     ParticleEffectPool m_deathEffectPool;
     PooledEffect m_pooledDeathEffect;
+    public int m_factionCode = 0;
 	   
-	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY )
+	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings )
 	   {
 	      m_objectXPosition = startX*29f;
 	      m_objectYPosition = startY*29f;
@@ -66,6 +67,7 @@ public abstract class ViewedCollidable
 	      // Remember to dispose of any shapes after you're done with them!
 	      // BodyDef and FixtureDef don't need disposing, but shapes do.
 	      circle.dispose();
+	      aliveThings.add(this);
 	   }
 	   
 	   public void Draw( SpriteBatch renderer )

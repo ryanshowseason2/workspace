@@ -1,5 +1,7 @@
 package com.me.mygdxgame.Entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -9,9 +11,9 @@ public class EnemyShip extends Ship
 {
 
 	public EnemyShip(String appearanceLocation, World world, float startX,
-			float startY, float maxV, int factionCode )
+			float startY, float maxV, int factionCode, ArrayList<ViewedCollidable> aliveThings )
 	{
-		super(appearanceLocation, world, startX, startY, maxV);
+		super(appearanceLocation, world, startX, startY, maxV, aliveThings);
 		// TODO Auto-generated constructor stub
 		m_factionCode = factionCode;
 		

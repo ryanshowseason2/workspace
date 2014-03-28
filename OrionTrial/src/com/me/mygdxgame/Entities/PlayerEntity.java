@@ -1,5 +1,6 @@
 package com.me.mygdxgame.Entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -19,9 +20,9 @@ public class PlayerEntity extends Ship implements InputProcessor
 {
 
 	public PlayerEntity(String appearanceLocation, World world, float startX,
-			float startY, float initialAngleAdjust, float maxV ) 
+			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings ) 
 	{
-		super(appearanceLocation, world, startX, startY, maxV);
+		super(appearanceLocation, world, startX, startY, maxV, aliveThings );
 		// TODO Auto-generated constructor stub
 		
 		m_objectSprite.rotate((float) initialAngleAdjust);
@@ -258,5 +259,11 @@ public class PlayerEntity extends Ship implements InputProcessor
 		
 	
     }
+	
+	@Override
+	public void damageIntegrity( float damage)
+	{
+		
+	}
 
 }
