@@ -32,9 +32,13 @@ public abstract class ViewedCollidable
     ParticleEffectPool m_deathEffectPool;
     PooledEffect m_pooledDeathEffect;
     public int m_factionCode = 0;
+    World m_world;
+    ArrayList<ViewedCollidable> m_aliveThings;
 	   
 	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode )
 	   {
+		  m_world = world;
+		  m_aliveThings = aliveThings;
 		  m_factionCode = factionCode;
 	      m_objectXPosition = startX*29f;
 	      m_objectYPosition = startY*29f;

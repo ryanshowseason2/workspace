@@ -32,4 +32,9 @@ public abstract class CounterMeasure implements QueryCallback
 	public abstract void AcquireAndFire();
 	public abstract void EngageCM();
 	public abstract void DisengageCM();
+
+	public void SetTarget( ViewedCollidable target )
+	{
+		m_target = target;
+	}
 }

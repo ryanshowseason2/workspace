@@ -91,13 +91,16 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cam.position.set(WIDTH / 2, HEIGHT / 2, 0);
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
-        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings);
-        player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 30 ) );
-        asty = new Asteroid("data/asteroid.png", w, 10, 10, m_aliveThings );
+        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings, cam);
+        //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
+        asty = new Asteroid("data/asteroid.png", w, 0, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", w, 10, 20, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", w, 10, 25, m_aliveThings );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //m_aliveThings.add((ViewedCollidable)asty);
-        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, 50, 2, m_aliveThings );
+        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, -90, 50, 2, m_aliveThings );
+        //shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings, 20 ) );
         //m_aliveThings.add(shippy);
         
         /** BOX2D LIGHT STUFF BEGIN */

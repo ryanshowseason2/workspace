@@ -36,7 +36,7 @@ public class Ship extends ViewedCollidable
 	public void damageCalc(ViewedCollidable object2, float crashVelocity) 
 	{
 		// TODO Auto-generated method stub
-
+		int i = 0;
 	}
 	
 	public void AddShortRangeCounterMeasure( CounterMeasure c)

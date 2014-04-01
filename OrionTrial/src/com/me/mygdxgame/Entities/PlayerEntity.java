@@ -12,15 +12,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.MassData;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
 
-public class PlayerEntity extends Ship implements InputProcessor
+public class PlayerEntity extends Ship implements InputProcessor, RayCastCallback
 {
 
 	public PlayerEntity(String appearanceLocation, World world, float startX,
-			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings ) 
+			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam ) 
 	{
 		super(appearanceLocation, world, startX, startY, maxV, aliveThings, 1 );
 		// TODO Auto-generated constructor stub
@@ -33,12 +36,13 @@ public class PlayerEntity extends Ship implements InputProcessor
 		m_body.setUserData(this);		
 		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
-		m_pooledDeathEffect = m_deathEffectPool.obtain();			
+		m_pooledDeathEffect = m_deathEffectPool.obtain();	
+		m_cam = cam;
 	}
 	
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
-	
+	ParallaxCamera m_cam;
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -215,6 +219,17 @@ public class PlayerEntity extends Ship implements InputProcessor
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
+		Vector3 vec = new Vector3( screenX, screenY ,0 );
+		m_cam.calculateParallaxMatrix(1f, 1f);
+		m_cam.unproject( vec );
+		float screenXf = vec.x / 29;
+		float screenYf = vec.y / 29;
+		Vector2 point = new Vector2();
+		point.x = screenXf;
+		point.y = screenYf;
+		
+		m_world.rayCast(this, m_body.getPosition(), point);
+		
 		return false;
 	}
 	
@@ -264,6 +279,21 @@ public class PlayerEntity extends Ship implements InputProcessor
 	public void damageIntegrity( float damage)
 	{
 		
+	}
+
+	@Override
+	public float reportRayFixture(Fixture fixture, Vector2 point,
+			Vector2 normal, float fraction)
+	{
+		ViewedCollidable target = (ViewedCollidable) fixture.getBody().getUserData();
+		if( target != this )
+		{
+			for( int i = 0; i < m_shortRangeCMS.size(); i++ )
+			{
+				m_shortRangeCMS.get(i).SetTarget( target );
+			}
+		}
+		return 1;
 	}
 
 }
