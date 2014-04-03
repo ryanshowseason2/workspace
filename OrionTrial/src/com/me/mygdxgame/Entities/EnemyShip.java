@@ -26,6 +26,9 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 	ViewedCollidable m_target = null;
 	float m_wayPointX;
 	float m_wayPointY;
+	float m_fixtureDistance;
+	ArrayList<Vector2> m_leftPossibleVectors = new ArrayList<Vector2>();
+	ArrayList<Vector2> m_rightPossibleVectors = new ArrayList<Vector2>();
 
 	public EnemyShip(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV,
@@ -144,15 +147,41 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 
 	private void CalculateWaypoint()
 	{
-		Vector2 point = new Vector2();
-		point.x = m_target.m_body.getPosition().x;
-		point.y = m_target.m_body.getPosition().y;
-		m_world.rayCast(this, m_body.getPosition(), point);
+		Vector2 source = new Vector2();
+		Vector2 destination = new Vector2();
+		destination.x = m_target.m_body.getPosition().x;
+		destination.y = m_target.m_body.getPosition().y;
 		
-		Vector2 wingLeft = new Vector2();
-		Vector2 wingRight = new Vector2();
-		//m_wayPointX = m_target.m_body.getPosition().x;
-		//m_wayPointY = m_target.m_body.getPosition().y;		
+		
+		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
+		source.x = m_body.getPosition().x;
+		source.y = m_body.getPosition().y;	
+		CheckPath( source, destination);
+		
+		if( m_seekType != SeekType.TravelingToWaypoint )
+		{
+			source.x = m_body.getPosition().x -(float)(radius * Math.sin(m_angleRadians));
+			source.y = m_body.getPosition().y +(float)(radius * Math.cos(m_angleRadians));
+			CheckPath( source, destination);
+		}
+		
+		if( m_seekType != SeekType.TravelingToWaypoint )
+		{
+			source.x = m_body.getPosition().x +(float)(radius * Math.sin(m_angleRadians));
+			source.y = m_body.getPosition().y -(float)(radius * Math.cos(m_angleRadians));
+			CheckPath( source, destination);
+		}
+		
+		if( m_seekType == SeekType.TravelingToWaypoint )
+		{
+			
+		}
+	}
+
+	private void CheckPath(Vector2 source, Vector2 destination)
+	{
+		m_fixtureDistance = Float.MAX_VALUE;
+		m_world.rayCast(this, source, destination);
 	}
 
 	@Override
@@ -171,26 +200,28 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 	public float reportRayFixture(Fixture fixture, Vector2 point,
 			Vector2 normal, float fraction)
 	{
-		if( fixture.getBody() == m_target.m_body )
+		if( fixture.getBody() != m_body)
 		{
-			m_wayPointX = m_target.m_body.getPosition().x;
-			m_wayPointY = m_target.m_body.getPosition().y;
-			m_seekType = m_onDeckSeekType;
+			float distance = m_target.m_body.getPosition().dst(fixture.getBody().getPosition());
+			if( fixture.getBody() == m_target.m_body && distance < m_fixtureDistance )
+			{
+				m_wayPointX = m_target.m_body.getPosition().x;
+				m_wayPointY = m_target.m_body.getPosition().y;
+				m_seekType = m_onDeckSeekType;
+			}
+			else if( distance < m_fixtureDistance )
+			{
+				// deviate the angle set that as the waypoint
+				m_onDeckSeekType = m_seekType;
+				m_seekType = SeekType.TravelingToWaypoint;
+				Vector2 pos = m_body.getPosition();
+				double angleRadians = Math.atan2(point.y - pos.y, point.x - pos.x);
+				angleRadians += Math.PI /2;
+				m_wayPointX = (float) (fixture.getBody().getPosition().x + 5 * Math.cos(angleRadians));
+				m_wayPointY = (float) (fixture.getBody().getPosition().y + 5 * Math.sin(angleRadians));
+			}
 		}
-		else
-		{
-			// deviate the angle set that as the waypoint
-			m_onDeckSeekType = m_seekType;
-			m_seekType = SeekType.TravelingToWaypoint;
-			Vector2 pos = m_body.getPosition();
-			Vector2 vec = new Vector2();
-			vec.x = fixture.getBody().getPosition().x;
-			vec.y = fixture.getBody().getPosition().y;
-			m_angleRadians = Math.atan2(vec.y - pos.y, vec.x - pos.x);
-			m_angleRadians += Math.PI /2;
-			m_wayPointX = (float) (fixture.getBody().getPosition().x + 5 * Math.cos(m_angleRadians));
-			m_wayPointY = (float) (fixture.getBody().getPosition().y + 5 * Math.sin(m_angleRadians));
-		}
+		
 		return 1;
 	}
 

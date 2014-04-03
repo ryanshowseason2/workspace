@@ -108,7 +108,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	    xForce = (float)(-45f * Math.cos(m_ship.m_angleRadians));
         yForce = (float)(-45.0f * Math.sin(m_ship.m_angleRadians));
         
-        float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
+        float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() / 2);
         m_airJetAttachX = m_ship.m_body.getPosition().x*29f +(float)(radius * Math.cos(m_ship.m_angleRadians));
         m_airJetAttachY = m_ship.m_body.getPosition().y*29f +(float)(radius * Math.sin(m_ship.m_angleRadians));
         
@@ -125,7 +125,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
         yForce =  (float)(45.0f * Math.cos(m_ship.m_angleRadians));
 	    ApplyThrust( xForce, yForce );
 	    
-	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
+	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() / 2 );
 	    m_airJetAttachX = m_ship.m_body.getPosition().x*29f +(float)(radius * Math.sin(m_ship.m_angleRadians));
 	    m_airJetAttachY = m_ship.m_body.getPosition().y*29f -(float)(radius * Math.cos(m_ship.m_angleRadians));
 	}
@@ -140,7 +140,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
         yForce = (float)(-45.0f * Math.cos(m_ship.m_angleRadians));
 	    ApplyThrust( xForce, yForce );
 	    
-	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
+	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() / 2 );
         m_airJetAttachX = m_ship.m_body.getPosition().x*29f -(float)(radius * Math.sin(m_ship.m_angleRadians));
         m_airJetAttachY = m_ship.m_body.getPosition().y*29f +(float)(radius * Math.cos(m_ship.m_angleRadians));
 	}
@@ -164,7 +164,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	public void Draw(SpriteBatch renderer)
 	{
 		// TODO Auto-generated method stub
-		float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
+		float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() / 2 );
 		float xdelta = (float) (Math.cos(m_ship.m_angleRadians) * radius);
 		float ydelta = (float) (Math.sin(m_ship.m_angleRadians) * radius);
 		
