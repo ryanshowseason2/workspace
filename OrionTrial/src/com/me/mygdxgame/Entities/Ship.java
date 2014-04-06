@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 import com.me.mygdxgame.Equipables.ConventionalCruiseEngine;
 import com.me.mygdxgame.Equipables.ConventionalManeuverEngine;
 import com.me.mygdxgame.Equipables.CounterMeasure;
@@ -29,6 +30,12 @@ public class Ship extends ViewedCollidable
     ParticleEffectPool m_shieldEffectPool;
     PooledEffect m_pooledShieldEffect;
 	
+    float[] m_shieldDamageResistances = {1,1,1,1};
+    float[] m_shieldDamageReductions = {0,0,0,0};
+    public float m_shieldIntegrity = 1000f;
+    int m_shieldRechargeDelay = 120;
+    int m_shieldRechargeCounter = 0;
+    float m_shieldIntegrityRechargeFactor = 1;
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
@@ -51,6 +58,22 @@ public class Ship extends ViewedCollidable
 		int i = 0;
 	}
 	
+	@Override
+	public void damageIntegrity(float damage, DamageType type )
+    {
+		float damageToIntegrity = damage;
+	    if( m_shieldIntegrity > 0 )
+	    {		   		  
+		   damage = damage * m_shieldDamageResistances[type.value];
+		   damage = damage > m_shieldDamageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
+		   damageToIntegrity = 0;
+		   m_shieldIntegrity = damage > m_shieldIntegrity ? 0 : m_shieldIntegrity - damage;
+	    }
+	    m_shieldRechargeCounter = m_shieldRechargeDelay;
+
+	    super.damageIntegrity(damageToIntegrity, type);
+    }
+	
 	public void AddShortRangeCounterMeasure( CounterMeasure c)
 	{
 		m_shortRangeCMS.add(c);
@@ -70,9 +93,73 @@ public class Ship extends ViewedCollidable
 		super.Draw(renderer);
 		ProcessCounterMeasures();
 		
-		float[] r ={1,1,0,1};
-		m_pooledShieldEffect.getEmitters().get(0).getTint().setColors( r );
+		HandleShieldRecharging();
+		
+		SetShieldColor();
 		m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
 		m_pooledShieldEffect.draw(renderer, 1f/60f);
+	}
+
+	private void HandleShieldRecharging()
+	{
+		if( m_shieldIntegrity < 1000f && m_shieldRechargeCounter <= 0 )
+		{
+			m_shieldIntegrity+= m_shieldIntegrityRechargeFactor;
+		}
+		else
+		{
+			m_shieldRechargeCounter--;
+		}
+	}
+
+	private void SetShieldColor()
+	{
+		float[] r ={1,1,1,1};
+		float shieldPercent = m_shieldIntegrity / 1000f;
+		
+		if(shieldPercent > .9f )
+		{
+			// white
+			r[0] = 1f;
+			r[1] = 1f;
+			r[2] = 1f;
+		}
+		else if(shieldPercent > .75f )
+		{
+			//blue
+			r[0] = .1f;
+			r[1] = .75f;
+			r[2] = 1f;
+		}
+		else if(shieldPercent > .5f )
+		{
+			//yellow
+			r[0] = 1f;
+			r[1] = 1f;
+			r[2] = .25f;
+		}
+		else if(shieldPercent > .3f )
+		{
+			//orange
+			r[0] = 1f;
+			r[1] = .25f;
+			r[2] = .1f;
+		}
+		else if(shieldPercent > 0f )
+		{
+			//red
+			r[0] = 1f;
+			r[1] = 0f;
+			r[2] = 0f;
+		}
+		else
+		{
+			// black no shields
+			r[0] = 0f;
+			r[1] = 0f;
+			r[2] = 0f;
+		}
+		
+		m_pooledShieldEffect.getEmitters().get(0).getTint().setColors( r );
 	}
 }

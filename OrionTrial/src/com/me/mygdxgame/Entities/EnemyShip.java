@@ -43,7 +43,7 @@ public class EnemyShip extends Ship implements QueryCallback
 				Gdx.files.internal("data/"));
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
 		m_pooledDeathEffect = m_deathEffectPool.obtain();
-		m_onDeckSeekType = m_seekType = SeekType.RamTarget;
+		m_onDeckSeekType = m_seekType = SeekType.EnterFiringRange;
 		ce = new InertialCruiseEngine(this, maxV);
 	}
 
@@ -319,8 +319,10 @@ public class EnemyShip extends Ship implements QueryCallback
 	public boolean reportFixture(Fixture fixture)
 	{
 		ViewedCollidable p = (ViewedCollidable) fixture.getBody().getUserData();
-		if (p != null && p.m_factionCode != m_factionCode
-				&& p.m_factionCode != 0)
+		if (p != null && 
+			p.m_factionCode != m_factionCode &&
+			p.m_isTargetable &&
+			p.m_factionCode != 0)
 		{
 			m_target = p;
 		}

@@ -26,6 +26,8 @@ public class Projectile extends ViewedCollidable
 		m_body.setBullet(true);
 		m_body.setUserData(this);
 		m_integrity = 1;
+		m_ignoreForPathing = true;
+		m_isTargetable = false;
 		//m_body.getFixtureList().get(0).setSensor(true);
 	}
 
@@ -34,7 +36,7 @@ public class Projectile extends ViewedCollidable
 	{
 		// TODO Auto-generated method stub
 		float mass = m_body.getMass();
-		object2.damageIntegrity(crashVelocity / 5 );	
+		object2.damageIntegrity(crashVelocity, DamageType.Penetration );	
 		m_integrity -=1;
 	}
 	

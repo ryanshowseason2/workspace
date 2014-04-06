@@ -92,7 +92,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings, cam);
-        //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
+        player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
         asty = new Asteroid("data/asteroid.png", w, 0, 40, m_aliveThings );
         asty = new Asteroid("data/asteroid.png", w, 5, 40, m_aliveThings );
         asty = new Asteroid("data/asteroid.png", w, 10, 40, m_aliveThings );

@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
 
 public class PlayerEntity extends Ship implements InputProcessor, RayCastCallback
@@ -260,7 +261,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity) 
 	{
-		object2.damageIntegrity(crashVelocity * m_body.getMass() );	
+		object2.damageIntegrity(crashVelocity * m_body.getMass(), DamageType.Collision );	
 	}
 	
 	@Override
@@ -276,9 +277,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
     }
 	
 	@Override
-	public void damageIntegrity( float damage)
+	public void damageIntegrity( float damage , DamageType type)
 	{
-		
+		super.damageIntegrity(damage, type);
+		m_integrity = 1000f;
 	}
 
 	@Override
@@ -286,7 +288,8 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 			Vector2 normal, float fraction)
 	{
 		ViewedCollidable target = (ViewedCollidable) fixture.getBody().getUserData();
-		if( target != this )
+		if( target != this &&
+			target.m_isTargetable )
 		{
 			for( int i = 0; i < m_shortRangeCMS.size(); i++ )
 			{

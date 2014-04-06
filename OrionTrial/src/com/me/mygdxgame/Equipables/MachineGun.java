@@ -95,7 +95,8 @@ public class MachineGun extends CounterMeasure
 			distanceToPotential <= m_range &&
 			distanceToPotential < distanceToCurrentTarget &&
 			m_ship.m_factionCode != vc.m_factionCode &&
-			vc.m_factionCode != 0 )
+			vc.m_factionCode != 0 &&
+			vc.m_isTargetable )
 		{
 			m_target = (ViewedCollidable) potentialTarget.getUserData();
 		}

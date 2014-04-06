@@ -34,6 +34,10 @@ public abstract class ViewedCollidable
     public int m_factionCode = 0;
     World m_world;
     ArrayList<ViewedCollidable> m_aliveThings;
+    float[] m_damageResistances = {1,1,1,1};
+    float[] m_damageReductions = {0,0,0,0};
+    boolean m_ignoreForPathing = false;
+    public boolean m_isTargetable = true;
     
 
     
@@ -131,6 +135,8 @@ public abstract class ViewedCollidable
 	   
 	   public void damageIntegrity(float damage, DamageType type )
 	   {
+		   damage = damage * m_damageResistances[type.value];
+		   damage = damage > m_damageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
 		   m_integrity -= damage;
 	   }
 

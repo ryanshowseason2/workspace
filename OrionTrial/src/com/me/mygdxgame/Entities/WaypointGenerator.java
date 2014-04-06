@@ -76,7 +76,8 @@ public class WaypointGenerator implements RayCastCallback
 		
 		if( m_body != fixture.getBody() &&
 			navigator.m_factionCode != inTheWay.m_factionCode &&
-					m_tmpSource.dst(point) < m_minDistance )
+			!inTheWay.m_ignoreForPathing &&
+			m_tmpSource.dst(point) < m_minDistance )
 		{
 			m_minDistance = m_tmpSource.dst(point);
 			
