@@ -34,6 +34,25 @@ public abstract class ViewedCollidable
     public int m_factionCode = 0;
     World m_world;
     ArrayList<ViewedCollidable> m_aliveThings;
+    
+
+    
+    public enum DamageType 
+    {
+        Collision(0), 
+        Penetration(1), 
+        Energy(2), 
+        Explosion(3);
+        
+        public int value;
+
+        private DamageType(int value) 
+        {
+            this.value = value;
+        }
+        
+     };  
+
 	   
 	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode )
 	   {
@@ -110,7 +129,7 @@ public abstract class ViewedCollidable
 
 	   public abstract void damageCalc(ViewedCollidable object2, float crashVelocity);
 	   
-	   public void damageIntegrity(float damage)
+	   public void damageIntegrity(float damage, DamageType type )
 	   {
 		   m_integrity -= damage;
 	   }

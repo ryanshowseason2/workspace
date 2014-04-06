@@ -2,7 +2,11 @@ package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Equipables.ConventionalCruiseEngine;
 import com.me.mygdxgame.Equipables.ConventionalManeuverEngine;
@@ -21,6 +25,10 @@ public class Ship extends ViewedCollidable
 	float m_maxVelocity;
 	ArrayList<ViewedCollidable> m_aliveThings;
 	
+	ParticleEffect m_shieldEffect = new ParticleEffect();
+    ParticleEffectPool m_shieldEffectPool;
+    PooledEffect m_pooledShieldEffect;
+	
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
@@ -30,6 +38,10 @@ public class Ship extends ViewedCollidable
 		me = new ConventionalManeuverEngine( this, maxV );
 		ce = new ConventionalCruiseEngine( this, maxV );
 		m_aliveThings = aliveThings;
+		
+		m_shieldEffect.load(Gdx.files.internal("data/shield.p"), Gdx.files.internal("data/"));
+		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
+		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 	}
 
 	@Override
@@ -57,5 +69,10 @@ public class Ship extends ViewedCollidable
 	{
 		super.Draw(renderer);
 		ProcessCounterMeasures();
+		
+		float[] r ={1,1,0,1};
+		m_pooledShieldEffect.getEmitters().get(0).getTint().setColors( r );
+		m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
+		m_pooledShieldEffect.draw(renderer, 1f/60f);
 	}
 }

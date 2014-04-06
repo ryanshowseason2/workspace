@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Equipables.InertialCruiseEngine;
 
-public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
+public class EnemyShip extends Ship implements QueryCallback
 {
 	public enum SeekType
 	{
@@ -26,9 +26,6 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 	ViewedCollidable m_target = null;
 	float m_wayPointX;
 	float m_wayPointY;
-	float m_fixtureDistance;
-	ArrayList<Vector2> m_leftPossibleVectors = new ArrayList<Vector2>();
-	ArrayList<Vector2> m_rightPossibleVectors = new ArrayList<Vector2>();
 
 	public EnemyShip(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV,
@@ -36,7 +33,6 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 	{
 		super(appearanceLocation, world, startX, startY, maxV, aliveThings,
 				factionCode);
-		// TODO Auto-generated constructor stub
 		m_factionCode = factionCode;
 		m_objectSprite.rotate((float) initialAngleAdjust);
 		MassData data = m_body.getMassData();
@@ -47,7 +43,7 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 				Gdx.files.internal("data/"));
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
 		m_pooledDeathEffect = m_deathEffectPool.obtain();
-		m_onDeckSeekType = m_seekType = SeekType.EnterFiringRange;
+		m_onDeckSeekType = m_seekType = SeekType.RamTarget;
 		ce = new InertialCruiseEngine(this, maxV);
 	}
 
@@ -131,6 +127,7 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 	
 	private void FiringDistanceLogic(Vector2 pos, Vector2 vec)
 	{
+		float distance = pos.dst(vec);
 		if ((m_body.getLinearVelocity().x > 5 && vec.x < pos.x)
 				|| (m_body.getLinearVelocity().x < -5 && vec.x > pos.x)
 				|| (m_body.getLinearVelocity().y > 5 && vec.y < pos.y)
@@ -138,7 +135,7 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 				|| pos.dst(vec) < 5 )
 		{
 			ce.EngineBrake();
-		} else if( pos.dst(vec) > 10 )
+		} else if( distance > 10f )
 		{
 			ce.ThrottleForward();
 			ce.EngageEngine();
@@ -147,41 +144,175 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 
 	private void CalculateWaypoint()
 	{
+		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
 		Vector2 source = new Vector2();
 		Vector2 destination = new Vector2();
 		destination.x = m_target.m_body.getPosition().x;
-		destination.y = m_target.m_body.getPosition().y;
-		
-		
-		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
+		destination.y = m_target.m_body.getPosition().y;		
 		source.x = m_body.getPosition().x;
 		source.y = m_body.getPosition().y;	
-		CheckPath( source, destination);
 		
-		if( m_seekType != SeekType.TravelingToWaypoint )
-		{
-			source.x = m_body.getPosition().x -(float)(radius * Math.sin(m_angleRadians));
-			source.y = m_body.getPosition().y +(float)(radius * Math.cos(m_angleRadians));
-			CheckPath( source, destination);
-		}
-		
-		if( m_seekType != SeekType.TravelingToWaypoint )
-		{
-			source.x = m_body.getPosition().x +(float)(radius * Math.sin(m_angleRadians));
-			source.y = m_body.getPosition().y -(float)(radius * Math.cos(m_angleRadians));
-			CheckPath( source, destination);
-		}
-		
-		if( m_seekType == SeekType.TravelingToWaypoint )
-		{
-			
-		}
+		// Check LOS to target only! return true or false
+		 if( CheckWingAndCenterPaths(radius, source, destination) )
+		 {
+			 // We're good to go
+			m_wayPointX = m_target.m_body.getPosition().x;
+			m_wayPointY = m_target.m_body.getPosition().y;
+			m_seekType = m_onDeckSeekType;
+		 }
+		 else
+		 {
+			 RegularPathFinding(radius);			 
+		 }
 	}
 
-	private void CheckPath(Vector2 source, Vector2 destination)
+	private void RegularPathFinding(float radius)
 	{
-		m_fixtureDistance = Float.MAX_VALUE;
-		m_world.rayCast(this, source, destination);
+		// we've got a path to find
+		 m_seekType = SeekType.TravelingToWaypoint;
+		 // initiate path current position to the ship's position add to generation list
+		 boolean losToEnemy = false;
+		 boolean takeLeftPath = false;
+		 Waypoint start = new Waypoint( m_body.getPosition());
+		 ArrayList<Waypoint> generationList = new ArrayList<Waypoint>();
+		 ArrayList<Waypoint> vetList = new ArrayList<Waypoint>();
+		 ArrayList<Waypoint> validWaypoints = new ArrayList<Waypoint>();
+		 generationList.add( start );
+		 
+		 Waypoint leftPath = null;
+		 Waypoint rightPath = null;
+		 
+		 // while we don't have a waypoint with LOS
+		 while( !losToEnemy )
+		 {			 
+			 // for each item in generation list
+			 for( int i = 0; i < generationList.size(); i++ )
+			 {
+				 // look in the direction of the enemy ship and 
+				 // Generate left and right possible waypoints
+				 WaypointGenerator gen = new WaypointGenerator( m_body, m_world, generationList.get(i), m_target.m_body.getPosition() );
+				 gen.Generate( radius );
+				 vetList.add(gen.m_left);
+				 vetList.add(gen.m_right);
+			 }
+			 
+			 generationList.clear();
+			 
+			 //for each generated waypoint
+			 for( int i = 0; i < vetList.size(); i++)
+			 {
+				 boolean losToWaypoint = false;
+				 Waypoint w = vetList.get(i);
+				 //while
+				 while ( !losToWaypoint )
+				 {						 
+				 	//if have LOS to generated waypoint
+					 if( CheckWingAndCenterPaths(radius, w.m_origin, w.m_waypoint) )
+					 {
+				 		// add to list points to check if we have LOS to target
+						 validWaypoints.add(w);
+						 losToWaypoint = true;
+						 
+						 // Set the initial left and right forks for later on.
+						 if( w.m_isLeftPath && leftPath == null )
+						 {
+							 leftPath = w;
+						 }
+						 
+						 if( w.m_isRightPath && rightPath == null )
+						 {
+							 rightPath = w;
+						 }
+					 }
+					 else //else don't have LOS
+					 {
+				 		// regenerate the point
+						 Vector2 conflictedPoint = new Vector2( w.m_waypoint );
+						 WaypointGenerator gen = new WaypointGenerator( m_body, m_world, w, conflictedPoint );
+						 gen.Generate( radius );
+						 
+						 if(w.m_isLeftFork)
+						 {
+							 w.m_waypoint.x = gen.m_left.m_waypoint.x;
+							 w.m_waypoint.y = gen.m_left.m_waypoint.y;
+						 }
+						 else
+						 {
+							 w.m_waypoint.x = gen.m_right.m_waypoint.x;
+							 w.m_waypoint.y = gen.m_right.m_waypoint.y; 
+						 }							 
+					 }
+				 }
+			 }
+			 
+			 vetList.clear();
+			 
+			 // for each waypoints the ship has LOS to as long as we haven't detected LOS
+			 //to enemy ship
+			 for( int i = 0; i < validWaypoints.size() && !losToEnemy; i++)
+			 {		
+				 
+				 Waypoint w = validWaypoints.get(i);
+			 	// if LOS to enemy ship
+				 if( CheckWingAndCenterPaths(radius, w.m_waypoint, m_target.m_body.getPosition() ) )
+				 {
+			 		// set loop var end loop
+					 losToEnemy = true;
+					 takeLeftPath = w.m_isLeftPath;
+				 }
+				 else // else
+				 {
+			 		// add this waypoint to the generation list
+					 w.m_origin = w.m_waypoint;
+					 generationList.add(w);
+				 }
+			 }
+			 
+			 validWaypoints.clear();
+		 }
+		 
+		 if( takeLeftPath )
+		 {
+			 m_wayPointX = leftPath.m_waypoint.x;
+			 m_wayPointY = leftPath.m_waypoint.y;
+		 }
+		 else
+		 {
+			 m_wayPointX = rightPath.m_waypoint.x;
+			 m_wayPointY = rightPath.m_waypoint.y;
+		 }
+	}
+
+	private boolean CheckWingAndCenterPaths(float radius, Vector2 source,
+			Vector2 destination)
+	{
+		boolean hasLineOfSight = CheckPath( source, destination);
+		double angleRadians = Math.atan2(destination.y - source.y, destination.x - source.x);
+		if( hasLineOfSight )
+		{
+			Vector2 tmp = new Vector2();
+			tmp.x = source.x -(float)(radius * Math.sin(angleRadians));
+			tmp.y = source.y +(float)(radius * Math.cos(angleRadians));
+			hasLineOfSight = CheckPath( tmp, destination);
+		}
+		
+		if(hasLineOfSight )
+		{
+			Vector2 tmp = new Vector2();
+			tmp.x = source.x +(float)(radius * Math.sin(angleRadians));
+			tmp.y = source.y -(float)(radius * Math.cos(angleRadians));
+			hasLineOfSight = CheckPath( tmp, destination);
+		}
+		
+		return hasLineOfSight;
+	}
+
+	private boolean CheckPath(Vector2 source, Vector2 destination)
+	{
+		LineOfSightChecker check = new LineOfSightChecker( m_target.m_body, m_body );
+		m_world.rayCast(check, source, destination);
+		
+		return check.m_hasLineOfSight;
 	}
 
 	@Override
@@ -194,35 +325,6 @@ public class EnemyShip extends Ship implements QueryCallback, RayCastCallback
 			m_target = p;
 		}
 		return true;
-	}
-
-	@Override
-	public float reportRayFixture(Fixture fixture, Vector2 point,
-			Vector2 normal, float fraction)
-	{
-		if( fixture.getBody() != m_body)
-		{
-			float distance = m_target.m_body.getPosition().dst(fixture.getBody().getPosition());
-			if( fixture.getBody() == m_target.m_body && distance < m_fixtureDistance )
-			{
-				m_wayPointX = m_target.m_body.getPosition().x;
-				m_wayPointY = m_target.m_body.getPosition().y;
-				m_seekType = m_onDeckSeekType;
-			}
-			else if( distance < m_fixtureDistance )
-			{
-				// deviate the angle set that as the waypoint
-				m_onDeckSeekType = m_seekType;
-				m_seekType = SeekType.TravelingToWaypoint;
-				Vector2 pos = m_body.getPosition();
-				double angleRadians = Math.atan2(point.y - pos.y, point.x - pos.x);
-				angleRadians += Math.PI /2;
-				m_wayPointX = (float) (fixture.getBody().getPosition().x + 5 * Math.cos(angleRadians));
-				m_wayPointY = (float) (fixture.getBody().getPosition().y + 5 * Math.sin(angleRadians));
-			}
-		}
-		
-		return 1;
 	}
 
 }

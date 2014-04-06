@@ -94,14 +94,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings, cam);
         //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
         asty = new Asteroid("data/asteroid.png", w, 0, 40, m_aliveThings );
-        asty = new Asteroid("data/asteroid.png", w, 10, 20, m_aliveThings );
-        asty = new Asteroid("data/asteroid.png", w, 10, 25, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", w, 5, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", w, 10, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", w, -5, 40, m_aliveThings );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
-        //m_aliveThings.add((ViewedCollidable)asty);
         shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, -90, 50, 2, m_aliveThings );
         //shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings, 20 ) );
-        //m_aliveThings.add(shippy);
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);
