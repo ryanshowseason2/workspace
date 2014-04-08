@@ -44,7 +44,7 @@ public class MyGdxGame extends Game {
 		//music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/8.12.mp3", FileType.Internal));
 		//music.setLooping(true);
 		//music.play();
-		Gdx.input.setInputProcessor( screen.player );
+		//Gdx.input.setInputProcessor( screen.player );
 	}
 
 	@Override

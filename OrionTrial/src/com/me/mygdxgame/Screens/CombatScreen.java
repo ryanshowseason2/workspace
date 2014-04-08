@@ -8,27 +8,44 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
 import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Equipables.MachineGun;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import box2dlight.ConeLight;
 import box2dlight.Light;
@@ -77,6 +94,11 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
 	RayHandler rayHandler;
 	EnemyShip shippy;
+	
+	Skin skin;
+	Stage stage;
+	Texture texture1;
+	InputMultiplexer m_inputSplitter = new InputMultiplexer();
     
 	public CombatScreen()
 	{
@@ -92,7 +114,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
         player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings, cam);
-        player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
+        //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
         asty = new Asteroid("data/asteroid.png", w, 0, 40, m_aliveThings );
         asty = new Asteroid("data/asteroid.png", w, 5, 40, m_aliveThings );
         asty = new Asteroid("data/asteroid.png", w, 10, 40, m_aliveThings );
@@ -113,32 +135,71 @@ public class CombatScreen extends OrionScreen implements ContactListener
         //rayHandler.setShadows(true);
         cam.update(true);
 
-        // rayHandler.setCombinedMatrix(camera.combined, camera.position.x,
-        // camera.position.y, camera.viewportWidth * camera.zoom,
-        // camera.viewportHeight * camera.zoom);
-        //for (int i = 0; i < BALLSNUM; i++) {
-        // final Color c = new Color(MathUtils.random()*0.4f,
-        // MathUtils.random()*0.4f,
-        // MathUtils.random()*0.4f, 1f);
+
         Light light = new PointLight(rayHandler, 128);
         Color color = new Color(1f,1f,1f,1f);
         Light light2 = new ConeLight(rayHandler, 64, color,
-    			300, 0, 0, 0,
-    			15);
+					    			300, 0, 0, 0,
+					    			15);
         light.setDistance(300f);
         light2.setDistance(800);
-        // Light light = new ConeLight(rayHandler, RAYS_PER_BALL, null,
-        // LIGHT_DISTANCE, 0, 0, 0, 60);
-        // light.setStaticLight(true);
         light.attachToBody(player.m_body, 0f, 0f);
         light2.attachToBody(player.m_body, 0f, 0f);
        
         light.setColor( 1, 1, 1, 1f);
-        // light.setColor(0.1f,0.1f,0.1f,0.1f);
 
-        //}
-        // new DirectionalLight(rayHandler, 24, new Color(0,0.4f,0,1f), -45);
         /** BOX2D LIGHT STUFF END */
+        
+        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        texture1 = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
+        TextureRegion image = new TextureRegion(texture1);
+
+        stage = new Stage();
+        
+        m_inputSplitter.addProcessor(player);
+        m_inputSplitter.addProcessor(stage);
+        Gdx.input.setInputProcessor(m_inputSplitter);
+
+        Button iconButton = new Button(new Image(image), skin);
+        iconButton.pad(10);
+        Button imgButton = new Button(new Image(image), skin);
+        imgButton.pad(10);
+        Button imgToggleButton = new Button(new Image(image), skin);
+        imgToggleButton.pad(10);
+
+
+
+
+        Dialog window = new Dialog("", skin);
+        window.setMovable(false);
+        window.setPosition(0, HEIGHT/2);
+        window.row();
+        window.add(iconButton);
+        window.row();
+        window.add(imgButton);
+        window.row();
+        window.add(imgToggleButton);
+        window.pack();
+
+        // stage.addActor(new Button("Behind Window", skin));
+        stage.addActor(window);
+
+
+        iconButton.addListener(new 
+        		ChangeListener() 
+        		{
+        			public void changed (ChangeEvent event, Actor actor) 
+        			{
+    					new Dialog("Some Dialog", skin, "dialog") 
+    					{
+							protected void result (Object object) 
+							{
+								System.out.println("Chosen: " + object);
+							}
+    					}.text("Are you enjoying this demo?").button("Yes", true).button("No", false).key(Keys.ENTER, true)
+						.key(Keys.ESCAPE, false).show(stage);
+        			}
+        		});
 	}
 		
 	@Override
@@ -153,31 +214,6 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	
 	private void handleInput() 
 	{
-		/*
-        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-            cam.zoom += 0.02;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            cam.zoom -= 0.02;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                cam.translate(-30, 0, 0);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                cam.translate(30, 0, 0);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                cam.translate(0, -30, 0);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                cam.translate(0, 30, 0);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-            cam.rotate(-.5f, 0, 0, 1);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-            cam.rotate(.5f, 0, 0, 1);
-        }*/
 		player.HandleMovement( cam );
     }
 
@@ -284,6 +320,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		
     		debugRenderer.render(w, cam.combined);
     		
+    		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
+    		stage.draw();
+    		
+    		/*
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
@@ -292,7 +332,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
-    		spriteBatch.end();
+    		spriteBatch.end();*/
     		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{
@@ -358,6 +398,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	}
 	
 	@Override
+	public void resize (int width, int height) 
+	{
+	//stage.getViewport().update(width, height, true);
+	}
+	
+	@Override
 	public void dispose()
 	{
 		background.dispose();
@@ -365,6 +411,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
 		parralax2.dispose();
 		spriteBatch.dispose();
 		font.dispose();
+		
+		stage.dispose();
+		skin.dispose();
+		texture1.dispose();
 	}
 
 	@Override

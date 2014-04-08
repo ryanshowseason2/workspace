@@ -60,24 +60,16 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
       m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees ) );
       
       
-      //float xForce = 0;
-      //float yForce = 0;
       
       // apply left impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.A)) 
       {          
-           /*/m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
-           xForce =  (float)(-450f * Math.sin(m_angleRadians));
-           yForce =  (float)(450.0f * Math.cos(m_angleRadians));*/
     	  ce.ThrottlePort();
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.D) ) 
-      {
-           
-    	  /*xForce = (float)(45f * Math.sin(m_angleRadians));
-          yForce = (float)(-45.0f * Math.cos(m_angleRadians));*/
+      {        
     	  ce.ThrottleStarboard();
            
       }
@@ -85,24 +77,18 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
             // apply left impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.S) ) 
       {          
-    	  /*xForce = (float)(-45f * Math.cos(m_angleRadians));
-          yForce = (float)(-45.0f * Math.sin(m_angleRadians));*/
     	  ce.ThrottleBackward();
       }
 
       // apply right impulse, but only if max velocity is not reached yet
       if (Gdx.input.isKeyPressed(Keys.W) ) 
       {
-    	  /*xForce = (float)(90f * Math.cos(m_angleRadians));
-          yForce = (float)(90.0f * Math.sin(m_angleRadians));*/
     	  ce.ThrottleForward();
       }
       
       // apply stopping impulse
       if (Gdx.input.isKeyPressed(Keys.X) ) 
       {
-    	  /*xForce = (float)(-30.0f * m_body.getLinearVelocity().x);
-          yForce = (float)(-30.0f * m_body.getLinearVelocity().y);*/
     	  ce.EngineBrake();
       }
       
@@ -124,49 +110,29 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		if( keycode == m_lastKey &&
 			( d.getTime() - m_keyPressedMilliseconds ) < 200 &&
 			me.m_boostJuice > 30 )
-		{
-		  float xForce = 0;
-		  float yForce = 0;
-			
+		{			
 	      if (keycode == Keys.A ) 
 	      {          
-	           /*/m_body.applyForce(-900.0f, 0, pos.x, pos.y, true);
-	           xForce =  (float)(-15000f * Math.sin(m_angleRadians));
-	           yForce =  (float)(15000.0f * Math.cos(m_angleRadians));
-	           m_boostJuice -= 4500;*/
 	    	  me.ManeuverPort();
 	      }
 	
 	      // apply right impulse, but only if max velocity is not reached yet
 	      if ( keycode == Keys.D ) 
 	      {
-	           /*
-	          xForce = (float)(15000f * Math.sin(m_angleRadians));
-	          yForce = (float)(-15000.0f * Math.cos(m_angleRadians));
-	          m_boostJuice -= 4500;*/
 	          me.ManeuverStarboard();
 	      }
 		      
 	      // apply left impulse, but only if max velocity is not reached yet
 	      if (keycode == Keys.S ) 
 	      {          
-	          /*xForce = (float)(-15000f * Math.cos(m_angleRadians));
-	          yForce = (float)(-15000.0f * Math.sin(m_angleRadians));
-	          m_boostJuice -= 4500;*/
 	    	  me.ManeuverBackward();
 	      }
 	
 	      // apply right impulse, but only if max velocity is not reached yet
 	      if (keycode == Keys.W ) 
 	      {
-	          /*xForce = (float)(15000f * Math.cos(m_angleRadians));
-	          yForce = (float)(15000.0f * Math.sin(m_angleRadians));
-	          m_boostJuice -= 4500;	 */
 	    	  me.ManeuverForward();
-	      }
-	      
-	      /*Vector2 pos = m_body.getPosition();
-	      m_body.applyForce( xForce, yForce, pos.x, pos.y, true);*/
+	      }	      
 		}
 		
 		if( keycode == Keys.W )
@@ -261,7 +227,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity) 
 	{
-		object2.damageIntegrity(crashVelocity * m_body.getMass(), DamageType.Collision );	
+		if( crashVelocity > 1 )
+		{
+			object2.damageIntegrity(crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
+		}
 	}
 	
 	@Override
