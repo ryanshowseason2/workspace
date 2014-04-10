@@ -18,7 +18,11 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
+import com.me.mygdxgame.Equipables.CounterMeasure;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class PlayerEntity extends Ship implements InputProcessor, RayCastCallback
 {
@@ -44,6 +48,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
 	ParallaxCamera m_cam;
+	public PlayerButtonListener m_buttonListener = new PlayerButtonListener();
+	public Button m_longRange;
+	public Button m_mediumRange;
+	public Button m_shortRange;
+	public Window m_window;
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -266,6 +275,15 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 			}
 		}
 		return 1;
+	}
+	
+	@Override
+	public void AddShortRangeCounterMeasure( CounterMeasure c)
+	{
+		super.AddShortRangeCounterMeasure(c);
+		m_shortRange.clearChildren();
+		m_shortRange.add(m_shortRangeCMS.get(0).m_icon);
+		m_window.pack();
 	}
 
 }

@@ -10,6 +10,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 
@@ -20,13 +22,15 @@ public abstract class CounterMeasure implements QueryCallback
 	Ship m_ship;
 	ViewedCollidable m_target = null;
 	ArrayList<ViewedCollidable> m_aliveThings;
+	public Image m_icon;
 	
-	public CounterMeasure( World w, Ship s, ArrayList<ViewedCollidable> aliveThings, int range )
+	public CounterMeasure( World w, Ship s, ArrayList<ViewedCollidable> aliveThings, int range, Image icon )
 	{
 		m_world = w;
 		m_ship = s;
 		m_aliveThings = aliveThings;
 		m_range = range;
+		m_icon = icon;
 	}
 	
 	public abstract void AcquireAndFire();

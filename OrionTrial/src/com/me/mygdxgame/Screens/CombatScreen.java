@@ -98,6 +98,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Skin skin;
 	Stage stage;
 	Texture texture1;
+	Button m_longRange;
+	Button m_mediumRange;
+	Button m_shortRange;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
     
 	public CombatScreen()
@@ -160,13 +163,17 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_inputSplitter.addProcessor(stage);
         Gdx.input.setInputProcessor(m_inputSplitter);
 
-        Button iconButton = new Button(new Image(image), skin);
-        iconButton.pad(10);
-        Button imgButton = new Button(new Image(image), skin);
-        imgButton.pad(10);
-        Button imgToggleButton = new Button(new Image(image), skin);
-        imgToggleButton.pad(10);
-
+        
+        m_longRange = new Button(new Image(image), skin);
+        m_longRange.pad(10);
+    	m_mediumRange = new Button(new Image(image), skin);
+    	m_mediumRange.pad(10);
+    	m_shortRange = new Button(new Image(image), skin);
+    	m_shortRange.pad(10);
+    	
+    	player.m_shortRange = m_shortRange;
+        player.m_longRange = m_longRange;
+        player.m_mediumRange = m_mediumRange;
 
 
 
@@ -174,18 +181,23 @@ public class CombatScreen extends OrionScreen implements ContactListener
         window.setMovable(false);
         window.setPosition(0, HEIGHT/2);
         window.row();
-        window.add(iconButton);
+        window.add(m_longRange);
         window.row();
-        window.add(imgButton);
+        window.add(m_mediumRange);
         window.row();
-        window.add(imgToggleButton);
+        window.add(m_shortRange);
         window.pack();
+        
+        player.m_window = window;
 
         // stage.addActor(new Button("Behind Window", skin));
         stage.addActor(window);
 
 
-        iconButton.addListener(new 
+        m_shortRange.addListener( player.m_buttonListener );
+        
+        
+        /*m_shortRange.addListener(new 
         		ChangeListener() 
         		{
         			public void changed (ChangeEvent event, Actor actor) 
@@ -199,7 +211,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
     					}.text("Are you enjoying this demo?").button("Yes", true).button("No", false).key(Keys.ENTER, true)
 						.key(Keys.ESCAPE, false).show(stage);
         			}
-        		});
+        		});*/
+        
+      player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
 	}
 		
 	@Override
