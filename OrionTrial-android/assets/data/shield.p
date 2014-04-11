@@ -31,7 +31,7 @@ scaling1: 1.0
 scaling2: 1.0
 timelineCount: 3
 timeline0: 0.0
-timeline1: 0.66
+timeline1: 0.45890412
 timeline2: 1.0
 - Life Offset - 
 active: false
@@ -79,8 +79,8 @@ timeline0: 0.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 0.0
-highMax: 0.0
+highMin: 20.0
+highMax: 20.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -88,15 +88,17 @@ timelineCount: 1
 timeline0: 0.0
 - Angle - 
 active: true
-lowMin: 0.0
-lowMax: 0.0
+lowMin: 360.0
+lowMax: 360.0
 highMin: 0.0
 highMax: 0.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 0.0
-timelineCount: 1
+scaling1: 1.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Rotation - 
 active: false
 - Wind - 
@@ -116,10 +118,12 @@ lowMax: 0.0
 highMin: 1.0
 highMax: 1.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 1.0
-timelineCount: 1
+scaling1: 1.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Options - 
 attached: true
 continuous: true

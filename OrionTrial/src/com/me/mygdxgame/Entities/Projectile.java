@@ -11,6 +11,7 @@ public class Projectile extends ViewedCollidable
 {
 	float m_originX;
 	float m_originY;
+	public float m_projectileVelocity = -50f;
 	
 	public Projectile(String appearanceLocation, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
@@ -49,8 +50,8 @@ public class Projectile extends ViewedCollidable
 		double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX) + accuracy;		
 		m_objectSprite.rotate((float) Math.toDegrees(angleRadians));
 		m_body.setFixedRotation(true);
-		float xSpeed =  (float)(-50f * Math.cos(angleRadians));
-        float ySpeed =  (float)(-50f * Math.sin(angleRadians));
+		float xSpeed =  (float)(m_projectileVelocity * Math.cos(angleRadians));
+        float ySpeed =  (float)(m_projectileVelocity * Math.sin(angleRadians));
         
         xSpeed = xSpeed + ( origin.m_body.getLinearVelocity().x * xSpeed > 0 ? origin.m_body.getLinearVelocity().x : 0);
         ySpeed = ySpeed + ( origin.m_body.getLinearVelocity().y * ySpeed > 0 ? origin.m_body.getLinearVelocity().y : 0);

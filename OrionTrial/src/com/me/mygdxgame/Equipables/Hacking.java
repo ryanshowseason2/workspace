@@ -14,16 +14,14 @@ import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 
-public class MachineGun extends CounterMeasure
+public class Hacking extends CounterMeasure
 {
 	ViewedCollidable m_secondaryTarget = null;
 	int m_activateSecondaryMode = 0;
-	int m_secondaryFireFrequency = 6;
-	int m_secondaryFireCounter = 0;
 	
-	public MachineGun(World w, Ship s, ArrayList<ViewedCollidable> aliveThings, float range )
+	public Hacking(World w, Ship s, ArrayList<ViewedCollidable> aliveThings, float range )
 	{
-		super(w, s, aliveThings, range, new Image( new Texture(Gdx.files.internal("data/machinegun.png") ) ) );
+		super(w, s, aliveThings, range, new Image( new Texture(Gdx.files.internal("data/hacking.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[0] = 1f;
 	}
@@ -47,26 +45,29 @@ public class MachineGun extends CounterMeasure
 									centerY + m_range / 2 );
 		}
 		
-		if( m_target != null && m_fireCounter <= 0 )
+		if( m_target != null )
 		{
 			float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
-
+			/*float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			float targetCenterX = m_target.m_body.getPosition().x;
+			float targetCenterY = m_target.m_body.getPosition().y;
+			Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
+			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
+			float xForce =  (float)(-1250f * Math.cos(angleRadians));
+	        float yForce =  (float)(-1250f * Math.sin(angleRadians));
+	        p.m_body.applyForceToCenter(xForce, yForce, true);*/
 			if( distanceToCurrentTarget <= m_range )
 			{
 				float centerX = m_ship.m_body.getPosition().x;
 				float centerY = m_ship.m_body.getPosition().y;
-				Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );				
+				Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
 				p.Fire(m_ship, m_target, (float) Math.random()/2 - .25f);
-				m_fireCounter = m_fireFrequency;
 			}
 			else
 			{
 				m_target = null;
 			}
-		}
-		else
-		{
-			m_fireCounter-= 1;
 		}
 	}
 

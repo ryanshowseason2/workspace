@@ -44,7 +44,9 @@ import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Equipables.Laser;
 import com.me.mygdxgame.Equipables.MachineGun;
+import com.me.mygdxgame.Equipables.Railgun;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import box2dlight.ConeLight;
@@ -213,7 +215,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
         			}
         		});*/
         
-      player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
+       // player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
+       // player.AddMidRangeCounterMeasure( new Laser( w, player, m_aliveThings, 40 ) );
+        player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings, 60 ) );
 	}
 		
 	@Override

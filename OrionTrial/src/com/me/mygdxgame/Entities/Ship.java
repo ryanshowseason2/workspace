@@ -77,6 +77,19 @@ public class Ship extends ViewedCollidable
 	public void AddShortRangeCounterMeasure( CounterMeasure c)
 	{
 		m_shortRangeCMS.add(c);
+		m_shortRangeCMS.get(0).Equip(0);
+	}
+	
+	public void AddMidRangeCounterMeasure( CounterMeasure c)
+	{
+		m_mediumRangeCMS.add(c);
+		m_mediumRangeCMS.get(0).Equip(1);
+	}
+	
+	public void AddLongRangeCounterMeasure( CounterMeasure c)
+	{
+		m_longRangeCMS.add(c);
+		m_longRangeCMS.get(0).Equip(2);
 	}
 
 	public void ProcessCounterMeasures()
@@ -84,6 +97,16 @@ public class Ship extends ViewedCollidable
 		for( int i = 0; i < m_shortRangeCMS.size(); i++ )
 		{
 			m_shortRangeCMS.get(i).AcquireAndFire();
+		}
+		
+		for( int i = 0; i < m_mediumRangeCMS.size(); i++ )
+		{
+			m_mediumRangeCMS.get(i).AcquireAndFire();
+		}
+		
+		for( int i = 0; i < m_longRangeCMS.size(); i++ )
+		{
+			m_longRangeCMS.get(i).AcquireAndFire();
 		}
 	}
 	

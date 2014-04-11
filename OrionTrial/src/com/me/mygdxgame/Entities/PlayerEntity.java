@@ -52,7 +52,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public Button m_longRange;
 	public Button m_mediumRange;
 	public Button m_shortRange;
-	public Window m_window;
+	public Window m_window;	
+	
+	ArrayList<CounterMeasure> m_availableShortRangeCMS = new ArrayList< CounterMeasure >();
+	ArrayList<CounterMeasure> m_availableMediumRangeCMS = new ArrayList< CounterMeasure >();
+	ArrayList<CounterMeasure> m_availableLongRangeCMS = new ArrayList< CounterMeasure >();
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -273,6 +277,16 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 			{
 				m_shortRangeCMS.get(i).SetTarget( target );
 			}
+			
+			for( int i = 0; i < m_mediumRangeCMS.size(); i++ )
+			{
+				m_mediumRangeCMS.get(i).SetTarget( target );
+			}
+			
+			for( int i = 0; i < m_longRangeCMS.size(); i++ )
+			{
+				m_longRangeCMS.get(i).SetTarget( target );
+			}
 		}
 		return 1;
 	}
@@ -281,9 +295,29 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public void AddShortRangeCounterMeasure( CounterMeasure c)
 	{
 		super.AddShortRangeCounterMeasure(c);
+		m_availableShortRangeCMS.add(c);
 		m_shortRange.clearChildren();
 		m_shortRange.add(m_shortRangeCMS.get(0).m_icon);
-		m_window.pack();
+		m_window.pack();		
 	}
-
+	
+	@Override
+	public void AddMidRangeCounterMeasure( CounterMeasure c)
+	{
+		super.AddMidRangeCounterMeasure(c);
+		m_availableMediumRangeCMS.add(c);
+		m_mediumRange.clearChildren();
+		m_mediumRange.add(m_mediumRangeCMS.get(0).m_icon);
+		m_window.pack();		
+	}
+	
+	@Override
+	public void AddLongRangeCounterMeasure( CounterMeasure c)
+	{
+		super.AddLongRangeCounterMeasure(c);
+		m_availableLongRangeCMS.add(c);
+		m_longRange.clearChildren();
+		m_longRange.add(m_longRangeCMS.get(0).m_icon);
+		m_window.pack();		
+	}
 }
