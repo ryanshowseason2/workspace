@@ -44,9 +44,14 @@ import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Equipables.Hacking;
 import com.me.mygdxgame.Equipables.Laser;
+import com.me.mygdxgame.Equipables.LongRangeSensors;
 import com.me.mygdxgame.Equipables.MachineGun;
+import com.me.mygdxgame.Equipables.MagneticWave;
+import com.me.mygdxgame.Equipables.Missile;
 import com.me.mygdxgame.Equipables.Railgun;
+import com.me.mygdxgame.Equipables.WingBlades;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import box2dlight.ConeLight;
@@ -98,11 +103,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	EnemyShip shippy;
 	
 	Skin skin;
-	Stage stage;
-	Texture texture1;
+	Stage m_stage;
+	Texture m_defaultButtonTexture;
+	Texture m_changeEquipmentTexture;
 	Button m_longRange;
 	Button m_mediumRange;
 	Button m_shortRange;
+	Button m_changeEquipment;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
     
 	public CombatScreen()
@@ -118,7 +125,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cam.position.set(WIDTH / 2, HEIGHT / 2, 0);
         font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
         w = new World(new Vector2(0,0), true );
-        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings, cam);
+        m_stage = new Stage();
+        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+        Dialog window = new Dialog("", skin);
+        player = new PlayerEntity("data/ship0.png", w, 0, 0, -90, 50f, m_aliveThings, cam, m_stage);
         //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
         asty = new Asteroid("data/asteroid.png", w, 0, 40, m_aliveThings );
         asty = new Asteroid("data/asteroid.png", w, 5, 40, m_aliveThings );
@@ -155,31 +165,36 @@ public class CombatScreen extends OrionScreen implements ContactListener
 
         /** BOX2D LIGHT STUFF END */
         
-        skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        texture1 = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
-        TextureRegion image = new TextureRegion(texture1);
+        
+        m_defaultButtonTexture = new Texture(Gdx.files.internal("data/unselected.png"));
+        m_changeEquipmentTexture = new Texture(Gdx.files.internal("data/changeweapon.png"));
+        TextureRegion defaultImg = new TextureRegion(m_defaultButtonTexture);
+        TextureRegion changeImg = new TextureRegion(m_changeEquipmentTexture);
 
-        stage = new Stage();
+        
         
         m_inputSplitter.addProcessor(player);
-        m_inputSplitter.addProcessor(stage);
+        m_inputSplitter.addProcessor(m_stage);
         Gdx.input.setInputProcessor(m_inputSplitter);
 
         
-        m_longRange = new Button(new Image(image), skin);
+        m_longRange = new Button(new Image(defaultImg), skin);
         m_longRange.pad(10);
-    	m_mediumRange = new Button(new Image(image), skin);
+    	m_mediumRange = new Button(new Image(defaultImg), skin);
     	m_mediumRange.pad(10);
-    	m_shortRange = new Button(new Image(image), skin);
+    	m_shortRange = new Button(new Image(defaultImg), skin);
     	m_shortRange.pad(10);
+    	m_changeEquipment = new Button(new Image(changeImg), skin);
+    	m_changeEquipment.pad(10);
+    	
     	
     	player.m_shortRange = m_shortRange;
         player.m_longRange = m_longRange;
         player.m_mediumRange = m_mediumRange;
+        player.m_changeEquipment = m_changeEquipment;
 
 
-
-        Dialog window = new Dialog("", skin);
+        
         window.setMovable(false);
         window.setPosition(0, HEIGHT/2);
         window.row();
@@ -188,15 +203,20 @@ public class CombatScreen extends OrionScreen implements ContactListener
         window.add(m_mediumRange);
         window.row();
         window.add(m_shortRange);
+        window.row();
+        window.add(m_changeEquipment);
         window.pack();
         
         player.m_window = window;
 
         // stage.addActor(new Button("Behind Window", skin));
-        stage.addActor(window);
+        m_stage.addActor(window);
 
 
+        m_longRange.addListener( player.m_buttonListener );
+        m_mediumRange.addListener( player.m_buttonListener );
         m_shortRange.addListener( player.m_buttonListener );
+        m_changeEquipment.addListener( player.m_buttonListener );
         
         
         /*m_shortRange.addListener(new 
@@ -217,7 +237,14 @@ public class CombatScreen extends OrionScreen implements ContactListener
         
        // player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
        // player.AddMidRangeCounterMeasure( new Laser( w, player, m_aliveThings, 40 ) );
-        player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings, 60 ) );
+        player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new Missile( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new Laser( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new MagneticWave( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new Hacking( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new WingBlades( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new MachineGun( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new LongRangeSensors( w, player, m_aliveThings ) );
 	}
 		
 	@Override
@@ -238,8 +265,11 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	@Override
 	public void draw(float delta) 
 	{
-		w.step(1/60f, 60, 20);
-		handleInput(); 
+		if( !player.m_inMenu )
+		{
+			w.step(1/60f, 60, 20);
+			handleInput();
+		}
 		
         GL20 gl = Gdx.graphics.getGL20();
 
@@ -329,17 +359,19 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		cam.viewportHeight * cam.zoom);
 
     		// rayHandler.setCombinedMatrix(camera.combined);
-    		//if (stepped)
-    		rayHandler.update();
-    		rayHandler.render();
+    		//if ( !player.m_inMenu )
+    		{
+	    		rayHandler.update();
+	    		rayHandler.render();
+    		}
 
     		/** BOX2D LIGHT STUFF END */
     		
      		
     		debugRenderer.render(w, cam.combined);
     		
-    		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
-    		stage.draw();
+    		m_stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
+    		m_stage.draw();
     		
     		/*
      	// draw fps
@@ -430,9 +462,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
 		spriteBatch.dispose();
 		font.dispose();
 		
-		stage.dispose();
+		m_stage.dispose();
 		skin.dispose();
-		texture1.dispose();
+		m_changeEquipmentTexture.dispose();
+		m_defaultButtonTexture.dispose();
 	}
 
 	@Override

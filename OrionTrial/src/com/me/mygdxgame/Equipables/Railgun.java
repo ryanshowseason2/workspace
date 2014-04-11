@@ -19,12 +19,18 @@ public class Railgun extends CounterMeasure
 	ViewedCollidable m_secondaryTarget = null;
 	int m_activateSecondaryMode = 0;
 	
-	public Railgun(World w, Ship s, ArrayList<ViewedCollidable> aliveThings, float range )
+	public Railgun(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
-		super(w, s, aliveThings, range, new Image( new Texture(Gdx.files.internal("data/railgun.png") ) ) );
+		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/railgun.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[2] = 1f;
 		m_fireFrequency = 60;
+	}
+	
+	@Override
+	public Image GetImageCopy()
+	{
+		return new Image( new Texture(Gdx.files.internal("data/railgun.png") ) );
 	}
 
 	@Override

@@ -19,11 +19,17 @@ public class Hacking extends CounterMeasure
 	ViewedCollidable m_secondaryTarget = null;
 	int m_activateSecondaryMode = 0;
 	
-	public Hacking(World w, Ship s, ArrayList<ViewedCollidable> aliveThings, float range )
+	public Hacking(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
-		super(w, s, aliveThings, range, new Image( new Texture(Gdx.files.internal("data/hacking.png") ) ) );
+		super(w, s, aliveThings,  new Image( new Texture(Gdx.files.internal("data/hacking.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[0] = 1f;
+	}
+	
+	@Override
+	public Image GetImageCopy()
+	{
+		return new Image( new Texture(Gdx.files.internal("data/hacking.png") ) );
 	}
 
 	@Override

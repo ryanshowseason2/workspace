@@ -38,7 +38,7 @@ public abstract class ViewedCollidable
     float[] m_damageReductions = {0,0,0,0};
     boolean m_ignoreForPathing = false;
     public boolean m_isTargetable = true;
-    
+    public static boolean m_inMenu = false;
 
     
     public enum DamageType 

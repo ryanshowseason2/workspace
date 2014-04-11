@@ -19,11 +19,17 @@ public class Missile extends CounterMeasure
 	ViewedCollidable m_secondaryTarget = null;
 	int m_activateSecondaryMode = 0;
 	
-	public Missile(World w, Ship s, ArrayList<ViewedCollidable> aliveThings, float range )
+	public Missile(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
-		super(w, s, aliveThings, range, new Image( new Texture(Gdx.files.internal("data/missile.png") ) ) );
+		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/missile.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[1] = 1f;
+	}
+	
+	@Override
+	public Image GetImageCopy()
+	{
+		return new Image( new Texture(Gdx.files.internal("data/missile.png") ) );
 	}
 
 	@Override

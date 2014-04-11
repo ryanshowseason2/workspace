@@ -51,19 +51,22 @@ public class EnemyShip extends Ship implements QueryCallback
 	public void Draw(SpriteBatch renderer)
 	{
 		super.Draw(renderer);
-		ce.Draw(renderer);
-		if (m_target == null)
+		if(!m_inMenu)
 		{
-			float centerX = m_body.getPosition().x;
-			float centerY = m_body.getPosition().y;
-			m_world.QueryAABB(this, centerX - m_detectionRange / 2, centerY
-					- m_detectionRange / 2, centerX + m_detectionRange / 2,
-					centerY + m_detectionRange / 2);
-		}
-
-		if (m_target != null)
-		{
-			NavigateToTarget();
+			ce.Draw(renderer);
+			if (m_target == null)
+			{
+				float centerX = m_body.getPosition().x;
+				float centerY = m_body.getPosition().y;
+				m_world.QueryAABB(this, centerX - m_detectionRange / 2, centerY
+						- m_detectionRange / 2, centerX + m_detectionRange / 2,
+						centerY + m_detectionRange / 2);
+			}
+	
+			if (m_target != null)
+			{
+				NavigateToTarget();
+			}
 		}
 	}
 

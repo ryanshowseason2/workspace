@@ -20,7 +20,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 import com.me.mygdxgame.Equipables.CounterMeasure;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
@@ -28,7 +30,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 {
 
 	public PlayerEntity(String appearanceLocation, World world, float startX,
-			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam ) 
+			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam, Stage stage ) 
 	{
 		super(appearanceLocation, world, startX, startY, maxV, aliveThings, 1 );
 		// TODO Auto-generated constructor stub
@@ -43,20 +45,22 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
 		m_pooledDeathEffect = m_deathEffectPool.obtain();	
 		m_cam = cam;
+		m_buttonListener = new PlayerButtonListener(this, stage );
+		m_equipChangeListener = new EquipChangeListener( this );
 	}
 	
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
 	ParallaxCamera m_cam;
-	public PlayerButtonListener m_buttonListener = new PlayerButtonListener();
+	public PlayerButtonListener m_buttonListener;
+	EquipChangeListener m_equipChangeListener;
 	public Button m_longRange;
 	public Button m_mediumRange;
 	public Button m_shortRange;
+	public Button m_changeEquipment;
 	public Window m_window;	
 	
-	ArrayList<CounterMeasure> m_availableShortRangeCMS = new ArrayList< CounterMeasure >();
-	ArrayList<CounterMeasure> m_availableMediumRangeCMS = new ArrayList< CounterMeasure >();
-	ArrayList<CounterMeasure> m_availableLongRangeCMS = new ArrayList< CounterMeasure >();
+	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -252,8 +256,8 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		super.Draw(renderer);
 		
 		
-		
-		ce.Draw(renderer);
+		if(!m_inMenu)
+			ce.Draw(renderer);
 		
 	
     }
@@ -294,30 +298,61 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	@Override
 	public void AddShortRangeCounterMeasure( CounterMeasure c)
 	{
-		super.AddShortRangeCounterMeasure(c);
-		m_availableShortRangeCMS.add(c);
-		m_shortRange.clearChildren();
-		m_shortRange.add(m_shortRangeCMS.get(0).m_icon);
-		m_window.pack();		
+		//super.AddShortRangeCounterMeasure(c);
+		m_availableCMS.add(c);
+		//m_shortRange.clearChildren();
+		//m_shortRange.add(m_shortRangeCMS.get(0).m_icon);
+		//m_window.pack();		
+	}
+	
+	public void EquipCounterMeasure( CounterMeasure c, int rangeIndex)
+	{
+		if( rangeIndex == 0 )
+		{
+			m_shortRangeCMS.clear();
+			super.AddShortRangeCounterMeasure(c);
+			m_shortRange.clearChildren();
+			m_shortRange.add(c.GetImageCopy());
+			m_window.pack();
+		}
+		
+		if( rangeIndex == 1 )
+		{
+			m_mediumRangeCMS.clear();
+			super.AddMidRangeCounterMeasure(c);
+			m_mediumRange.clearChildren();
+			m_mediumRange.add(c.GetImageCopy());
+			m_window.pack();
+		}
+		
+		if( rangeIndex == 2 )
+		{
+			m_longRangeCMS.clear();
+			super.AddLongRangeCounterMeasure(c);
+			m_longRange.clearChildren();
+			m_longRange.add(c.GetImageCopy());
+			m_window.pack();
+		}
 	}
 	
 	@Override
 	public void AddMidRangeCounterMeasure( CounterMeasure c)
 	{
-		super.AddMidRangeCounterMeasure(c);
-		m_availableMediumRangeCMS.add(c);
-		m_mediumRange.clearChildren();
-		m_mediumRange.add(m_mediumRangeCMS.get(0).m_icon);
-		m_window.pack();		
+		//super.AddMidRangeCounterMeasure(c);
+		m_availableCMS.add(c);
+		//m_mediumRange.clearChildren();
+		//m_mediumRange.add(m_mediumRangeCMS.get(0).m_icon);
+		//m_window.pack();		
 	}
+	
 	
 	@Override
 	public void AddLongRangeCounterMeasure( CounterMeasure c)
 	{
-		super.AddLongRangeCounterMeasure(c);
-		m_availableLongRangeCMS.add(c);
-		m_longRange.clearChildren();
-		m_longRange.add(m_longRangeCMS.get(0).m_icon);
-		m_window.pack();		
+		//super.AddLongRangeCounterMeasure(c);
+		m_availableCMS.add(c);
+		//m_longRange.clearChildren();
+		//m_longRange.add(m_longRangeCMS.get(0).m_icon);
+		//m_window.pack();		
 	}
 }

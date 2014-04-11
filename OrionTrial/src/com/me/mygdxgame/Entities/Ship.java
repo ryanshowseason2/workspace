@@ -114,17 +114,21 @@ public class Ship extends ViewedCollidable
 	public void Draw( SpriteBatch renderer )
 	{
 		super.Draw(renderer);
-		ProcessCounterMeasures();
 		
-		HandleShieldRecharging();
-		
-		SetShieldColor();
-		m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
-		m_pooledShieldEffect.draw(renderer, 1f/60f);
+		if( !m_inMenu )
+		{
+			ProcessCounterMeasures();
+			
+			HandleShieldRecharging();
+			
+			SetShieldColor();
+			m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
+			m_pooledShieldEffect.draw(renderer, 1f/60f);
+		}
 	}
 
 	private void HandleShieldRecharging()
-	{
+	{		
 		if( m_shieldIntegrity < 1000f && m_shieldRechargeCounter <= 0 )
 		{
 			m_shieldIntegrity+= m_shieldIntegrityRechargeFactor;
@@ -132,7 +136,7 @@ public class Ship extends ViewedCollidable
 		else
 		{
 			m_shieldRechargeCounter--;
-		}
+		}		
 	}
 
 	private void SetShieldColor()
