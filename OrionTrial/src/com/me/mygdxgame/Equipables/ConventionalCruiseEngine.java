@@ -173,6 +173,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		{						
 			m_pooledEngineEffect.setPosition( m_ship.m_objectXPosition - xdelta, m_ship.m_objectYPosition - ydelta );
 			m_pooledEngineEffect.draw(renderer, 1f/60f);
+			m_ship.IncreaseDetectionRange( 10f );
 		}
 		
 		if( m_ship.m_integrity > 0 )
@@ -183,7 +184,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		
 		if( m_jetsEngaged  )
 		{
-			
+			m_ship.IncreaseDetectionRange( 5f );
 			if( m_lastXForce > 0 && (m_ship.m_angleDegrees > 45f || m_ship.m_angleDegrees < -45f) )
 			{
 				m_pooledAirJetEffectLeft.setPosition( m_airJetAttachX, m_airJetAttachY );

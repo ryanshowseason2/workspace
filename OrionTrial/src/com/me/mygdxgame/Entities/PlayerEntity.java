@@ -253,13 +253,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	@Override
 	public void Draw( SpriteBatch renderer )
     {
-		super.Draw(renderer);
-		
-		
-		if(!m_inMenu)
-			ce.Draw(renderer);
-		
-	
+		super.Draw(renderer);									
     }
 	
 	@Override

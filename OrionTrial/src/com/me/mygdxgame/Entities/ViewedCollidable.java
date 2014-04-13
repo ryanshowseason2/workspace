@@ -39,7 +39,7 @@ public abstract class ViewedCollidable
     boolean m_ignoreForPathing = false;
     public boolean m_isTargetable = true;
     public static boolean m_inMenu = false;
-
+    float m_detectionRange = Float.MAX_VALUE;
     
     public enum DamageType 
     {

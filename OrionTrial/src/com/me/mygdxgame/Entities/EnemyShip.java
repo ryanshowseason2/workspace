@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -24,8 +25,10 @@ public class EnemyShip extends Ship implements QueryCallback
 	SeekType m_onDeckSeekType;
 	int m_detectionRange = 30;
 	ViewedCollidable m_target = null;
+	Body m_targetBody = null;
 	float m_wayPointX;
 	float m_wayPointY;
+	Vector2 m_navigatingTo;
 
 	public EnemyShip(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV,
@@ -45,6 +48,8 @@ public class EnemyShip extends Ship implements QueryCallback
 		m_pooledDeathEffect = m_deathEffectPool.obtain();
 		m_onDeckSeekType = m_seekType = SeekType.EnterFiringRange;
 		ce = new InertialCruiseEngine(this, maxV);
+		m_navigatingTo = new Vector2();
+		m_navigatingTo.x = -1;
 	}
 
 	@Override
@@ -53,7 +58,6 @@ public class EnemyShip extends Ship implements QueryCallback
 		super.Draw(renderer);
 		if(!m_inMenu)
 		{
-			ce.Draw(renderer);
 			if (m_target == null)
 			{
 				float centerX = m_body.getPosition().x;
@@ -62,11 +66,19 @@ public class EnemyShip extends Ship implements QueryCallback
 						- m_detectionRange / 2, centerX + m_detectionRange / 2,
 						centerY + m_detectionRange / 2);
 			}
-	
-			if (m_target != null)
+			else if( m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange &&
+					 !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) )
 			{
+				//Check that target is still in detection range
+				m_target = null;
+			}
+	
+			if (m_target != null || m_navigatingTo.x != -1 )
+			{				
 				NavigateToTarget();
 			}
+			
+			
 		}
 	}
 
@@ -150,8 +162,19 @@ public class EnemyShip extends Ship implements QueryCallback
 		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
 		Vector2 source = new Vector2();
 		Vector2 destination = new Vector2();
-		destination.x = m_target.m_body.getPosition().x;
-		destination.y = m_target.m_body.getPosition().y;		
+		if( m_target != null )
+		{
+			destination.x = m_target.m_body.getPosition().x;
+			destination.y = m_target.m_body.getPosition().y;	
+			m_navigatingTo.x = m_target.m_body.getPosition().x;
+			m_navigatingTo.y = m_target.m_body.getPosition().y;
+		}
+		else
+		{
+			destination.x = m_navigatingTo.x;
+			destination.y = m_navigatingTo.y;	
+		}
+			
 		source.x = m_body.getPosition().x;
 		source.y = m_body.getPosition().y;	
 		
@@ -159,8 +182,8 @@ public class EnemyShip extends Ship implements QueryCallback
 		 if( CheckWingAndCenterPaths(radius, source, destination) )
 		 {
 			 // We're good to go
-			m_wayPointX = m_target.m_body.getPosition().x;
-			m_wayPointY = m_target.m_body.getPosition().y;
+			m_wayPointX = destination.x;
+			m_wayPointY = destination.y;
 			m_seekType = m_onDeckSeekType;
 		 }
 		 else
@@ -193,7 +216,7 @@ public class EnemyShip extends Ship implements QueryCallback
 			 {
 				 // look in the direction of the enemy ship and 
 				 // Generate left and right possible waypoints
-				 WaypointGenerator gen = new WaypointGenerator( m_body, m_world, generationList.get(i), m_target.m_body.getPosition() );
+				 WaypointGenerator gen = new WaypointGenerator( m_body, m_world, generationList.get(i), m_navigatingTo );
 				 gen.Generate( radius );
 				 vetList.add(gen.m_left);
 				 vetList.add(gen.m_right);
@@ -256,8 +279,8 @@ public class EnemyShip extends Ship implements QueryCallback
 			 {		
 				 
 				 Waypoint w = validWaypoints.get(i);
-			 	// if LOS to enemy ship
-				 if( CheckWingAndCenterPaths(radius, w.m_waypoint, m_target.m_body.getPosition() ) )
+			 	// if LOS to enemy ship or last seen location, or nav point set by the level
+				 if( CheckWingAndCenterPaths(radius, w.m_waypoint, m_navigatingTo ) )
 				 {
 			 		// set loop var end loop
 					 losToEnemy = true;
@@ -312,7 +335,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	private boolean CheckPath(Vector2 source, Vector2 destination)
 	{
-		LineOfSightChecker check = new LineOfSightChecker( m_target.m_body, m_body );
+		LineOfSightChecker check = new LineOfSightChecker( m_targetBody, m_body );
 		m_world.rayCast(check, source, destination);
 		
 		return check.m_hasLineOfSight;
@@ -322,12 +345,27 @@ public class EnemyShip extends Ship implements QueryCallback
 	public boolean reportFixture(Fixture fixture)
 	{
 		ViewedCollidable p = (ViewedCollidable) fixture.getBody().getUserData();
+		
 		if (p != null && 
 			p.m_factionCode != m_factionCode &&
 			p.m_isTargetable &&
-			p.m_factionCode != 0)
-		{
-			m_target = p;
+			p.m_factionCode != 0 )
+		{			
+			Ship s = (Ship) fixture.getBody().getUserData();
+			
+			if( s != null )
+			{
+				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
+				{
+					m_target = p;
+					m_targetBody = p.m_body;
+				}
+			}
+			else
+			{
+				m_target = p;
+				m_targetBody = p.m_body;
+			}
 		}
 		return true;
 	}

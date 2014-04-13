@@ -36,6 +36,7 @@ public class Ship extends ViewedCollidable
     int m_shieldRechargeDelay = 120;
     int m_shieldRechargeCounter = 0;
     float m_shieldIntegrityRechargeFactor = 1;
+        
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
@@ -49,6 +50,7 @@ public class Ship extends ViewedCollidable
 		m_shieldEffect.load(Gdx.files.internal("data/shield.p"), Gdx.files.internal("data/"));
 		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
+		m_detectionRange = 50f;
 	}
 
 	@Override
@@ -117,8 +119,9 @@ public class Ship extends ViewedCollidable
 		
 		if( !m_inMenu )
 		{
+			m_detectionRange = 50f;
 			ProcessCounterMeasures();
-			
+			ce.Draw(renderer);
 			HandleShieldRecharging();
 			
 			SetShieldColor();
@@ -188,5 +191,10 @@ public class Ship extends ViewedCollidable
 		}
 		
 		m_pooledShieldEffect.getEmitters().get(0).getTint().setColors( r );
+	}
+
+	public void IncreaseDetectionRange(float f)
+	{
+		m_detectionRange += f;		
 	}
 }
