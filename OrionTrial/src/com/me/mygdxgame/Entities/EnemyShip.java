@@ -22,13 +22,13 @@ public class EnemyShip extends Ship implements QueryCallback
 	}
 
 	SeekType m_seekType;
-	SeekType m_onDeckSeekType;
-	int m_detectionRange = 30;
+	SeekType m_onDeckSeekType;	
 	ViewedCollidable m_target = null;
 	Body m_targetBody = null;
 	float m_wayPointX;
 	float m_wayPointY;
 	Vector2 m_navigatingTo;
+	
 
 	public EnemyShip(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV,
@@ -62,9 +62,9 @@ public class EnemyShip extends Ship implements QueryCallback
 			{
 				float centerX = m_body.getPosition().x;
 				float centerY = m_body.getPosition().y;
-				m_world.QueryAABB(this, centerX - m_detectionRange / 2, centerY
-						- m_detectionRange / 2, centerX + m_detectionRange / 2,
-						centerY + m_detectionRange / 2);
+				m_world.QueryAABB(this, centerX - m_sensorRange / 2, centerY
+						- m_sensorRange / 2, centerX + m_sensorRange / 2,
+						centerY + m_sensorRange / 2);
 			}
 			else if( m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange &&
 					 !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) )
@@ -78,7 +78,29 @@ public class EnemyShip extends Ship implements QueryCallback
 				NavigateToTarget();
 			}
 			
-			
+			UpdateTrackedTargetsList();
+		}
+	}
+
+	private void UpdateTrackedTargetsList()
+	{
+		//update tracked targets
+		ArrayList<ViewedCollidable> targetsToRemove = new ArrayList<ViewedCollidable>();
+		
+		for( int i = 0; i< m_trackedTargets.size(); i++ )
+		{
+			ViewedCollidable vc = m_trackedTargets.get(i);
+			if( (vc.m_body.getPosition().dst(m_body.getPosition()) > vc.m_detectionRange &&
+				!CheckWingAndCenterPaths(0, m_body.getPosition(), vc.m_body.getPosition() ) ) ||
+				vc.m_integrity <=0 )
+			{
+				targetsToRemove.add(vc);
+			}				
+		}
+		
+		for( int i = 0; i< targetsToRemove.size(); i++ )
+		{
+			m_trackedTargets.remove(targetsToRemove.get(i) );
 		}
 	}
 
@@ -359,12 +381,16 @@ public class EnemyShip extends Ship implements QueryCallback
 				{
 					m_target = p;
 					m_targetBody = p.m_body;
+					m_trackedTargets.remove(p);
+					m_trackedTargets.add(p);
 				}
 			}
 			else
 			{
 				m_target = p;
 				m_targetBody = p.m_body;
+				m_trackedTargets.remove(p);
+				m_trackedTargets.add(p);
 			}
 		}
 		return true;

@@ -137,7 +137,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, -90, 50, 2, m_aliveThings );
-        //shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings, 20 ) );
+        shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);

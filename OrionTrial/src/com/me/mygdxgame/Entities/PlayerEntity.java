@@ -26,7 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-public class PlayerEntity extends Ship implements InputProcessor, RayCastCallback
+public class PlayerEntity extends Ship implements InputProcessor, RayCastCallback, QueryCallback
 {
 
 	public PlayerEntity(String appearanceLocation, World world, float startX,
@@ -253,7 +253,18 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	@Override
 	public void Draw( SpriteBatch renderer )
     {
-		super.Draw(renderer);									
+		super.Draw(renderer);	
+		
+		if(!m_inMenu)
+		{
+			float centerX = m_body.getPosition().x;
+			float centerY = m_body.getPosition().y;
+			m_world.QueryAABB(this, centerX - m_sensorRange / 2, centerY
+					- m_sensorRange / 2, centerX + m_sensorRange / 2,
+					centerY + m_sensorRange / 2);
+			
+			UpdateTrackedTargetsList();
+		}
     }
 	
 	@Override
@@ -349,4 +360,55 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		//m_longRange.add(m_longRangeCMS.get(0).m_icon);
 		//m_window.pack();		
 	}
+
+	@Override
+	public boolean reportFixture(Fixture fixture)
+	{
+		ViewedCollidable p = (ViewedCollidable) fixture.getBody().getUserData();
+		
+		if (p != null && 
+			p.m_factionCode != m_factionCode &&
+			p.m_isTargetable &&
+			p.m_factionCode != 0 )
+		{			
+			Ship s = (Ship) fixture.getBody().getUserData();
+			
+			if( s != null )
+			{
+				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
+				{
+
+					m_trackedTargets.remove(p);
+					m_trackedTargets.add(p);
+				}
+			}
+			else
+			{
+				m_trackedTargets.remove(p);
+				m_trackedTargets.add(p);
+			}
+		}
+		return true;
+	}
+	
+	private void UpdateTrackedTargetsList()
+	{
+		//update tracked targets
+		ArrayList<ViewedCollidable> targetsToRemove = new ArrayList<ViewedCollidable>();
+		
+		for( int i = 0; i< m_trackedTargets.size(); i++ )
+		{
+			ViewedCollidable vc = m_trackedTargets.get(i);
+			if(	vc.m_integrity <=0 )
+			{
+				targetsToRemove.add(vc);
+			}				
+		}
+		
+		for( int i = 0; i< targetsToRemove.size(); i++ )
+		{
+			m_trackedTargets.remove(targetsToRemove.get(i) );
+		}
+	}
+
 }

@@ -36,7 +36,8 @@ public class Ship extends ViewedCollidable
     int m_shieldRechargeDelay = 120;
     int m_shieldRechargeCounter = 0;
     float m_shieldIntegrityRechargeFactor = 1;
-        
+    float m_sensorRange = 30;
+    public ArrayList<ViewedCollidable> m_trackedTargets = new ArrayList<ViewedCollidable>();
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{

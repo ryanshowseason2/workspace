@@ -44,13 +44,18 @@ public class MachineGun extends CounterMeasure
 		
 		if( m_target == null )
 		{
-			float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			
-			m_world.QueryAABB(this, centerX - m_range / 2,
-									centerY - m_range / 2,
-									centerX + m_range / 2,
-									centerY + m_range / 2 );
+			// Pull the closest tracked target from the ship computer! 
+			float leastDistance = Float.MAX_VALUE;
+			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			{
+				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
+				if( distance <= m_range && distance < leastDistance )
+				{
+					leastDistance = distance;
+					m_target = vc;
+				}
+			}
 		}
 		
 		if( m_target != null && m_fireCounter <= 0 )
