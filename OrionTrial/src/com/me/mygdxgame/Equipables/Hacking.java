@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.Projectile;
@@ -78,17 +79,16 @@ public class Hacking extends CounterMeasure
 	}
 
 	@Override
-	public void EngageCM()
+	public void EngageCM( Button b )
 	{
-		// TODO Auto-generated method stub
+		super.EngageCM(b);
 		m_activateSecondaryMode = 120;
 	}
 
 	@Override
 	public void DisengageCM()
 	{
-		// TODO Auto-generated method stub
-
+		super.DisengageCM();
 	}
 
 	@Override

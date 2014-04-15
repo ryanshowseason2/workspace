@@ -35,7 +35,7 @@ public class PlayerButtonListener extends ChangeListener
 			}
 			else
 			{
-				 m_player.m_longRangeCMS.get(0).EngageCM();
+				 m_player.m_longRangeCMS.get(0).EngageCM( (Button) actor );
 			}
 		}
 		
@@ -47,7 +47,7 @@ public class PlayerButtonListener extends ChangeListener
 			}
 			else
 			{
-				 m_player.m_mediumRangeCMS.get(0).EngageCM();
+				 m_player.m_mediumRangeCMS.get(0).EngageCM( (Button) actor );
 			}
 		}
 		
@@ -59,7 +59,7 @@ public class PlayerButtonListener extends ChangeListener
 			}
 			else
 			{
-				 m_player.m_shortRangeCMS.get(0).EngageCM();
+				 m_player.m_shortRangeCMS.get(0).EngageCM( (Button) actor );
 			}
 		}
 		
@@ -80,7 +80,7 @@ public class PlayerButtonListener extends ChangeListener
 	        	
 	        	if(c.m_rangeEnablersAndMultipliers[2] > 0)
 	        	{
-	        		Button choice = new Button(c.m_icon, skin);
+	        		Button choice = new Button(c.GetImageCopy(), skin);
 	        		choice.setUserObject( new CounterMeasureAndRangePair(c , 2));
 	        		choice.pad(10);
 	        		choice.addListener( m_player.m_equipChangeListener );
@@ -94,7 +94,7 @@ public class PlayerButtonListener extends ChangeListener
 	        	
 	        	if(c.m_rangeEnablersAndMultipliers[1] > 0)
 	        	{
-	        		Button choice = new Button(c.m_icon, skin);
+	        		Button choice = new Button(c.GetImageCopy(), skin);
 	        		choice.setUserObject( new CounterMeasureAndRangePair(c , 1));
 	        		choice.pad(10);
 	        		choice.addListener( m_player.m_equipChangeListener );
@@ -108,7 +108,7 @@ public class PlayerButtonListener extends ChangeListener
 	        	
 	        	if(c.m_rangeEnablersAndMultipliers[0] > 0)
 	        	{
-	        		Button choice = new Button(c.m_icon, skin);
+	        		Button choice = new Button(c.GetImageCopy(), skin);
 	        		choice.setUserObject( new CounterMeasureAndRangePair(c , 0));
 	        		choice.pad(10);
 	        		choice.addListener( m_player.m_equipChangeListener );

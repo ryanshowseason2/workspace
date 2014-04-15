@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.Ship;
@@ -24,6 +25,7 @@ public abstract class CounterMeasure implements QueryCallback
 	Ship m_ship;
 	ViewedCollidable m_target = null;
 	ArrayList<ViewedCollidable> m_aliveThings;
+	Button m_buttonActivatedOn;
 	public Image m_icon;
 	public float[] m_rangeEnablersAndMultipliers = {0,0,0};
 	int m_fireFrequency = 6;
@@ -43,8 +45,21 @@ public abstract class CounterMeasure implements QueryCallback
 	}
 	
 	public abstract void AcquireAndFire();
-	public abstract void EngageCM();
-	public abstract void DisengageCM();
+	
+	public void EngageCM( Button b )
+	{
+		m_buttonActivatedOn = b;
+		b.setDisabled(true);
+		b.clearChildren();
+		b.add( new Image( new Texture(Gdx.files.internal("data/time.png") ) ) );
+	}
+	public void DisengageCM()
+	{
+		m_buttonActivatedOn.setDisabled(false);
+		m_buttonActivatedOn.clearChildren();
+		m_buttonActivatedOn.add( GetImageCopy() );
+	}
+	
 	public abstract Image GetImageCopy();
 
 	public void SetTarget( ViewedCollidable target )

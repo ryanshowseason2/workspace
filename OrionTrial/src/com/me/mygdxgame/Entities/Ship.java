@@ -74,7 +74,7 @@ public class Ship extends ViewedCollidable
 	    }
 	    m_shieldRechargeCounter = m_shieldRechargeDelay;
 
-	    super.damageIntegrity(damageToIntegrity, type);
+	    //super.damageIntegrity(damageToIntegrity, type);
     }
 	
 	public void AddShortRangeCounterMeasure( CounterMeasure c)
