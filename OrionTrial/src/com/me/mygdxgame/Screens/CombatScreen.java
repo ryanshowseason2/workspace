@@ -475,7 +475,17 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	public void beginContact(Contact contact) 
 	{
 		// TODO Auto-generated method stub
+		Body body1 = contact.getFixtureA().getBody();
+		Body body2 = contact.getFixtureB().getBody();
+		ViewedCollidable object1 = (ViewedCollidable) body1.getUserData();
+		ViewedCollidable object2 = (ViewedCollidable) body2.getUserData();
+		float crashVelocity = Math.abs( body1.getLinearVelocity().dst(0, 0) - body2.getLinearVelocity().dst(0, 0) );
 		
+		if( object1 != null && object2 != null )
+		{
+			object1.damageCalc( object2, crashVelocity );
+			object2.damageCalc( object1, crashVelocity );
+		}
 	}
 
 	@Override
@@ -489,17 +499,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	public void preSolve(Contact contact, Manifold oldManifold) 
 	{
 		// TODO Auto-generated method stub
-		Body body1 = contact.getFixtureA().getBody();
-		Body body2 = contact.getFixtureB().getBody();
-		ViewedCollidable object1 = (ViewedCollidable) body1.getUserData();
-		ViewedCollidable object2 = (ViewedCollidable) body2.getUserData();
-		float crashVelocity = Math.abs( body1.getLinearVelocity().dst(0, 0) - body2.getLinearVelocity().dst(0, 0) );
 		
-		if( object1 != null && object2 != null )
-		{
-			object1.damageCalc( object2, crashVelocity );
-			object2.damageCalc( object1, crashVelocity );
-		}
 	}
 
 	@Override

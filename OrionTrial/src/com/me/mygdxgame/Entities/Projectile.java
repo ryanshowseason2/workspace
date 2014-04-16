@@ -1,24 +1,44 @@
 package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.MassData;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class Projectile extends ViewedCollidable
 {
+	public enum Characters
+	{
+		Sandy,
+		Gourt,
+		Noel,
+		Sahvret,
+		Bobbi,
+		SSid,
+		Belice,
+		Yashpal
+	}
+	
+	EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
 	float m_originX;
 	float m_originY;
 	public float m_projectileVelocity = -50f;
+	int m_bulletLife = 100;
+	boolean m_etherealBullet = false;
+	float m_minDistance;
 	
 	public Projectile(String appearanceLocation, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
 	{
 		super(appearanceLocation, world, startX, startY, aliveThings, factionCode);
-		// TODO Auto-generated constructor stub
-		
+		// TODO Auto-generated constructor stub		
 		m_originX = startX;
 		m_originY = startY;
 		MassData data = m_body.getMassData();
@@ -29,16 +49,44 @@ public class Projectile extends ViewedCollidable
 		m_integrity = 1;
 		m_ignoreForPathing = true;
 		m_isTargetable = false;
-		//m_body.getFixtureList().get(0).setSensor(true);
+		m_body.getFixtureList().get(0).setSensor(true);
+		
+		PopulateSpecials();
+		SetSpecials( m_specialAbilitiesActivated );
+	}
+
+	private void PopulateSpecials()
+	{
+		m_specialAbilitiesActivated.put(Characters.Sandy, false);
+		m_specialAbilitiesActivated.put(Characters.Gourt, false);
+		m_specialAbilitiesActivated.put(Characters.Noel, false);
+		m_specialAbilitiesActivated.put(Characters.Sahvret, false);
+		m_specialAbilitiesActivated.put(Characters.Bobbi, true);
+		m_specialAbilitiesActivated.put(Characters.SSid, false);
+		m_specialAbilitiesActivated.put(Characters.Belice, false);
+		m_specialAbilitiesActivated.put(Characters.Yashpal, false);
 	}
 
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity)
 	{
-		// TODO Auto-generated method stub
-		float mass = m_body.getMass();
-		object2.damageIntegrity(crashVelocity, DamageType.Penetration );	
-		m_integrity -=1;
+		if( (!m_etherealBullet && object2.m_isTargetable) ||
+			( m_etherealBullet && object2.m_factionCode != 0 ) )
+		{
+			object2.damageIntegrity(crashVelocity, DamageType.Penetration );	
+			m_integrity -=1;
+			
+			if( m_specialAbilitiesActivated.get(Characters.Bobbi) &&
+				Ship.class.isInstance(object2) )
+				//object2.getClass().isInstance(Ship.class) )
+			{				
+				Ship s = (Ship) object2;
+				if( s != null )
+				{
+					s.m_shieldIntegrityRechargeFactor = 0;
+				}
+			}
+		}
 	}
 	
 	public void Fire( Ship origin, ViewedCollidable target, float accuracy )
@@ -63,10 +111,25 @@ public class Projectile extends ViewedCollidable
 	{
 		super.Draw(renderer);
 		
-		if( m_body.getPosition().dst(m_originX, m_originY) > 25 )
+		m_bulletLife--;
+		if(m_bulletLife <= 0 )
 		{
 			m_integrity = 0;
-		}
+		}		
 	}
 
+	public void SetSpecials( EnumMap<Characters, Boolean> specialAbilitiesActivated )
+	{
+		m_specialAbilitiesActivated = specialAbilitiesActivated;
+		
+		if( m_specialAbilitiesActivated.get(Characters.Yashpal))
+		{
+			m_etherealBullet = true;
+		}
+	}
+	
+	@Override
+	public void damageIntegrity( float damage , DamageType type)
+	{
+	}
 }

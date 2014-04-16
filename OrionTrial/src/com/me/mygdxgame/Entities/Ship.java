@@ -38,6 +38,7 @@ public class Ship extends ViewedCollidable
     float m_shieldIntegrityRechargeFactor = 1;
     float m_sensorRange = 30;
     public ArrayList<ViewedCollidable> m_trackedTargets = new ArrayList<ViewedCollidable>();
+    float m_softwareIntegrity = 1000f;
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
