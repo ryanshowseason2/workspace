@@ -391,6 +391,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		{
     			ViewedCollidable tmp = (ViewedCollidable) m_deadThings.get(i);
     			w.destroyBody(tmp.m_body);
+    			tmp.destroy();
     		}
     		m_deadThings.clear();
 

@@ -76,12 +76,19 @@ public class Projectile extends ViewedCollidable
 			object2.damageIntegrity(crashVelocity, DamageType.Penetration );	
 			m_integrity -=1;
 			
-			if( m_specialAbilitiesActivated.get(Characters.Bobbi) &&
-				Ship.class.isInstance(object2) )
-				//object2.getClass().isInstance(Ship.class) )
-			{				
-				Ship s = (Ship) object2;
-				if( s != null )
+			BobbisHackingBullets(object2);
+		}
+	}
+
+	private void BobbisHackingBullets(ViewedCollidable object2)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Bobbi) &&
+			Ship.class.isInstance(object2) )
+		{				
+			Ship s = (Ship) object2;
+			if( s != null && s.m_shieldIntegrity <= 0 && s.m_shieldIntegrityRechargeFactor > 0 )
+			{
+				if( s.AttemptHack( 1.0f ) )
 				{
 					s.m_shieldIntegrityRechargeFactor = 0;
 				}

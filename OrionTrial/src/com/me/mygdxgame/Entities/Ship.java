@@ -3,6 +3,7 @@ package com.me.mygdxgame.Entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,6 +40,8 @@ public class Ship extends ViewedCollidable
     float m_sensorRange = 30;
     public ArrayList<ViewedCollidable> m_trackedTargets = new ArrayList<ViewedCollidable>();
     float m_softwareIntegrity = 1000f;
+    int m_hackedDrawCounter = 0;
+    BitmapFont m_font;
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
@@ -53,6 +56,7 @@ public class Ship extends ViewedCollidable
 		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 		m_detectionRange = 50f;
+		m_font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
 	}
 
 	@Override
@@ -129,6 +133,17 @@ public class Ship extends ViewedCollidable
 			SetShieldColor();
 			m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
 			m_pooledShieldEffect.draw(renderer, 1f/60f);
+			
+			DrawHackedIndicator(renderer);
+		}
+	}
+
+	private void DrawHackedIndicator(SpriteBatch renderer)
+	{
+		if( m_hackedDrawCounter > 0 )
+		{
+			m_font.draw(renderer, "HACKED!"  , m_body.getPosition().x * 29f, m_body.getPosition().y * 29f + m_hackedDrawCounter% 60);
+			m_hackedDrawCounter--;
 		}
 	}
 
@@ -198,5 +213,19 @@ public class Ship extends ViewedCollidable
 	public void IncreaseDetectionRange(float f)
 	{
 		m_detectionRange += f;		
+	}
+
+	public boolean AttemptHack(float d)
+	{
+		m_softwareIntegrity-=d;
+		float attempt =  (float) (Math.random() * 1000);
+		boolean b = attempt > m_softwareIntegrity ? true : false;
+		m_hackedDrawCounter = m_hackedDrawCounter + ( b ? 60 : 0);
+		return b;
+	}
+	
+	@Override
+	public void destroy()
+	{
 	}
 }

@@ -156,4 +156,8 @@ public abstract class ViewedCollidable
 		
 		return dead;
 	}
+
+	public void destroy()
+	{
+	}
 }
