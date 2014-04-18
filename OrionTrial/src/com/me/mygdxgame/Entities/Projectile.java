@@ -59,9 +59,9 @@ public class Projectile extends ViewedCollidable
 
 	private void PopulateSpecials()
 	{
-		m_specialAbilitiesActivated.put(Characters.Sandy, true);
+		m_specialAbilitiesActivated.put(Characters.Sandy, false);
 		m_specialAbilitiesActivated.put(Characters.Gourt, false);
-		m_specialAbilitiesActivated.put(Characters.Noel, false);
+		m_specialAbilitiesActivated.put(Characters.Noel, true);
 		m_specialAbilitiesActivated.put(Characters.Shavret, false);
 		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
 		m_specialAbilitiesActivated.put(Characters.SSid, false);
@@ -84,6 +84,7 @@ public class Projectile extends ViewedCollidable
 			
 			BobbisHackingBullets(object2);
 			SSidsHackingBullets(object2);
+			NoelsHackingBullets(object2);
 		}
 	}
 
@@ -132,6 +133,22 @@ public class Projectile extends ViewedCollidable
 					m_ship.m_trackedTargets.add( vc );
 					s.m_fighterGroup.remove(vc);
 					s.m_soundTheAlarmCounter = 0;
+				}
+			}
+		}
+	}
+	
+	private void NoelsHackingBullets(ViewedCollidable object2)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Noel) &&
+				EnemyShip.class.isInstance(object2) )
+		{				
+			EnemyShip s = (EnemyShip) object2;
+			if( s != null && s.m_shieldIntegrity <= 0 && s.ce.m_enginePotency > 0 )
+			{
+				if( s.AttemptHack( 15.0f ) )
+				{
+					s.ce.m_enginePotency*=.75;
 				}
 			}
 		}
@@ -201,7 +218,7 @@ public class Projectile extends ViewedCollidable
 		if( m_specialAbilitiesActivated.get(Characters.Sandy))
 		{
 			m_body.getFixtureList().get(0).setSensor(false);
-			m_body.getFixtureList().get(0).setRestitution(1f);;
+			m_body.getFixtureList().get(0).setRestitution(1f);
 			m_integrity++;
 		}		
 	}

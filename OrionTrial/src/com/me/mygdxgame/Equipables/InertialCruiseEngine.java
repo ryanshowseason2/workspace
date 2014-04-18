@@ -45,6 +45,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		m_airJetEffectPoolUp = new ParticleEffectPool(m_airJetEffectUp, 1, 2);
 		m_pooledAirJetEffectUp = m_airJetEffectPoolUp.obtain();
 		
+		m_enginePotency = 3f;
+		m_brakePotency = 1f;
 	}
 	
 	public void ApplyThrust( float forceX, float forceY )
@@ -92,8 +94,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce = (float)(3f * Math.cos(m_ship.m_angleRadians));
-        yForce = (float)(3.0f * Math.sin(m_ship.m_angleRadians));
+	    xForce = (float)(m_enginePotency * Math.cos(m_ship.m_angleRadians));
+        yForce = (float)(m_enginePotency * Math.sin(m_ship.m_angleRadians));
         
         ApplyThrust( xForce, yForce, true );
 	}
@@ -104,8 +106,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce = (float)(-4.5f * Math.cos(m_ship.m_angleRadians));
-        yForce = (float)(-4.5f * Math.sin(m_ship.m_angleRadians));
+	    xForce = (float)(-m_enginePotency * Math.cos(m_ship.m_angleRadians));
+        yForce = (float)(-m_enginePotency * Math.sin(m_ship.m_angleRadians));
         
         float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
         m_airJetAttachX = m_ship.m_body.getPosition().x*29f +(float)(radius * Math.cos(m_ship.m_angleRadians));
@@ -120,8 +122,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce =  (float)(-4.5f * Math.sin(m_ship.m_angleRadians));
-        yForce =  (float)(4.5f * Math.cos(m_ship.m_angleRadians));
+	    xForce =  (float)(-m_enginePotency * Math.sin(m_ship.m_angleRadians));
+        yForce =  (float)(m_enginePotency * Math.cos(m_ship.m_angleRadians));
 	    ApplyThrust( xForce, yForce );
 	    
 	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
@@ -135,8 +137,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce = (float)(4.5f * Math.sin(m_ship.m_angleRadians));
-        yForce = (float)(-4.5f * Math.cos(m_ship.m_angleRadians));
+	    xForce = (float)(m_enginePotency * Math.sin(m_ship.m_angleRadians));
+        yForce = (float)(-m_enginePotency * Math.cos(m_ship.m_angleRadians));
 	    ApplyThrust( xForce, yForce );
 	    
 	    float radius = Math.max(m_ship.m_objectAppearance.getWidth() / 2, m_ship.m_objectAppearance.getHeight() ) / 2;
@@ -231,8 +233,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce = (float)(-1.0f * m_ship.m_body.getLinearVelocity().x);
-        yForce = (float)(-1.0f * m_ship.m_body.getLinearVelocity().y);
+	    xForce = (float)(-m_brakePotency * m_ship.m_body.getLinearVelocity().x);
+        yForce = (float)(-m_brakePotency * m_ship.m_body.getLinearVelocity().y);
 	    ApplyThrust( xForce, yForce, true );
 	    m_brakesEngaged = true;
 	}
