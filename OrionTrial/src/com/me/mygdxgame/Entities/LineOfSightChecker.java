@@ -33,7 +33,7 @@ public class LineOfSightChecker implements RayCastCallback
 		
 		if( fixture.getBody() != m_body &&
 			fixture.getBody() != m_self &&
-			navigator.m_factionCode != inTheWay.m_factionCode &&
+			inTheWay.m_factionCode == 0 &&
 			!inTheWay.m_ignoreForPathing )
 		{
 			m_hasLineOfSight = false;

@@ -33,6 +33,7 @@ public class Projectile extends ViewedCollidable
 	int m_bulletLife = 100;
 	boolean m_etherealBullet = false;
 	float m_minDistance;
+	Ship m_ship;
 	
 	public Projectile(String appearanceLocation, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
@@ -61,8 +62,8 @@ public class Projectile extends ViewedCollidable
 		m_specialAbilitiesActivated.put(Characters.Gourt, false);
 		m_specialAbilitiesActivated.put(Characters.Noel, false);
 		m_specialAbilitiesActivated.put(Characters.Sahvret, false);
-		m_specialAbilitiesActivated.put(Characters.Bobbi, true);
-		m_specialAbilitiesActivated.put(Characters.SSid, false);
+		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
+		m_specialAbilitiesActivated.put(Characters.SSid, true);
 		m_specialAbilitiesActivated.put(Characters.Belice, false);
 		m_specialAbilitiesActivated.put(Characters.Yashpal, false);
 	}
@@ -77,6 +78,7 @@ public class Projectile extends ViewedCollidable
 			m_integrity -=1;
 			
 			BobbisHackingBullets(object2);
+			SSidsHackingBullets(object2);
 		}
 	}
 
@@ -86,11 +88,30 @@ public class Projectile extends ViewedCollidable
 			Ship.class.isInstance(object2) )
 		{				
 			Ship s = (Ship) object2;
-			if( s != null && s.m_shieldIntegrity <= 0 && s.m_shieldIntegrityRechargeFactor > 0 )
+			if( s != null )
 			{
-				if( s.AttemptHack( 1.0f ) )
+				if( s.AttemptHack( 5.0f ) )
 				{
-					s.m_shieldIntegrityRechargeFactor = 0;
+					s.m_shieldRechargeDelay+= 5;
+				}
+			}
+		}
+	}
+	
+	private void SSidsHackingBullets(ViewedCollidable object2)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.SSid) &&
+				EnemyShip.class.isInstance(object2) )
+		{				
+			EnemyShip s = (EnemyShip) object2;
+			if( s != null && s.m_shieldIntegrity <= 0 && s.m_fighterGroup.size() > 0 )
+			{
+				if( s.AttemptHack( 15.0f ) )
+				{
+					ViewedCollidable vc = s.m_fighterGroup.get(0);
+					m_ship.m_trackedTargets.add( vc );
+					s.m_fighterGroup.remove(vc);
+					s.m_soundTheAlarmCounter = 0;
 				}
 			}
 		}
@@ -98,6 +119,7 @@ public class Projectile extends ViewedCollidable
 	
 	public void Fire( Ship origin, ViewedCollidable target, float accuracy )
 	{
+		m_ship = origin;
 		float centerX = origin.m_body.getPosition().x;
 		float centerY = origin.m_body.getPosition().y;
 		float targetCenterX = target.m_body.getPosition().x;

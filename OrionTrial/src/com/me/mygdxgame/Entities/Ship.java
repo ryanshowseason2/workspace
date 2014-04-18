@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 import com.me.mygdxgame.Equipables.ConventionalCruiseEngine;
 import com.me.mygdxgame.Equipables.ConventionalManeuverEngine;
@@ -42,6 +44,7 @@ public class Ship extends ViewedCollidable
     float m_softwareIntegrity = 1000f;
     int m_hackedDrawCounter = 0;
     BitmapFont m_font;
+    EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{

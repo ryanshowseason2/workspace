@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 import com.me.mygdxgame.Equipables.InertialCruiseEngine;
 
 public class EnemyShip extends Ship implements QueryCallback
@@ -28,6 +30,8 @@ public class EnemyShip extends Ship implements QueryCallback
 	float m_wayPointX;
 	float m_wayPointY;
 	Vector2 m_navigatingTo;
+	ArrayList<EnemyShip> m_fighterGroup = new ArrayList<EnemyShip>();
+	int m_soundTheAlarmCounter = 0;
 	
 
 	public EnemyShip(String appearanceLocation, World world, float startX,
@@ -50,6 +54,12 @@ public class EnemyShip extends Ship implements QueryCallback
 		ce = new InertialCruiseEngine(this, maxV);
 		m_navigatingTo = new Vector2();
 		m_navigatingTo.x = -1;
+	}
+	
+	public void AddToFighterGroup(EnemyShip e )
+	{
+		m_fighterGroup.add(e);
+		e.m_fighterGroup.add( this );
 	}
 
 	@Override
@@ -101,6 +111,31 @@ public class EnemyShip extends Ship implements QueryCallback
 		for( int i = 0; i< targetsToRemove.size(); i++ )
 		{
 			m_trackedTargets.remove(targetsToRemove.get(i) );
+		}
+		
+		AlertAllies();
+	}
+
+	private void AlertAllies()
+	{
+		if( m_trackedTargets.size() > 0)
+		{
+			m_soundTheAlarmCounter++;
+			
+			if( m_soundTheAlarmCounter > 300 )
+			{
+				for( int i = 0; i < m_fighterGroup.size(); i++ )
+				{
+					if( m_fighterGroup.get(i).m_target == null )
+					{
+						m_fighterGroup.get(i).m_target = m_target;
+					}
+				}
+			}
+		}
+		else
+		{
+			m_soundTheAlarmCounter = 0;
 		}
 	}
 
@@ -169,10 +204,11 @@ public class EnemyShip extends Ship implements QueryCallback
 				|| (m_body.getLinearVelocity().x < -5 && vec.x > pos.x)
 				|| (m_body.getLinearVelocity().y > 5 && vec.y < pos.y)
 				|| (m_body.getLinearVelocity().y < -5 && vec.y > pos.y)
-				|| pos.dst(vec) < 5 )
+				|| pos.dst(vec) <= 7f )
 		{
 			ce.EngineBrake();
-		} else if( distance > 10f )
+		} 
+		else if( distance > 10f )
 		{
 			ce.ThrottleForward();
 			ce.EngageEngine();
