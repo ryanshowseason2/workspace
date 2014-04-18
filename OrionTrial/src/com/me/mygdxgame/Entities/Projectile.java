@@ -34,6 +34,7 @@ public class Projectile extends ViewedCollidable
 	boolean m_etherealBullet = false;
 	float m_minDistance;
 	Ship m_ship;
+	ViewedCollidable m_originalTarget;
 	
 	public Projectile(String appearanceLocation, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
@@ -59,11 +60,11 @@ public class Projectile extends ViewedCollidable
 	private void PopulateSpecials()
 	{
 		m_specialAbilitiesActivated.put(Characters.Sandy, false);
-		m_specialAbilitiesActivated.put(Characters.Gourt, false);
+		m_specialAbilitiesActivated.put(Characters.Gourt, true);
 		m_specialAbilitiesActivated.put(Characters.Noel, false);
 		m_specialAbilitiesActivated.put(Characters.Sahvret, false);
 		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
-		m_specialAbilitiesActivated.put(Characters.SSid, true);
+		m_specialAbilitiesActivated.put(Characters.SSid, false);
 		m_specialAbilitiesActivated.put(Characters.Belice, false);
 		m_specialAbilitiesActivated.put(Characters.Yashpal, false);
 	}
@@ -139,15 +140,18 @@ public class Projectile extends ViewedCollidable
 	public void Fire( Ship origin, ViewedCollidable target, float accuracy )
 	{
 		m_ship = origin;
+		m_originalTarget = target;
 		float centerX = origin.m_body.getPosition().x;
 		float centerY = origin.m_body.getPosition().y;
 		float targetCenterX = target.m_body.getPosition().x;
 		float targetCenterY = target.m_body.getPosition().y;		
-		double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX) + accuracy;		
-		m_objectSprite.rotate((float) Math.toDegrees(angleRadians));
+		m_angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX) + accuracy;
+		m_angleDegrees = (float) (m_angleRadians * 180 / Math.PI);
+		m_objectSprite.rotate((float) Math.toDegrees(m_angleRadians));
 		m_body.setFixedRotation(true);
-		float xSpeed =  (float)(m_projectileVelocity * Math.cos(angleRadians));
-        float ySpeed =  (float)(m_projectileVelocity * Math.sin(angleRadians));
+		m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees ) );
+		float xSpeed =  (float)(m_projectileVelocity * Math.cos(m_angleRadians));
+        float ySpeed =  (float)(m_projectileVelocity * Math.sin(m_angleRadians));
         
         xSpeed = xSpeed + ( origin.m_body.getLinearVelocity().x * xSpeed > 0 ? origin.m_body.getLinearVelocity().x : 0);
         ySpeed = ySpeed + ( origin.m_body.getLinearVelocity().y * ySpeed > 0 ? origin.m_body.getLinearVelocity().y : 0);
@@ -163,7 +167,26 @@ public class Projectile extends ViewedCollidable
 		if(m_bulletLife <= 0 )
 		{
 			m_integrity = 0;
-		}		
+		}	
+		
+		if( m_specialAbilitiesActivated.get(Characters.Gourt))
+		{
+			Vector2 targetPos = m_originalTarget.m_body.getPosition();
+			Vector2 bulletPos = m_body.getPosition();
+			double angleRadians = Math.atan2(targetPos.y - bulletPos.y, targetPos.x - bulletPos.x);
+			float xForce = 0;
+		    float yForce = 0;
+		    xForce = (float)(30f * Math.cos(angleRadians));
+	        yForce = (float)(30f * Math.sin(angleRadians));
+	        m_body.applyForceToCenter(xForce, yForce, true);
+		}
+        
+        m_angleRadians = Math.atan2(m_body.getLinearVelocity().y, m_body.getLinearVelocity().x);
+        float degrees = (float) (m_angleRadians * 180 / Math.PI);
+        float difference = degrees - m_angleDegrees;
+        m_objectSprite.rotate( (float) (difference) );
+        m_angleDegrees = (float) degrees;
+        m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees ) );
 	}
 
 	public void SetSpecials( EnumMap<Characters, Boolean> specialAbilitiesActivated )
