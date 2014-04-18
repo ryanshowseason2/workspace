@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -44,7 +45,7 @@ public abstract class CounterMeasure implements QueryCallback
 		m_range = 20 * m_rangeEnablersAndMultipliers[rangeIndex];
 	}
 	
-	public abstract void AcquireAndFire();
+	public abstract void AcquireAndFire(SpriteBatch renderer);
 	
 	public void EngageCM( Button b )
 	{

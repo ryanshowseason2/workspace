@@ -61,11 +61,11 @@ public class Projectile extends ViewedCollidable
 	{
 		m_specialAbilitiesActivated.put(Characters.Sandy, false);
 		m_specialAbilitiesActivated.put(Characters.Gourt, false);
-		m_specialAbilitiesActivated.put(Characters.Noel, true);
+		m_specialAbilitiesActivated.put(Characters.Noel, false);
 		m_specialAbilitiesActivated.put(Characters.Shavret, false);
 		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
 		m_specialAbilitiesActivated.put(Characters.SSid, false);
-		m_specialAbilitiesActivated.put(Characters.Belice, false);
+		m_specialAbilitiesActivated.put(Characters.Belice, true);
 		m_specialAbilitiesActivated.put(Characters.Yashpal, false);
 	}
 
@@ -161,7 +161,19 @@ public class Projectile extends ViewedCollidable
 		float centerX = origin.m_body.getPosition().x;
 		float centerY = origin.m_body.getPosition().y;
 		float targetCenterX = target.m_body.getPosition().x;
-		float targetCenterY = target.m_body.getPosition().y;		
+		float targetCenterY = target.m_body.getPosition().y;	
+		
+		if( m_specialAbilitiesActivated.get(Characters.Belice) )
+		{				
+			Vector2 predictivePoint = Intercept( m_ship.m_body.getPosition(), target.m_body.getPosition(), target.m_body.getLinearVelocity(), m_projectileVelocity );
+			if( predictivePoint.x != Float.NEGATIVE_INFINITY )
+			{
+				targetCenterX = predictivePoint.x;
+				targetCenterY = predictivePoint.y;
+			}
+			accuracy = 0;
+		}
+		
 		m_angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX) + accuracy;
 		m_angleDegrees = (float) (m_angleRadians * 180 / Math.PI);
 		m_objectSprite.rotate((float) Math.toDegrees(m_angleRadians));
@@ -170,8 +182,8 @@ public class Projectile extends ViewedCollidable
 		float xSpeed =  (float)(m_projectileVelocity * Math.cos(m_angleRadians));
         float ySpeed =  (float)(m_projectileVelocity * Math.sin(m_angleRadians));
         
-        xSpeed = xSpeed + ( origin.m_body.getLinearVelocity().x * xSpeed > 0 ? origin.m_body.getLinearVelocity().x : 0);
-        ySpeed = ySpeed + ( origin.m_body.getLinearVelocity().y * ySpeed > 0 ? origin.m_body.getLinearVelocity().y : 0);
+        //xSpeed = xSpeed + ( origin.m_body.getLinearVelocity().x * xSpeed > 0 ? origin.m_body.getLinearVelocity().x : 0);
+        //ySpeed = ySpeed + ( origin.m_body.getLinearVelocity().y * ySpeed > 0 ? origin.m_body.getLinearVelocity().y : 0);
         m_body.setLinearVelocity( xSpeed, ySpeed );
 	}
 	
@@ -226,5 +238,99 @@ public class Projectile extends ViewedCollidable
 	@Override
 	public void damageIntegrity( float damage , DamageType type)
 	{
+	}
+	
+	/**
+	 * Return the firing solution for a projectile starting at 'src' with
+	 * velocity 'v', to hit a target, 'dst'.
+	 *
+	 * @param Object src position of shooter
+	 * @param Object dst position & velocity of target
+	 * @param Number v   speed of projectile
+	 * @return Object Coordinate at which to fire (and where intercept occurs)
+	 *
+	 * E.g.
+	 * >>> intercept({x:2, y:4}, {x:5, y:7, vx: 2, vy:1}, 5)
+	 * = {x: 8, y: 8.5}
+	 */
+	public Vector2 Intercept( Vector2 src, Vector2 dst, Vector2 dstVel, float projectileVelocity) 
+	{
+	  float tx = dst.x - src.x;
+	  float ty = dst.y - src.y;
+	  float tvx = dstVel.x;
+	  float tvy = dstVel.y;
+
+	  // Get quadratic equation components
+	  float a = tvx*tvx + tvy*tvy - projectileVelocity*projectileVelocity;
+	  float b = 2 * (tvx * tx + tvy * ty);
+	  float c = tx*tx + ty*ty;    
+
+	  // Solve quadratic
+	  Vector2 ts = quad(a, b, c); // See quad(), below
+
+	  // Find smallest positive solution
+	  Vector2 sol = new Vector2();
+	  sol.x = Float.NEGATIVE_INFINITY;
+	  if (ts.x != Float.NEGATIVE_INFINITY ) 
+	  {
+	    float t0 = ts.x; 
+	    float t1 = ts.y;
+	    float t = Math.min(t0, t1);
+	    if (t < 0)
+	    {
+	    	t = Math.max(t0, t1);  
+	    }
+	    
+	    if (t > 0) 
+	    {
+	        sol.x = dst.x + dstVel.x*t;
+	        sol.y = dst.y + dstVel.y*t;	      
+	    }
+	    
+	  }
+
+	  return sol;
+	}
+
+
+	/**
+	 * Return solutions for quadratic
+	 */
+	public Vector2 quad( float a, float b, float c) 
+	{
+	  Vector2 sol = new Vector2();;
+	  if (Math.abs(a) < 1e-6) 
+	  {
+	    if (Math.abs(b) < 1e-6) 
+	    {
+	    	if(Math.abs(c) < 1e-6)
+	    	{
+	    		sol.x = 0;
+	    		sol.y = 0;
+	    	}
+	    	else
+	    	{
+	    		sol.x = Float.NEGATIVE_INFINITY;
+	    		sol.y = Float.NEGATIVE_INFINITY;
+	    	}
+	    } 
+	    else 
+	    {
+	      sol.x = -c/b;
+	      sol.y = -c/b;
+	    }
+	  } 
+	  else 
+	  {
+	    float disc = b*b - 4*a*c;
+	    if (disc >= 0) 
+	    {
+	      disc = (float) Math.sqrt(disc);
+	      a = 2*a;
+	      sol.x = (-b-disc)/a;
+	      sol.y = (-b+disc)/a;
+	    }
+	  }
+	  return sol;
 	}
 }

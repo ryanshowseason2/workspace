@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -31,7 +32,7 @@ public class NoWeapon extends CounterMeasure
 	}
 
 	@Override
-	public void AcquireAndFire()
+	public void AcquireAndFire( SpriteBatch renderer )
 	{
 		// TODO Auto-generated method stub
 

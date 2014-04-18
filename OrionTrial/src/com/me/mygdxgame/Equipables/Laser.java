@@ -3,7 +3,10 @@ package com.me.mygdxgame.Equipables;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -17,14 +20,15 @@ import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class Laser extends CounterMeasure
 {
-	ViewedCollidable m_secondaryTarget = null;
-	int m_activateSecondaryMode = 0;
-	
+	Texture m_objectAppearance;
+	Sprite m_objectSprite;
 	public Laser(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
 		super(w, s, aliveThings,  new Image( new Texture(Gdx.files.internal("data/laser.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[1] = 1f;
+		m_objectAppearance = new Texture(Gdx.files.internal("data/bullet.png"));
+		m_objectSprite = new Sprite( m_objectAppearance );
 	}
 	
 	@Override
@@ -34,55 +38,58 @@ public class Laser extends CounterMeasure
 	}
 
 	@Override
-	public void AcquireAndFire()
+	public void AcquireAndFire( SpriteBatch renderer )
 	{
-		if( ( m_target != null && m_target.m_integrity <= 0 ) )
-		{
-			m_target = null;
-		}
-		
 		if( m_target == null )
 		{
-			float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			
-			m_world.QueryAABB(this, centerX - m_range / 2,
-									centerY - m_range / 2,
-									centerX + m_range / 2,
-									centerY + m_range / 2 );
+			// Pull the closest tracked target from the ship computer! 
+			float leastDistance = Float.MAX_VALUE;
+			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			{
+				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
+				if( distance <= m_range && distance < leastDistance )
+				{
+					leastDistance = distance;
+					m_target = vc;
+				}
+			}
 		}
 		
 		if( m_target != null )
 		{
 			float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
-			/*float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			float targetCenterX = m_target.m_body.getPosition().x;
-			float targetCenterY = m_target.m_body.getPosition().y;
-			Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
-			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
-			float xForce =  (float)(-1250f * Math.cos(angleRadians));
-	        float yForce =  (float)(-1250f * Math.sin(angleRadians));
-	        p.m_body.applyForceToCenter(xForce, yForce, true);*/
+			
 			if( distanceToCurrentTarget <= m_range )
 			{
+				float objectXPosition = m_ship.m_body.getPosition().x*29f;
+				float objectYPosition = m_ship.m_body.getPosition().y*29f;
+
+				m_objectSprite.setPosition(objectXPosition ,objectYPosition );
+				m_objectSprite.setSize(29f*distanceToCurrentTarget, m_objectSprite.getHeight() );
 				float centerX = m_ship.m_body.getPosition().x;
 				float centerY = m_ship.m_body.getPosition().y;
-				Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
-				p.Fire(m_ship, m_target, (float) Math.random()/2 - .25f);
+				float targetCenterX = m_target.m_body.getPosition().x;
+				float targetCenterY = m_target.m_body.getPosition().y;
+				double angleRadians = Math.atan2(-centerY + targetCenterY,-centerX + targetCenterX);
+				m_objectSprite.setRotation((float) Math.toDegrees(angleRadians));
+				renderer.end();    // actual drawing is done on end(); if we do not end, we contaminate previous rendering.
+				renderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+				renderer.begin();
+				m_objectSprite.draw(renderer);
 			}
 			else
 			{
 				m_target = null;
 			}
 		}
+		
 	}
 
 	@Override
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_activateSecondaryMode = 120;
 	}
 
 	@Override

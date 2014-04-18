@@ -103,21 +103,21 @@ public class Ship extends ViewedCollidable
 		m_longRangeCMS.get(0).Equip(2);
 	}
 
-	public void ProcessCounterMeasures()
+	public void ProcessCounterMeasures(SpriteBatch renderer)
 	{
 		for( int i = 0; i < m_shortRangeCMS.size(); i++ )
 		{
-			m_shortRangeCMS.get(i).AcquireAndFire();
+			m_shortRangeCMS.get(i).AcquireAndFire( renderer );
 		}
 		
 		for( int i = 0; i < m_mediumRangeCMS.size(); i++ )
 		{
-			m_mediumRangeCMS.get(i).AcquireAndFire();
+			m_mediumRangeCMS.get(i).AcquireAndFire( renderer );
 		}
 		
 		for( int i = 0; i < m_longRangeCMS.size(); i++ )
 		{
-			m_longRangeCMS.get(i).AcquireAndFire();
+			m_longRangeCMS.get(i).AcquireAndFire( renderer );
 		}
 	}
 	
@@ -129,7 +129,7 @@ public class Ship extends ViewedCollidable
 		if( !m_inMenu )
 		{
 			m_detectionRange = 50f;
-			ProcessCounterMeasures();
+			ProcessCounterMeasures( renderer );
 			ce.Draw(renderer);
 			HandleShieldRecharging();
 			

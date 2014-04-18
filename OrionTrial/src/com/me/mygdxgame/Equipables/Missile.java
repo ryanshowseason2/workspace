@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -34,7 +35,7 @@ public class Missile extends CounterMeasure
 	}
 
 	@Override
-	public void AcquireAndFire()
+	public void AcquireAndFire( SpriteBatch renderer )
 	{
 		if( ( m_target != null && m_target.m_integrity <= 0 ) )
 		{
