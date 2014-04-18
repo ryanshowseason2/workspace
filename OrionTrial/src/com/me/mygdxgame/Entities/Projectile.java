@@ -74,12 +74,31 @@ public class Projectile extends ViewedCollidable
 		if( (!m_etherealBullet && object2.m_isTargetable) ||
 			( m_etherealBullet && object2.m_factionCode != 0 ) )
 		{
-			object2.damageIntegrity(crashVelocity, DamageType.Penetration );	
+			DamageType dType = DamageType.Penetration;
+			
+			dType = ShavretsDamageType(object2);
+			
+			object2.damageIntegrity(crashVelocity, dType );	
 			m_integrity -=1;
 			
 			BobbisHackingBullets(object2);
 			SSidsHackingBullets(object2);
 		}
+	}
+
+	private DamageType ShavretsDamageType(ViewedCollidable object2)
+	{
+		DamageType dType;
+		if( m_specialAbilitiesActivated.get(Characters.Sahvret) && 
+			object2.m_damageResistances[DamageType.Penetration.value] > object2.m_damageResistances[DamageType.Collision.value] )
+		{
+			dType = DamageType.Collision;
+		}
+		else
+		{
+			dType = DamageType.Penetration;
+		}
+		return dType;
 	}
 
 	private void BobbisHackingBullets(ViewedCollidable object2)

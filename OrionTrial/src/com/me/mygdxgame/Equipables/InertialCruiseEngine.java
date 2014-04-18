@@ -231,8 +231,8 @@ public class InertialCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce = (float)(-3.0f * m_ship.m_body.getLinearVelocity().x);
-        yForce = (float)(-3.0f * m_ship.m_body.getLinearVelocity().y);
+	    xForce = (float)(-1.0f * m_ship.m_body.getLinearVelocity().x);
+        yForce = (float)(-1.0f * m_ship.m_body.getLinearVelocity().y);
 	    ApplyThrust( xForce, yForce, true );
 	    m_brakesEngaged = true;
 	}
