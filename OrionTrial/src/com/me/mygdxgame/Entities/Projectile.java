@@ -19,7 +19,7 @@ public class Projectile extends ViewedCollidable
 		Sandy,
 		Gourt,
 		Noel,
-		Sahvret,
+		Shavret,
 		Bobbi,
 		SSid,
 		Belice,
@@ -59,10 +59,10 @@ public class Projectile extends ViewedCollidable
 
 	private void PopulateSpecials()
 	{
-		m_specialAbilitiesActivated.put(Characters.Sandy, false);
-		m_specialAbilitiesActivated.put(Characters.Gourt, true);
+		m_specialAbilitiesActivated.put(Characters.Sandy, true);
+		m_specialAbilitiesActivated.put(Characters.Gourt, false);
 		m_specialAbilitiesActivated.put(Characters.Noel, false);
-		m_specialAbilitiesActivated.put(Characters.Sahvret, false);
+		m_specialAbilitiesActivated.put(Characters.Shavret, false);
 		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
 		m_specialAbilitiesActivated.put(Characters.SSid, false);
 		m_specialAbilitiesActivated.put(Characters.Belice, false);
@@ -90,7 +90,7 @@ public class Projectile extends ViewedCollidable
 	private DamageType ShavretsDamageType(ViewedCollidable object2)
 	{
 		DamageType dType;
-		if( m_specialAbilitiesActivated.get(Characters.Sahvret) && 
+		if( m_specialAbilitiesActivated.get(Characters.Shavret) && 
 			object2.m_damageResistances[DamageType.Penetration.value] > object2.m_damageResistances[DamageType.Collision.value] )
 		{
 			dType = DamageType.Collision;
@@ -197,6 +197,13 @@ public class Projectile extends ViewedCollidable
 		{
 			m_etherealBullet = true;
 		}
+		
+		if( m_specialAbilitiesActivated.get(Characters.Sandy))
+		{
+			m_body.getFixtureList().get(0).setSensor(false);
+			m_body.getFixtureList().get(0).setRestitution(1f);;
+			m_integrity++;
+		}		
 	}
 	
 	@Override
