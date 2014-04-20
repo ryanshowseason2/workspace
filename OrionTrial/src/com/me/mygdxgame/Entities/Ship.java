@@ -60,6 +60,7 @@ public class Ship extends ViewedCollidable
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 		m_detectionRange = 50f;
 		m_font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
+		m_shieldDamageReductions[DamageType.Energy.value] = 5f;
 	}
 
 	@Override
@@ -78,10 +79,14 @@ public class Ship extends ViewedCollidable
 		   damage = damage * m_shieldDamageResistances[type.value];
 		   damage = damage > m_shieldDamageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
 		   damageToIntegrity = 0;
-		   m_shieldIntegrity = damage > m_shieldIntegrity ? 0 : m_shieldIntegrity - damage;
-	    }
-	    m_shieldRechargeCounter = m_shieldRechargeDelay;
+		   m_shieldIntegrity = damage > m_shieldIntegrity ? 0 : m_shieldIntegrity - damage;		  
+	    }	    
 
+	    if( damage > 0 )
+	    {
+		   m_shieldRechargeCounter = m_shieldRechargeDelay;
+	    }
+	    
 	    //super.damageIntegrity(damageToIntegrity, type);
     }
 	
