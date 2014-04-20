@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.me.mygdxgame.Entities.LeastDistantRaycast;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
@@ -87,49 +88,32 @@ public class Laser extends CounterMeasure
 				float objectXPosition = m_ship.m_objectXPosition;// - m_ship.m_objectAppearance.getWidth() / 2;
 				float objectYPosition = m_ship.m_objectYPosition;// - m_ship.m_objectAppearance.getHeight() / 2 ;
 				
-				m_laserMidBackgroundSprite.setPosition(objectXPosition ,objectYPosition );
-				m_laserMidBackgroundSprite.setOrigin(0, m_laserMidBackgroundSprite.getHeight()/2 );
-				m_laserMidBackgroundSprite.setSize(29f*distanceToCurrentTarget, m_laserMidBackgroundSprite.getHeight() );
-				m_laserMidBackgroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass / 2 );
+				//Resolve who the laser hit and where it impacted
+				LeastDistantRaycast ldr = new LeastDistantRaycast(m_ship.m_body);
+				m_world.rayCast(ldr, m_ship.m_body.getPosition(), m_target.m_body.getPosition() );
 				
-				m_laserMidForegroundSprite.setPosition(objectXPosition ,objectYPosition );
-				m_laserMidForegroundSprite.setOrigin(0, m_laserMidForegroundSprite.getHeight()/2 );
-				m_laserMidForegroundSprite.setSize(29f*distanceToCurrentTarget, m_laserMidForegroundSprite.getHeight() );
-				m_laserMidForegroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass );
+				float distanceLaserTraveled = ldr.m_minDistance;
 				
-				m_laserEndBackgroundSprite.setPosition(objectXPosition,objectYPosition );
-				m_laserEndBackgroundSprite.setOrigin(0, m_laserEndBackgroundSprite.getHeight()/2 );
-				m_laserEndBackgroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass );
+				SetupLaserSpritePositions(objectXPosition, objectYPosition,	distanceLaserTraveled);				
+				SetupSpriteRotations();
 				
-				m_laserEndForegroundSprite.setPosition(objectXPosition ,objectYPosition );
-				m_laserEndForegroundSprite.setOrigin(0, m_laserEndForegroundSprite.getHeight()/2 );
-				m_laserEndForegroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass );
 				
-				float centerX = m_ship.m_body.getPosition().x;
-				float centerY = m_ship.m_body.getPosition().y;
-				float targetCenterX = m_target.m_body.getPosition().x;
-				float targetCenterY = m_target.m_body.getPosition().y;
-				double angleRadians = Math.atan2(-centerY + targetCenterY,-centerX + targetCenterX);
-				m_laserMidBackgroundSprite.setRotation((float) Math.toDegrees(angleRadians));
-				m_laserMidForegroundSprite.setRotation((float) Math.toDegrees(angleRadians));
-				m_laserEndBackgroundSprite.setRotation((float) Math.toDegrees(angleRadians));
-				m_laserEndForegroundSprite.setRotation((float) Math.toDegrees(angleRadians));
+				
 				renderer.end();    // actual drawing is done on end(); if we do not end, we contaminate previous rendering.
 				renderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 				renderer.begin();
-				//renderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-				//m_laserMidBackgroundSprite.setAlpha(1f);
+
 				m_laserMidBackgroundSprite.draw(renderer);	
 				m_laserEndBackgroundSprite.draw(renderer);	
 				
 				
-				m_target.damageIntegrity(1f, DamageType.Energy);
+				ldr.m_entityHit.damageIntegrity(1f, DamageType.Energy);
 				
 				if( m_chargeUpCounter > m_chargeUpCriticalMass )
 				{
 					m_laserMidForegroundSprite.draw(renderer);
 					m_laserEndForegroundSprite.draw(renderer);
-					m_target.damageIntegrity(10f, DamageType.Energy);
+					ldr.m_entityHit.damageIntegrity(10f, DamageType.Energy);
 					
 					if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
 					{
@@ -151,6 +135,41 @@ public class Laser extends CounterMeasure
 			}
 		}
 		
+	}
+
+	private void SetupSpriteRotations()
+	{
+		float centerX = m_ship.m_body.getPosition().x;
+		float centerY = m_ship.m_body.getPosition().y;
+		float targetCenterX = m_target.m_body.getPosition().x;
+		float targetCenterY = m_target.m_body.getPosition().y;
+		double angleRadians = Math.atan2(-centerY + targetCenterY,-centerX + targetCenterX);
+		m_laserMidBackgroundSprite.setRotation((float) Math.toDegrees(angleRadians));
+		m_laserMidForegroundSprite.setRotation((float) Math.toDegrees(angleRadians));
+		m_laserEndBackgroundSprite.setRotation((float) Math.toDegrees(angleRadians));
+		m_laserEndForegroundSprite.setRotation((float) Math.toDegrees(angleRadians));
+	}
+
+	private void SetupLaserSpritePositions(float objectXPosition,
+			float objectYPosition, float distanceLaserTraveled)
+	{
+		m_laserMidBackgroundSprite.setPosition(objectXPosition ,objectYPosition );
+		m_laserMidBackgroundSprite.setOrigin(0, m_laserMidBackgroundSprite.getHeight()/2 );
+		m_laserMidBackgroundSprite.setSize(29f*distanceLaserTraveled, m_laserMidBackgroundSprite.getHeight() );
+		m_laserMidBackgroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass / 2 );
+		
+		m_laserMidForegroundSprite.setPosition(objectXPosition ,objectYPosition );
+		m_laserMidForegroundSprite.setOrigin(0, m_laserMidForegroundSprite.getHeight()/2 );
+		m_laserMidForegroundSprite.setSize(29f*distanceLaserTraveled, m_laserMidForegroundSprite.getHeight() );
+		m_laserMidForegroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass );
+		
+		m_laserEndBackgroundSprite.setPosition(objectXPosition,objectYPosition );
+		m_laserEndBackgroundSprite.setOrigin(0, m_laserEndBackgroundSprite.getHeight()/2 );
+		m_laserEndBackgroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass );
+		
+		m_laserEndForegroundSprite.setPosition(objectXPosition ,objectYPosition );
+		m_laserEndForegroundSprite.setOrigin(0, m_laserEndForegroundSprite.getHeight()/2 );
+		m_laserEndForegroundSprite.setScale( 1f,m_chargeUpCounter / m_chargeUpCriticalMass );
 	}
 
 	@Override
