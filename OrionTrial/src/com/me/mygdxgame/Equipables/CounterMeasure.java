@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Equipables;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 
 public abstract class CounterMeasure implements QueryCallback
 {
@@ -31,6 +33,7 @@ public abstract class CounterMeasure implements QueryCallback
 	public float[] m_rangeEnablersAndMultipliers = {0,0,0};
 	int m_fireFrequency = 6;
 	int m_fireCounter = 0;
+	EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
 	
 	public CounterMeasure( World w, Ship s, ArrayList<ViewedCollidable> aliveThings, Image icon )
 	{
@@ -38,6 +41,24 @@ public abstract class CounterMeasure implements QueryCallback
 		m_ship = s;
 		m_aliveThings = aliveThings;
 		m_icon = icon;
+		PopulateSpecials();
+	}
+	
+	private void PopulateSpecials()
+	{
+		m_specialAbilitiesActivated.put(Characters.Sandy, false);
+		m_specialAbilitiesActivated.put(Characters.Gourt, false);
+		m_specialAbilitiesActivated.put(Characters.Noel, false);
+		m_specialAbilitiesActivated.put(Characters.Shavret, true);
+		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
+		m_specialAbilitiesActivated.put(Characters.SSid, false);
+		m_specialAbilitiesActivated.put(Characters.Belice, false);
+		m_specialAbilitiesActivated.put(Characters.Yashpal, false);
+	}
+	
+	public void SetSpecials( EnumMap<Characters, Boolean> specialAbilitiesActivated )
+	{
+		m_specialAbilitiesActivated = specialAbilitiesActivated;		
 	}
 	
 	public void Equip( int rangeIndex )

@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Equipables;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -19,6 +20,7 @@ import com.me.mygdxgame.Entities.LeastDistantRaycast;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class Laser extends CounterMeasure
@@ -36,6 +38,8 @@ public class Laser extends CounterMeasure
 	float m_chargeUpCounter = 0;
 	float m_chargedDuration = 60;
 	float m_chargeUpCriticalMass = 300;
+	ArrayList<ViewedCollidable> m_targets = new ArrayList<ViewedCollidable>();
+	boolean m_superAbilityActivated = false;
 	
 	public Laser(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -63,75 +67,114 @@ public class Laser extends CounterMeasure
 	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
 	{
-		if( m_target == null )
+		SetupTargetsList();
+		
+		if( m_targets.size() > 0 )
 		{
-			// Pull the closest tracked target from the ship computer! 
+			for( int i = 0; i < m_targets.size(); i++ )
+			{
+				m_target = m_targets.get(i);
+				float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
+				
+				if( distanceToCurrentTarget <= m_range )
+				{
+					float objectXPosition = m_ship.m_objectXPosition;// - m_ship.m_objectAppearance.getWidth() / 2;
+					float objectYPosition = m_ship.m_objectYPosition;// - m_ship.m_objectAppearance.getHeight() / 2 ;
+					
+					//Resolve who the laser hit and where it impacted
+					LeastDistantRaycast ldr = new LeastDistantRaycast(m_ship.m_body);
+					m_world.rayCast(ldr, m_ship.m_body.getPosition(), m_target.m_body.getPosition() );
+					
+					float distanceLaserTraveled = ldr.m_minDistance;
+					
+					SetupLaserSpritePositions(objectXPosition, objectYPosition,	distanceLaserTraveled);				
+					SetupSpriteRotations();
+					
+					
+					
+					renderer.end();    // actual drawing is done on end(); if we do not end, we contaminate previous rendering.
+					renderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+					renderer.begin();
+	
+					m_laserMidBackgroundSprite.draw(renderer);	
+					m_laserEndBackgroundSprite.draw(renderer);	
+					
+					
+					ldr.m_entityHit.damageIntegrity(1f, DamageType.Energy);
+					
+					if( m_chargeUpCounter > m_chargeUpCriticalMass )
+					{
+						m_laserMidForegroundSprite.draw(renderer);
+						m_laserEndForegroundSprite.draw(renderer);
+						ldr.m_entityHit.damageIntegrity(10f, DamageType.Energy);
+						
+						if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
+						{
+							m_chargeUpCounter = 0;
+							if( m_chargedDuration > 60 )
+							{
+								m_chargedDuration = 60;
+								DisengageCM();
+							}
+							
+						}
+					}
+					
+					m_chargeUpCounter++;
+				}
+				else
+				{
+					m_target = null;
+				}
+			}
+		}
+		
+	}
+
+	private void SetupTargetsList()
+	{
+		m_targets.clear();
+		if( m_superAbilityActivated && m_specialAbilitiesActivated.get(Characters.Shavret) )
+		{
+			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			{
+				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
+				if( distance <= m_range )
+				{
+					m_targets.add( vc );
+				}
+			}
+		}
+		else
+		{			
+			// Pull the closest tracked target from the ship computer! 			
 			float leastDistance = Float.MAX_VALUE;
 			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
 			{
 				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
 				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
-				if( distance <= m_range && distance < leastDistance )
+				if( distance <= m_range && 
+				    ( distance < leastDistance ) )
 				{
+					m_targets.clear();
 					leastDistance = distance;
-					m_target = vc;
+					m_targets.add( vc );
 				}
-			}
-		}
-		
-		if( m_target != null )
-		{
-			float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
+			}	
 			
-			if( distanceToCurrentTarget <= m_range )
+			if( m_target != null )
 			{
-				float objectXPosition = m_ship.m_objectXPosition;// - m_ship.m_objectAppearance.getWidth() / 2;
-				float objectYPosition = m_ship.m_objectYPosition;// - m_ship.m_objectAppearance.getHeight() / 2 ;
-				
-				//Resolve who the laser hit and where it impacted
-				LeastDistantRaycast ldr = new LeastDistantRaycast(m_ship.m_body);
-				m_world.rayCast(ldr, m_ship.m_body.getPosition(), m_target.m_body.getPosition() );
-				
-				float distanceLaserTraveled = ldr.m_minDistance;
-				
-				SetupLaserSpritePositions(objectXPosition, objectYPosition,	distanceLaserTraveled);				
-				SetupSpriteRotations();
-				
-				
-				
-				renderer.end();    // actual drawing is done on end(); if we do not end, we contaminate previous rendering.
-				renderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-				renderer.begin();
-
-				m_laserMidBackgroundSprite.draw(renderer);	
-				m_laserEndBackgroundSprite.draw(renderer);	
-				
-				
-				ldr.m_entityHit.damageIntegrity(1f, DamageType.Energy);
-				
-				if( m_chargeUpCounter > m_chargeUpCriticalMass )
+				float distance = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition());
+				if( distance <= m_range && m_target.m_integrity > 0 )
 				{
-					m_laserMidForegroundSprite.draw(renderer);
-					m_laserEndForegroundSprite.draw(renderer);
-					ldr.m_entityHit.damageIntegrity(10f, DamageType.Energy);
-					
-					if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
-					{
-						m_chargeUpCounter = 0;
-						if( m_chargedDuration > 60 )
-						{
-							m_chargedDuration = 60;
-							DisengageCM();
-						}
-						
-					}
+					m_targets.clear();
+					m_targets.add( m_target );
 				}
-				
-				m_chargeUpCounter++;
-			}
-			else
-			{
-				m_target = null;
+				else
+				{
+					m_target = null;
+				}
 			}
 		}
 		
@@ -176,14 +219,15 @@ public class Laser extends CounterMeasure
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_chargedDuration = 600;
+		m_chargedDuration = 700;
+		m_superAbilityActivated = true;
 	}
 
 	@Override
 	public void DisengageCM()
 	{
 		super.DisengageCM();
-
+		m_superAbilityActivated = false;
 	}
 
 	@Override

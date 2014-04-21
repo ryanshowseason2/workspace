@@ -65,7 +65,7 @@ public class Projectile extends ViewedCollidable
 		m_specialAbilitiesActivated.put(Characters.Shavret, false);
 		m_specialAbilitiesActivated.put(Characters.Bobbi, false);
 		m_specialAbilitiesActivated.put(Characters.SSid, false);
-		m_specialAbilitiesActivated.put(Characters.Belice, true);
+		m_specialAbilitiesActivated.put(Characters.Belice, false);
 		m_specialAbilitiesActivated.put(Characters.Yashpal, false);
 	}
 

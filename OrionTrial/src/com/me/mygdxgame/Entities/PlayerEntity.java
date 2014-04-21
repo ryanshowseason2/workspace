@@ -296,6 +296,9 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 			{
 				m_longRangeCMS.get(i).SetTarget( target );
 			}
+			
+			m_trackedTargets.remove( target );
+			m_trackedTargets.add( target );
 		}
 		return 1;
 	}
