@@ -46,7 +46,7 @@ public abstract class CounterMeasure implements QueryCallback
 	
 	private void PopulateSpecials()
 	{
-		m_specialAbilitiesActivated.put(Characters.Sandy, false);
+		m_specialAbilitiesActivated.put(Characters.Sandy, true);
 		m_specialAbilitiesActivated.put(Characters.Gourt, false);
 		m_specialAbilitiesActivated.put(Characters.Noel, false);
 		m_specialAbilitiesActivated.put(Characters.Shavret, true);

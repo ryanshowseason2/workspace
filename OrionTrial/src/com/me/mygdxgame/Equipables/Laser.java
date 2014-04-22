@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -16,6 +17,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.me.mygdxgame.Entities.AllinPathRaycast;
+import com.me.mygdxgame.Entities.LaserRayCastBase;
 import com.me.mygdxgame.Entities.LeastDistantRaycast;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
@@ -45,7 +48,7 @@ public class Laser extends CounterMeasure
 	{
 		super(w, s, aliveThings,  new Image( new Texture(Gdx.files.internal("data/lasericon.png") ) ) );
 		// TODO Auto-generated constructor stub
-		m_rangeEnablersAndMultipliers[1] = 1f;
+		m_rangeEnablersAndMultipliers[1] = 2f;
 		m_laserMidBackground = new Texture(Gdx.files.internal("data/laser.png"));
 		m_laserMidBackgroundSprite = new Sprite( m_laserMidBackground );
 		m_laserMidForeground = new Texture(Gdx.files.internal("data/laserOverlayStatic.png"));
@@ -82,10 +85,27 @@ public class Laser extends CounterMeasure
 					float objectYPosition = m_ship.m_objectYPosition;// - m_ship.m_objectAppearance.getHeight() / 2 ;
 					
 					//Resolve who the laser hit and where it impacted
-					LeastDistantRaycast ldr = new LeastDistantRaycast(m_ship.m_body);
-					m_world.rayCast(ldr, m_ship.m_body.getPosition(), m_target.m_body.getPosition() );
+					LaserRayCastBase lrcb;
+					Vector2 targetPositionModded = new Vector2( m_target.m_body.getPosition() );
+					if( m_specialAbilitiesActivated.get(Characters.Sandy) )
+					{
+						lrcb = new AllinPathRaycast(m_ship.m_body, m_range );
+						float centerX = m_ship.m_body.getPosition().x;
+						float centerY = m_ship.m_body.getPosition().y;
+						float targetCenterX = m_target.m_body.getPosition().x;
+						float targetCenterY = m_target.m_body.getPosition().y;
+						double angleRadians = Math.atan2(-centerY + targetCenterY,-centerX + targetCenterX);
+						
+						targetPositionModded.x += m_range * Math.cos(angleRadians);
+						targetPositionModded.y += m_range * Math.sin(angleRadians);
+					}
+					else
+					{
+						lrcb = new LeastDistantRaycast(m_ship.m_body);
+					}
+					m_world.rayCast(lrcb, m_ship.m_body.getPosition(), targetPositionModded );
 					
-					float distanceLaserTraveled = ldr.m_minDistance;
+					float distanceLaserTraveled = lrcb.GetDistanceTraveled();
 					
 					SetupLaserSpritePositions(objectXPosition, objectYPosition,	distanceLaserTraveled);				
 					SetupSpriteRotations();
@@ -99,14 +119,21 @@ public class Laser extends CounterMeasure
 					m_laserMidBackgroundSprite.draw(renderer);	
 					m_laserEndBackgroundSprite.draw(renderer);	
 					
-					
-					ldr.m_entityHit.damageIntegrity(1f, DamageType.Energy);
+					ArrayList<ViewedCollidable> hitEntities = lrcb.GetEntitiesHit();
+					for(int j = 0; j< hitEntities.size(); j++ )
+					{
+						hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
+					}
 					
 					if( m_chargeUpCounter > m_chargeUpCriticalMass )
 					{
 						m_laserMidForegroundSprite.draw(renderer);
 						m_laserEndForegroundSprite.draw(renderer);
-						ldr.m_entityHit.damageIntegrity(10f, DamageType.Energy);
+						
+						for(int k = 0; k< hitEntities.size(); k++ )
+						{
+							hitEntities.get(k).damageIntegrity(10f, DamageType.Energy);
+						}					
 						
 						if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
 						{
@@ -115,8 +142,7 @@ public class Laser extends CounterMeasure
 							{
 								m_chargedDuration = 60;
 								DisengageCM();
-							}
-							
+							}							
 						}
 					}
 					

@@ -7,22 +7,24 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 
-public class LeastDistantRaycast extends LaserRayCastBase implements RayCastCallback
+public class AllinPathRaycast extends LaserRayCastBase implements RayCastCallback
 {
 	Body m_self;
-	public float m_minDistance;
+	public float m_range;
 	Vector2 m_contactPoint;
-	public ViewedCollidable m_entityHit;
 	ArrayList<ViewedCollidable> m_hitEntities = new ArrayList<ViewedCollidable>();
-	public LeastDistantRaycast(  Body self )
+	ArrayList<Vector2> m_hitPoints = new ArrayList<Vector2>();
+	public AllinPathRaycast(  Body self, float range )
 	{
 		m_self = self;
+		m_range = range;
 		Reset();
 	}
 	
 	public void Reset()
 	{
-		m_minDistance = Float.MAX_VALUE;
+		m_hitEntities.clear();
+		m_hitPoints.clear();
 	}
 	
 	@Override
@@ -33,12 +35,10 @@ public class LeastDistantRaycast extends LaserRayCastBase implements RayCastCall
 		ViewedCollidable inTheWay = (ViewedCollidable) fixture.getBody().getUserData();
 		float distance = navigator.m_body.getPosition().dst(point);
 		if( fixture.getBody() != m_self &&
-			!inTheWay.m_ignoreForPathing &&
-			distance < m_minDistance )
+			!inTheWay.m_ignoreForPathing )
 		{
-			m_contactPoint = point;
-			m_minDistance = distance;
-			m_entityHit = inTheWay;
+			m_hitEntities.add( inTheWay );
+			m_hitPoints.add( point );
 		}
 		return 1;
 	}
@@ -47,14 +47,13 @@ public class LeastDistantRaycast extends LaserRayCastBase implements RayCastCall
 	public float GetDistanceTraveled()
 	{
 		// TODO Auto-generated method stub
-		return m_minDistance;
+		return m_range;
 	}
 
 	@Override
 	public ArrayList<ViewedCollidable> GetEntitiesHit()
 	{
-		m_hitEntities.remove( m_entityHit );
-		m_hitEntities.add( m_entityHit );
 		return m_hitEntities;
 	}
+
 }
