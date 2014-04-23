@@ -38,7 +38,7 @@ public class Ship extends ViewedCollidable
     public float m_shieldIntegrity = 1000f;
     int m_shieldRechargeDelay = 120;
     int m_shieldRechargeCounter = 0;
-    float m_shieldIntegrityRechargeFactor = 1;
+    public float m_shieldIntegrityRechargeFactor = 1;
     float m_sensorRange = 30;
     public ArrayList<ViewedCollidable> m_trackedTargets = new ArrayList<ViewedCollidable>();
     public float m_softwareIntegrity = 1000f;
@@ -60,7 +60,7 @@ public class Ship extends ViewedCollidable
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 		m_detectionRange = 50f;
 		m_font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
-		m_shieldDamageReductions[DamageType.Energy.value] = 5f;
+		m_shieldDamageReductions[DamageType.Energy.value] = 1f;
 	}
 
 	@Override
@@ -165,6 +165,11 @@ public class Ship extends ViewedCollidable
 		{
 			m_shieldRechargeCounter--;
 		}		
+		
+		if( m_shieldIntegrity <= 0 && m_shieldIntegrityRechargeFactor < 0)
+		{
+			m_shieldIntegrityRechargeFactor= 1;
+		}
 	}
 
 	private void SetShieldColor()

@@ -143,9 +143,11 @@ public class Laser extends CounterMeasure implements QueryCallback
 						
 						for(int k = 0; k< hitEntities.size(); k++ )
 						{
-							hitEntities.get(k).damageIntegrity(10f, DamageType.Energy);
+							hitEntities.get(k).damageIntegrity(5f, DamageType.Energy);
 							
 							GourtLaserSpecial(hitEntities, k);
+							
+							BeliceLaserSpecial(hitEntities, k);
 						}					
 						
 						if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
@@ -168,6 +170,21 @@ public class Laser extends CounterMeasure implements QueryCallback
 			}
 		}
 		
+	}
+
+	private void BeliceLaserSpecial(ArrayList<ViewedCollidable> hitEntities,
+			int k)
+	{
+		// TODO Optimize out the array
+		if( m_specialAbilitiesActivated.get(Characters.Belice ) &&
+			Ship.class.isInstance(hitEntities.get(k)) )
+		{
+			Ship s = (Ship) hitEntities.get(k);
+			if(s.m_shieldIntegrityRechargeFactor > 0)
+			{
+				s.m_shieldIntegrityRechargeFactor*= -3;
+			}
+		}
 	}
 
 	private void SSidHackingLaser(ArrayList<ViewedCollidable> hitEntities, int j)
