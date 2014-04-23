@@ -25,13 +25,6 @@ public class NoWeapon extends CounterMeasure
 	}
 
 	@Override
-	public boolean reportFixture(Fixture fixture)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
 	{
 		// TODO Auto-generated method stub

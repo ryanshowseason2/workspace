@@ -21,7 +21,7 @@ import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Entities.Projectile.Characters;
 
-public abstract class CounterMeasure implements QueryCallback
+public abstract class CounterMeasure
 {
 	float m_range = 20;
 	World m_world;
@@ -46,8 +46,8 @@ public abstract class CounterMeasure implements QueryCallback
 	
 	private void PopulateSpecials()
 	{
-		m_specialAbilitiesActivated.put(Characters.Sandy, true);
-		m_specialAbilitiesActivated.put(Characters.Gourt, false);
+		m_specialAbilitiesActivated.put(Characters.Sandy, false);
+		m_specialAbilitiesActivated.put(Characters.Gourt, true);
 		m_specialAbilitiesActivated.put(Characters.Noel, false);
 		m_specialAbilitiesActivated.put(Characters.Shavret, true);
 		m_specialAbilitiesActivated.put(Characters.Bobbi, false);

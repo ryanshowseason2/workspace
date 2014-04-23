@@ -150,31 +150,4 @@ public class MachineGun extends CounterMeasure
 		super.DisengageCM();		
 	}
 
-	@Override
-	public boolean reportFixture(Fixture fixture)
-	{
-		Body potentialTarget = fixture.getBody();
-		float distanceToPotential = potentialTarget.getPosition().dst(m_ship.m_body.getPosition() );
-		float distanceToCurrentTarget = Float.MAX_VALUE;
-		ViewedCollidable vc = (ViewedCollidable) potentialTarget.getUserData();
-		
-		if(m_target != null)
-		{
-			distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
-		}
-		
-		if( potentialTarget != m_ship.m_body && 
-			distanceToPotential <= m_range &&
-			distanceToPotential < distanceToCurrentTarget &&
-			m_ship.m_factionCode != vc.m_factionCode &&
-			vc.m_factionCode != 0 &&
-			vc.m_isTargetable &&
-			vc.m_body != m_secondaryTarget.m_body )
-		{
-			m_target = (ViewedCollidable) potentialTarget.getUserData();
-		}
-		
-		return true;
-	}
-
 }

@@ -26,7 +26,7 @@ import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Entities.Projectile.Characters;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
-public class Laser extends CounterMeasure
+public class Laser extends CounterMeasure implements QueryCallback
 {
 	Texture m_laserMidBackground;
 	Texture m_laserMidForeground;
@@ -43,6 +43,7 @@ public class Laser extends CounterMeasure
 	float m_chargeUpCriticalMass = 300;
 	ArrayList<ViewedCollidable> m_targets = new ArrayList<ViewedCollidable>();
 	boolean m_superAbilityActivated = false;
+	ViewedCollidable m_currentTargetBeingDamaged;
 	
 	public Laser(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -133,6 +134,8 @@ public class Laser extends CounterMeasure
 						for(int k = 0; k< hitEntities.size(); k++ )
 						{
 							hitEntities.get(k).damageIntegrity(10f, DamageType.Energy);
+							
+							GourtLaserSpecial(hitEntities, k);
 						}					
 						
 						if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
@@ -155,6 +158,22 @@ public class Laser extends CounterMeasure
 			}
 		}
 		
+	}
+
+	private void GourtLaserSpecial(ArrayList<ViewedCollidable> hitEntities,
+			int k)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Gourt) &&
+			Ship.class.isInstance(hitEntities.get(k)) )
+		{
+			Ship s = (Ship) hitEntities.get(k);
+			
+			if( s.m_shieldIntegrity > 0 )
+			{			
+				m_currentTargetBeingDamaged = s;
+				m_world.QueryAABB(this, m_ship.m_body.getPosition().x - m_range / 1, m_ship.m_body.getPosition().y - m_range / 1, m_ship.m_body.getPosition().x + m_range / 1, m_ship.m_body.getPosition().y + m_range / 1 );
+			}
+		}
 	}
 
 	private void SetupTargetsList()
@@ -259,26 +278,19 @@ public class Laser extends CounterMeasure
 	@Override
 	public boolean reportFixture(Fixture fixture)
 	{
-		Body potentialTarget = fixture.getBody();
-		float distanceToPotential = potentialTarget.getPosition().dst(m_ship.m_body.getPosition() );
-		float distanceToCurrentTarget = Float.MAX_VALUE;
-		ViewedCollidable vc = (ViewedCollidable) potentialTarget.getUserData();
-		
-		if(m_target != null)
+		ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
+		if( vc.m_factionCode != m_ship.m_factionCode &&
+			vc != m_currentTargetBeingDamaged )
 		{
-			distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
+			float centerX = m_currentTargetBeingDamaged.m_body.getPosition().x;
+			float centerY = m_currentTargetBeingDamaged.m_body.getPosition().y;
+			float targetCenterX = fixture.getBody().getPosition().x;
+			float targetCenterY = fixture.getBody().getPosition().y;
+			double angleRadians = Math.atan2(-centerY + targetCenterY,-centerX + targetCenterX);
+			float forceX = (float) (-9000 * Math.cos(angleRadians));
+			float forceY = (float) (-9000 * Math.sin(angleRadians));
+			fixture.getBody().applyForceToCenter(forceX, forceY, true);
 		}
-		
-		if( potentialTarget != m_ship.m_body && 
-			distanceToPotential <= m_range &&
-			distanceToPotential < distanceToCurrentTarget &&
-			m_ship.m_factionCode != vc.m_factionCode &&
-			vc.m_factionCode != 0 &&
-			vc.m_isTargetable )
-		{
-			m_target = (ViewedCollidable) potentialTarget.getUserData();
-		}
-		
 		return true;
 	}
 
