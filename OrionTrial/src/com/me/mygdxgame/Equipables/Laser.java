@@ -125,11 +125,19 @@ public class Laser extends CounterMeasure implements QueryCallback
 					for(int j = 0; j< hitEntities.size(); j++ )
 					{
 						
+						float targetShields = 0;
+						if( Ship.class.isInstance(hitEntities.get(j)) )
+						{
+							Ship ship = (Ship) hitEntities.get(j);
+							targetShields = ship.m_shieldIntegrity;
+						}
 						
 						if( !BobbiLaserMicrowave(hitEntities.get(j)) )
 						{
 							hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
 						}
+						
+						YashpalLaserSpecial(hitEntities, j, targetShields);
 						
 						SSidHackingLaser(hitEntities, j);
 						
@@ -170,6 +178,22 @@ public class Laser extends CounterMeasure implements QueryCallback
 			}
 		}
 		
+	}
+
+	private void YashpalLaserSpecial(ArrayList<ViewedCollidable> hitEntities,
+			int j, float targetShields)
+	{
+		// TODO optimize this cast I've already done it
+		if( m_specialAbilitiesActivated.get(Characters.Yashpal ) &&
+				Ship.class.isInstance(hitEntities.get(j)) )
+		{
+			Ship ship = (Ship) hitEntities.get(j);
+			
+			if( targetShields == ship.m_shieldIntegrity )
+			{
+				m_ship.m_shieldIntegrity+= 2;
+			}														
+		}
 	}
 
 	private void BeliceLaserSpecial(ArrayList<ViewedCollidable> hitEntities,
