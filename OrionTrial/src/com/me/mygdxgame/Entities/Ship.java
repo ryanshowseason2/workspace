@@ -41,7 +41,7 @@ public class Ship extends ViewedCollidable
     float m_shieldIntegrityRechargeFactor = 1;
     float m_sensorRange = 30;
     public ArrayList<ViewedCollidable> m_trackedTargets = new ArrayList<ViewedCollidable>();
-    float m_softwareIntegrity = 1000f;
+    public float m_softwareIntegrity = 1000f;
     int m_hackedDrawCounter = 0;
     BitmapFont m_font;
     EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
@@ -228,7 +228,7 @@ public class Ship extends ViewedCollidable
 		m_softwareIntegrity-=d;
 		float attempt =  (float) (Math.random() * 1000);
 		boolean b = attempt > m_softwareIntegrity ? true : false;
-		m_hackedDrawCounter = m_hackedDrawCounter + ( b ? 60 : 0);
+		m_hackedDrawCounter = ( b ? m_hackedDrawCounter == 0 ? 60: m_hackedDrawCounter : m_hackedDrawCounter );
 		return b;
 	}
 	

@@ -25,11 +25,11 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	SeekType m_seekType;
 	SeekType m_onDeckSeekType;	
-	ViewedCollidable m_target = null;
+	public ViewedCollidable m_target = null;
 	Body m_targetBody = null;
 	float m_wayPointX;
 	float m_wayPointY;
-	Vector2 m_navigatingTo;
+	public Vector2 m_navigatingTo;
 	ArrayList<EnemyShip> m_fighterGroup = new ArrayList<EnemyShip>();
 	int m_soundTheAlarmCounter = 0;
 	

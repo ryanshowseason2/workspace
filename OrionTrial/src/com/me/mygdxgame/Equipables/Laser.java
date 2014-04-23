@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.AllinPathRaycast;
+import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.LaserRayCastBase;
 import com.me.mygdxgame.Entities.LeastDistantRaycast;
 import com.me.mygdxgame.Entities.Projectile;
@@ -124,6 +125,8 @@ public class Laser extends CounterMeasure implements QueryCallback
 					for(int j = 0; j< hitEntities.size(); j++ )
 					{
 						hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
+						
+						NoelLaserHack(hitEntities, j);
 					}
 					
 					if( m_chargeUpCounter > m_chargeUpCriticalMass )
@@ -158,6 +161,22 @@ public class Laser extends CounterMeasure implements QueryCallback
 			}
 		}
 		
+	}
+
+	private void NoelLaserHack(ArrayList<ViewedCollidable> hitEntities, int j)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Noel) &&
+				EnemyShip.class.isInstance(hitEntities.get(j)) )
+		{
+			EnemyShip s = (EnemyShip) hitEntities.get(j);
+			
+			if( s.AttemptHack( .1f ))
+			{
+				s.m_navigatingTo.x = -1;
+				s.m_target = null;
+				s.m_softwareIntegrity+=1;
+			}
+		}
 	}
 
 	private void GourtLaserSpecial(ArrayList<ViewedCollidable> hitEntities,
