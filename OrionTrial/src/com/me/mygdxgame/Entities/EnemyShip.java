@@ -31,7 +31,7 @@ public class EnemyShip extends Ship implements QueryCallback
 	float m_wayPointY;
 	public Vector2 m_navigatingTo;
 	ArrayList<EnemyShip> m_fighterGroup = new ArrayList<EnemyShip>();
-	int m_soundTheAlarmCounter = 0;
+	public int m_soundTheAlarmCounter = 0;
 	
 
 	public EnemyShip(String appearanceLocation, World world, float startX,

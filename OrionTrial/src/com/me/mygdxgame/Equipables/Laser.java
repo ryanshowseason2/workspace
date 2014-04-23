@@ -131,6 +131,8 @@ public class Laser extends CounterMeasure implements QueryCallback
 							hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
 						}
 						
+						SSidHackingLaser(hitEntities, j);
+						
 						NoelLaserHack(hitEntities, j);
 					}
 					
@@ -168,6 +170,20 @@ public class Laser extends CounterMeasure implements QueryCallback
 		
 	}
 
+	private void SSidHackingLaser(ArrayList<ViewedCollidable> hitEntities, int j)
+	{
+		// TODO optimize out the arraylist
+		if( m_specialAbilitiesActivated.get(Characters.SSid) &&
+				EnemyShip.class.isInstance(hitEntities.get(j)) )
+		{
+			EnemyShip s = (EnemyShip) hitEntities.get(j);
+			if( s.AttemptHack( .35f ) )
+			{
+				s.m_soundTheAlarmCounter -=5;
+			}
+		}
+	}
+
 	private boolean BobbiLaserMicrowave(ViewedCollidable vc )
 	{
 		boolean activated = false;
@@ -186,6 +202,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 
 	private void NoelLaserHack(ArrayList<ViewedCollidable> hitEntities, int j)
 	{
+		// TODO Optimize out the array
 		if( m_specialAbilitiesActivated.get(Characters.Noel) &&
 				EnemyShip.class.isInstance(hitEntities.get(j)) )
 		{
@@ -203,6 +220,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 	private void GourtLaserSpecial(ArrayList<ViewedCollidable> hitEntities,
 			int k)
 	{
+		// TODO Optimize out the array
 		if( m_specialAbilitiesActivated.get(Characters.Gourt) &&
 			Ship.class.isInstance(hitEntities.get(k)) )
 		{
