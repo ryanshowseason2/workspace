@@ -124,7 +124,12 @@ public class Laser extends CounterMeasure implements QueryCallback
 					ArrayList<ViewedCollidable> hitEntities = lrcb.GetEntitiesHit();
 					for(int j = 0; j< hitEntities.size(); j++ )
 					{
-						hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
+						
+						
+						if( !BobbiLaserMicrowave(hitEntities.get(j)) )
+						{
+							hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
+						}
 						
 						NoelLaserHack(hitEntities, j);
 					}
@@ -161,6 +166,22 @@ public class Laser extends CounterMeasure implements QueryCallback
 			}
 		}
 		
+	}
+
+	private boolean BobbiLaserMicrowave(ViewedCollidable vc )
+	{
+		boolean activated = false;
+		if( m_specialAbilitiesActivated.get(Characters.Bobbi) &&
+				Ship.class.isInstance(vc) )
+		{
+			Ship s = (Ship) vc;
+			if( s.m_shieldIntegrity > 0 )
+			{
+				s.m_integrity--;
+				activated = true;
+			}
+		}
+		return activated;
 	}
 
 	private void NoelLaserHack(ArrayList<ViewedCollidable> hitEntities, int j)
