@@ -45,6 +45,8 @@ public class Ship extends ViewedCollidable
     int m_hackedDrawCounter = 0;
     BitmapFont m_font;
     EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
+    
+    ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList< OverTimeEffect >();
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
@@ -150,6 +152,15 @@ public class Ship extends ViewedCollidable
 			m_pooledShieldEffect.draw(renderer, 1f/60f);
 			
 			DrawHackedIndicator(renderer);
+			
+			for( int i = 0; i < m_overTimeEffects.size(); i++ )
+			{
+				OverTimeEffect e = m_overTimeEffects.get(i);
+				if( !e.Action() )
+				{
+					m_overTimeEffects.remove(e);
+				}
+			}
 		}
 	}
 
@@ -247,5 +258,24 @@ public class Ship extends ViewedCollidable
 	@Override
 	public void destroy()
 	{
+	}
+	
+	public void AddOverTimeEffect( OverTimeEffect e )
+	{
+		boolean found = false;
+		for( int i = 0; i < m_overTimeEffects.size() && !found; i++ )
+		{
+			OverTimeEffect tmp = m_overTimeEffects.get(i);
+			if( tmp.m_effectCode == e.m_effectCode )
+			{
+				tmp.m_counter = e.m_counter;
+				found = true;
+			}
+		}
+		
+		if( !found )
+		{
+			m_overTimeEffects.add(e);
+		}
 	}
 }

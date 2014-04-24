@@ -10,7 +10,7 @@ public abstract class CruiseEngine
 {
 	Ship m_ship;
 	float m_maxVelocity;
-	boolean m_enginesEngaged = false;
+	public boolean m_enginesEngaged = false;
 	boolean m_jetsEngaged = false;
 	boolean m_brakesEngaged = false;
 	float m_airJetAttachX;
