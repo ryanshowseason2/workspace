@@ -73,8 +73,15 @@ public class Ship extends ViewedCollidable
 	@Override
 	public void damageIntegrity(float damage, DamageType type )
     {
+	    damageIntegrity(damage, type, false );
+    }
+	
+	@Override
+	public void damageIntegrity(float damage, DamageType type, boolean bypassResistances )
+    {
 		float damageToIntegrity = damage;
-	    if( m_shieldIntegrity > 0 )
+		
+	    if( m_shieldIntegrity > 0 && !bypassResistances )
 	    {		   		  
 		   damage = damage * m_shieldDamageResistances[type.value];
 		   damage = damage > m_shieldDamageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
@@ -87,7 +94,7 @@ public class Ship extends ViewedCollidable
 		   m_shieldRechargeCounter = m_shieldRechargeDelay;
 	    }
 	    
-	    //super.damageIntegrity(damageToIntegrity, type);
+	    //super.damageIntegrity(damageToIntegrity, type, bypassResistances );
     }
 	
 	public void AddShortRangeCounterMeasure( CounterMeasure c)

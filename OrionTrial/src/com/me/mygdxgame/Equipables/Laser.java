@@ -189,7 +189,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 		{
 			Ship ship = (Ship) hitEntities.get(j);
 			
-			if( targetShields == ship.m_shieldIntegrity )
+			if( targetShields == ship.m_shieldIntegrity && ship.m_shieldIntegrity > 0 )
 			{
 				m_ship.m_shieldIntegrity+= 2;
 			}														
@@ -234,7 +234,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 			Ship s = (Ship) vc;
 			if( s.m_shieldIntegrity > 0 )
 			{
-				s.m_integrity--;
+				s.damageIntegrity( 1f, DamageType.Energy, true );
 				activated = true;
 			}
 		}
@@ -363,7 +363,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_chargedDuration = 700;
+		m_chargedDuration = 600;
 		m_superAbilityActivated = true;
 	}
 

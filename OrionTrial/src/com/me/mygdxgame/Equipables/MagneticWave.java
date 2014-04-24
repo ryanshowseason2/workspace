@@ -16,10 +16,11 @@ import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 
-public class MagneticWave extends CounterMeasure
-{
-	ViewedCollidable m_secondaryTarget = null;
-	int m_activateSecondaryMode = 0;
+public class MagneticWave extends CounterMeasure implements QueryCallback
+{	
+	float m_potency = -12f;
+	float m_engagedMultiplier = 50f;
+	boolean m_engaged = false;
 	
 	public MagneticWave(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -35,59 +36,76 @@ public class MagneticWave extends CounterMeasure
 		return new Image( new Texture(Gdx.files.internal("data/magnet.png") ) );
 	}
 
-	@Override
-	public void AcquireAndFire( SpriteBatch renderer )
-	{
-		if( ( m_target != null && m_target.m_integrity <= 0 ) )
-		{
-			m_target = null;
-		}
-		
-		if( m_target == null )
-		{
-			float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			
-		}
-		
-		if( m_target != null )
-		{
-			float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
-			/*float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			float targetCenterX = m_target.m_body.getPosition().x;
-			float targetCenterY = m_target.m_body.getPosition().y;
-			Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
-			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
-			float xForce =  (float)(-1250f * Math.cos(angleRadians));
-	        float yForce =  (float)(-1250f * Math.sin(angleRadians));
-	        p.m_body.applyForceToCenter(xForce, yForce, true);*/
-			if( distanceToCurrentTarget <= m_range )
-			{
-				float centerX = m_ship.m_body.getPosition().x;
-				float centerY = m_ship.m_body.getPosition().y;
-				Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
-				p.Fire(m_ship, m_target, (float) Math.random()/2 - .25f);
-			}
-			else
-			{
-				m_target = null;
-			}
-		}
-	}
+	
+
 
 	@Override
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_activateSecondaryMode = 120;
+		m_potency *= m_engagedMultiplier;	
+		m_engaged = true;
 	}
 
 	@Override
 	public void DisengageCM()
 	{
 		super.DisengageCM();
+		m_engaged = false;
+	}
 
+	@Override
+	public boolean reportFixture(Fixture fixture)
+	{
+		Body potentialTarget = fixture.getBody();
+		float distanceToPotential = potentialTarget.getPosition().dst(m_ship.m_body.getPosition() );
+		ViewedCollidable vc = (ViewedCollidable) potentialTarget.getUserData();
+				
+		if( potentialTarget != m_ship.m_body && 
+			distanceToPotential <= m_range &&
+			m_ship.m_factionCode != vc.m_factionCode )
+		{
+			float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			float targetCenterX = vc.m_body.getPosition().x;
+			float targetCenterY = vc.m_body.getPosition().y;
+			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
+			float xForce =  (float)( m_potency * Math.cos(angleRadians) / distanceToPotential);
+	        float yForce =  (float)( m_potency * Math.sin(angleRadians) / distanceToPotential);
+	        if( m_engaged )
+	        {
+	        	vc.m_body.applyLinearImpulse(xForce, yForce, vc.m_body.getPosition().x, vc.m_body.getPosition().y, true);
+	        }
+	        else
+	        {
+	        	vc.m_body.applyForceToCenter(xForce, yForce, true);
+	        }
+		}
+		
+		return true;
+	}
+
+	@Override
+	public void AcquireAndFire(SpriteBatch renderer)
+	{
+		// TODO Auto-generated method stub
+		float centerX = m_ship.m_body.getPosition().x;
+		float centerY = m_ship.m_body.getPosition().y;
+		
+		m_world.QueryAABB(this, centerX - m_range / 2,
+								centerY - m_range / 2,
+								centerX + m_range / 2,
+								centerY + m_range / 2 );
+		
+		if( m_potency < -12 )
+		{
+			m_potency+= 2;
+		}
+		else if( m_engaged )
+		{
+			DisengageCM();
+			m_potency = -12;
+		}
 	}
 
 }

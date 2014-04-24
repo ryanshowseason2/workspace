@@ -44,7 +44,7 @@ public class Projectile extends ViewedCollidable
 		m_originX = startX;
 		m_originY = startY;
 		MassData data = m_body.getMassData();
-		data.mass = 0.00005f;
+		data.mass = 1f;
 		m_body.setMassData(data);
 		m_body.setBullet(true);
 		m_body.setUserData(this);

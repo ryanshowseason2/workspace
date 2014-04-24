@@ -135,8 +135,17 @@ public abstract class ViewedCollidable
 	   
 	   public void damageIntegrity(float damage, DamageType type )
 	   {
-		   damage = damage * m_damageResistances[type.value];
-		   damage = damage > m_damageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
+		   damageIntegrity(damage, type, false );
+	   }
+	   
+	   public void damageIntegrity(float damage, DamageType type, boolean bypassResistances )
+	   {
+		   if( !bypassResistances )
+		   {
+			   damage = damage * m_damageResistances[type.value];
+			   damage = damage > m_damageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
+		   }
+		   
 		   m_integrity -= damage;
 	   }
 

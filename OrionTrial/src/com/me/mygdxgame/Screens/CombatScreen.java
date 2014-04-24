@@ -139,7 +139,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         w.setContactListener(this);
         shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, -90, 50, 2, m_aliveThings );
         shippy.AddToFighterGroup( new EnemyShip( "data/stateczek.png", w, 0, 90, -90, 50, 2, m_aliveThings ) );
-        //shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
+        shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);
