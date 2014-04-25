@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.EngineBrakeEffect;
 import com.me.mygdxgame.Entities.EngineIntegrityCompromisedEffect;
+import com.me.mygdxgame.Entities.FreezeShip;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
@@ -106,6 +107,16 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	        
 	        ShavretMagWaveSpecial(vc);
 	        
+	        if( m_specialAbilitiesActivated.get(Characters.Noel ) &&
+    			m_engaged &&
+    			Ship.class.isInstance(vc) )
+    		{
+	        	Ship ship = (Ship) vc;
+	        	if(ship.AttemptHack(.1f))
+	        	{
+	        		ship.AddOverTimeEffect( new FreezeShip(300, 3, ship));
+	        	}
+    		}
 		}
 		
 		return true;

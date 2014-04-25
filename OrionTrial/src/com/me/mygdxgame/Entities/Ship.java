@@ -47,6 +47,7 @@ public class Ship extends ViewedCollidable
     EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
     
     ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList< OverTimeEffect >();
+	boolean m_freezeShip = false;
 	
 	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
@@ -142,6 +143,7 @@ public class Ship extends ViewedCollidable
 		
 		if( !m_inMenu )
 		{
+			
 			m_detectionRange = 50f;
 			SetShieldColor();
 			m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
@@ -156,9 +158,12 @@ public class Ship extends ViewedCollidable
 				}
 			}
 			
-			ProcessCounterMeasures( renderer );
-			ce.Draw(renderer);
-			HandleShieldRecharging();																		
+			if( !m_freezeShip )
+			{
+				ProcessCounterMeasures( renderer );
+				ce.Draw(renderer);
+				HandleShieldRecharging();
+			}
 		}
 	}
 
