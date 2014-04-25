@@ -18,6 +18,7 @@ import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Entities.Projectile.Characters;
+import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class MagneticWave extends CounterMeasure implements QueryCallback
 {	
@@ -103,9 +104,22 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	        
 	        BobbiMagWaveSpecial(vc);
 	        
+	        ShavretMagWaveSpecial(vc);
+	        
 		}
 		
 		return true;
+	}
+
+	private void ShavretMagWaveSpecial(ViewedCollidable vc)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Shavret ) &&
+			m_engaged )
+		{
+			double damage = Math.sqrt( Math.sqrt( vc.m_body.getLinearVelocity().x * vc.m_body.getLinearVelocity().x + vc.m_body.getLinearVelocity().y * vc.m_body.getLinearVelocity().y ) );
+			vc.damageIntegrity( (float) damage, DamageType.Penetration );
+			vc.m_body.setLinearVelocity(0, 0);
+		}
 	}
 
 	private void BobbiMagWaveSpecial(ViewedCollidable vc)

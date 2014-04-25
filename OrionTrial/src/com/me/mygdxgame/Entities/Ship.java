@@ -143,16 +143,10 @@ public class Ship extends ViewedCollidable
 		if( !m_inMenu )
 		{
 			m_detectionRange = 50f;
-			ProcessCounterMeasures( renderer );
-			ce.Draw(renderer);
-			HandleShieldRecharging();
-			
 			SetShieldColor();
 			m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
 			m_pooledShieldEffect.draw(renderer, 1f/60f);
-			
 			DrawHackedIndicator(renderer);
-			
 			for( int i = 0; i < m_overTimeEffects.size(); i++ )
 			{
 				OverTimeEffect e = m_overTimeEffects.get(i);
@@ -161,6 +155,10 @@ public class Ship extends ViewedCollidable
 					m_overTimeEffects.remove(e);
 				}
 			}
+			
+			ProcessCounterMeasures( renderer );
+			ce.Draw(renderer);
+			HandleShieldRecharging();																		
 		}
 	}
 
