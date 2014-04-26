@@ -32,7 +32,7 @@ public abstract class ViewedCollidable
     ParticleEffectPool m_deathEffectPool;
     PooledEffect m_pooledDeathEffect;
     public int m_factionCode = 0;
-    World m_world;
+    public World m_world;
     ArrayList<ViewedCollidable> m_aliveThings;
     float[] m_damageResistances = {1,1,1,1};
     float[] m_damageReductions = {0,0,0,0};

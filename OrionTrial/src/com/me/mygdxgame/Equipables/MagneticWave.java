@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -56,6 +57,8 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 		{
 			m_beliceSpecialMultiplier = -.01f;
 		}
+		
+		
 			
 	}
 
@@ -68,6 +71,14 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 		if( m_specialAbilitiesActivated.get(Characters.Belice ) )
 		{
 			m_beliceSpecialMultiplier = 1f;
+		}
+		
+		if( m_specialAbilitiesActivated.get(Characters.Gourt ) )
+		{
+			Vector2 gravity = new Vector2();
+			gravity.x =  0;
+			gravity.y =  0;
+			m_ship.m_world.setGravity(gravity);
 		}
 		
 	}
@@ -107,19 +118,24 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	        
 	        ShavretMagWaveSpecial(vc);
 	        
-	        if( m_specialAbilitiesActivated.get(Characters.Noel ) &&
-    			m_engaged &&
-    			Ship.class.isInstance(vc) )
-    		{
-	        	Ship ship = (Ship) vc;
-	        	if(ship.AttemptHack(.1f))
-	        	{
-	        		ship.AddOverTimeEffect( new FreezeShip(300, 3, ship));
-	        	}
-    		}
+	        NoelsMagwaveSpecial(vc);
 		}
 		
 		return true;
+	}
+
+	private void NoelsMagwaveSpecial(ViewedCollidable vc)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Noel ) &&
+			m_engaged &&
+			Ship.class.isInstance(vc) )
+		{
+			Ship ship = (Ship) vc;
+			if(ship.AttemptHack(.1f))
+			{
+				ship.AddOverTimeEffect( new FreezeShip(300, 3, ship));
+			}
+		}
 	}
 
 	private void ShavretMagWaveSpecial(ViewedCollidable vc)
@@ -187,6 +203,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 								centerX + m_range / 2,
 								centerY + m_range / 2 );
 
+		GourtsMagWaveSpecial();
 		
 		if( m_potency < -12 )
 		{
@@ -196,6 +213,18 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 		{
 			DisengageCM();
 			m_potency = -12;
+		}
+	}
+
+	private void GourtsMagWaveSpecial()
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Gourt ) &&
+			m_engaged )
+		{
+			Vector2 gravity = new Vector2();
+			gravity.x =  (float)( -m_potency * Math.cos(m_ship.m_angleRadians));
+			gravity.y =  (float)( -m_potency * Math.sin(m_ship.m_angleRadians) );
+			m_ship.m_world.setGravity(gravity);
 		}
 	}
 
