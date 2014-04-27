@@ -146,13 +146,18 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	        
 	        NoelsMagwaveSpecial(vc);
 	        
-	        if( m_specialAbilitiesActivated.get(Characters.Sandy ) )
-    		{
-    			vc.damageIntegrity(1f, DamageType.Collision );
-    		}
+	        SandyMagWaveSpecial(vc);	        
 		}
 		
 		return true;
+	}
+
+	private void SandyMagWaveSpecial(ViewedCollidable vc)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Sandy ) )
+		{
+			vc.damageIntegrity(1f, DamageType.Collision );
+		}
 	}
 
 	private void NoelsMagwaveSpecial(ViewedCollidable vc)
@@ -224,7 +229,6 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	@Override
 	public void AcquireAndFire(SpriteBatch renderer)
 	{
-		// TODO Auto-generated method stub
 		float centerX = m_ship.m_body.getPosition().x;
 		float centerY = m_ship.m_body.getPosition().y;
 		
