@@ -29,7 +29,7 @@ public class Projectile extends ViewedCollidable
 	EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
 	float m_originX;
 	float m_originY;
-	public float m_projectileVelocity = -50f;
+	public float m_projectileVelocity = -70f;
 	int m_bulletLife = 100;
 	boolean m_etherealBullet = false;
 	float m_minDistance;

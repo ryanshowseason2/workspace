@@ -129,6 +129,8 @@ public class EnemyShip extends Ship implements QueryCallback
 					if( m_fighterGroup.get(i).m_target == null )
 					{
 						m_fighterGroup.get(i).m_target = m_target;
+						m_fighterGroup.get(i).m_trackedTargets.remove(m_target);
+						m_fighterGroup.get(i).m_trackedTargets.add(m_target);
 					}
 				}
 			}
