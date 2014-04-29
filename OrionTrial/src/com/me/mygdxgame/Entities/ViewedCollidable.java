@@ -1,6 +1,9 @@
 package com.me.mygdxgame.Entities;
 
+
 import java.util.ArrayList;
+
+import BodyLoaderPackage.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -57,8 +60,9 @@ public abstract class ViewedCollidable
         
      };  
 
+     
 	   
-	   ViewedCollidable( String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode )
+      public ViewedCollidable(String appearanceLocation, String collisionData,	World world, float startX, float startY,ArrayList<ViewedCollidable> aliveThings, int factionCode)
 	   {
 		  m_world = world;
 		  m_aliveThings = aliveThings;
@@ -79,27 +83,35 @@ public abstract class ViewedCollidable
 
 	      // Create a circle shape and set its radius to 6
 	      CircleShape circle = new CircleShape();
-	      float radius = Math.max(m_objectAppearance.getWidth() / 2 / 29f, m_objectAppearance.getHeight() ) / 2 / 29f;
+	      float radius = Math.max(m_objectAppearance.getWidth() / 2 / 29f, m_objectAppearance.getHeight() / 2 / 29f ) ;
 	      circle.setRadius(radius);
 
 	      // Create a fixture definition to apply our shape to
 	      FixtureDef fixtureDef = new FixtureDef();
-	      fixtureDef.shape = circle;
 	      fixtureDef.density = 0.1f; 
 	      fixtureDef.friction = 0f;
 	      fixtureDef.restitution = 0.1f; // Make it bounce a little bit
 	      fixtureDef.filter.groupIndex = (short) (m_factionCode * -1);
-
-	      // Create our fixture and attach it to the body
-	      Fixture fixture = m_body.createFixture(fixtureDef);
-
+	      
+	      if( collisionData.length() == 0 )
+	      {
+	    	  fixtureDef.shape = circle;
+	    	// Create our fixture and attach it to the body
+		      Fixture fixture = m_body.createFixture(fixtureDef);
+	      }
+	      else
+	      {
+	    	  BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal(collisionData));
+	    	  loader.attachFixture(m_body, "Name", fixtureDef, 5f);
+	      }
+	      
 	      // Remember to dispose of any shapes after you're done with them!
 	      // BodyDef and FixtureDef don't need disposing, but shapes do.
 	      circle.dispose();
 	      aliveThings.add(this);
 	   }
-	   
-	   public void Draw( SpriteBatch renderer )
+
+	public void Draw( SpriteBatch renderer )
 	   {
 		   m_objectXPosition = m_body.getPosition().x*29f;
 		   m_objectYPosition = m_body.getPosition().y*29f;

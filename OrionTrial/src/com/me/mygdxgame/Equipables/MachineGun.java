@@ -69,7 +69,7 @@ public class MachineGun extends CounterMeasure
 			{
 				float centerX = m_ship.m_body.getPosition().x;
 				float centerY = m_ship.m_body.getPosition().y;
-				Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );				
+				Projectile p = new Projectile("data/bullet.png", "", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );				
 				p.Fire(m_ship, m_target, (float) Math.random()/2 - .25f);
 				m_fireCounter = m_fireFrequency;
 				m_ship.IncreaseDetectionRange( 5f );
@@ -110,7 +110,7 @@ public class MachineGun extends CounterMeasure
 					{
 						float centerX = m_ship.m_body.getPosition().x;
 						float centerY = m_ship.m_body.getPosition().y;
-						Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );				
+						Projectile p = new Projectile("data/bullet.png", "", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );				
 						p.Fire(m_ship, m_secondaryTarget, (float) Math.random()/2 - .25f);
 						m_secondaryFireCounter = m_secondaryFireFrequency;
 						m_ship.IncreaseDetectionRange( 5f );					

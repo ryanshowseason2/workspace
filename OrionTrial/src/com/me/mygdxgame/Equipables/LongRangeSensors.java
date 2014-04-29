@@ -39,42 +39,7 @@ public class LongRangeSensors extends CounterMeasure
 	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
 	{
-		if( ( m_target != null && m_target.m_integrity <= 0 ) )
-		{
-			m_target = null;
-		}
-		
-		if( m_target == null )
-		{
-			float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			
-		}
-		
-		if( m_target != null )
-		{
-			float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
-			/*float centerX = m_ship.m_body.getPosition().x;
-			float centerY = m_ship.m_body.getPosition().y;
-			float targetCenterX = m_target.m_body.getPosition().x;
-			float targetCenterY = m_target.m_body.getPosition().y;
-			Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
-			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
-			float xForce =  (float)(-1250f * Math.cos(angleRadians));
-	        float yForce =  (float)(-1250f * Math.sin(angleRadians));
-	        p.m_body.applyForceToCenter(xForce, yForce, true);*/
-			if( distanceToCurrentTarget <= m_range )
-			{
-				float centerX = m_ship.m_body.getPosition().x;
-				float centerY = m_ship.m_body.getPosition().y;
-				Projectile p = new Projectile("data/bullet.png", m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
-				p.Fire(m_ship, m_target, (float) Math.random()/2 - .25f);
-			}
-			else
-			{
-				m_target = null;
-			}
-		}
+
 	}
 
 	@Override

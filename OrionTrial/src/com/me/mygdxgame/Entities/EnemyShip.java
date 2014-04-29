@@ -34,11 +34,11 @@ public class EnemyShip extends Ship implements QueryCallback
 	public int m_soundTheAlarmCounter = 0;
 	
 
-	public EnemyShip(String appearanceLocation, World world, float startX,
+	public EnemyShip(String appearanceLocation, String collisionData, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV,
 			int factionCode, ArrayList<ViewedCollidable> aliveThings)
 	{
-		super(appearanceLocation, world, startX, startY, maxV, aliveThings,
+		super(appearanceLocation, collisionData, world, startX, startY, maxV, aliveThings,
 				factionCode);
 		m_factionCode = factionCode;
 		m_objectSprite.rotate((float) initialAngleAdjust);
@@ -409,7 +409,8 @@ public class EnemyShip extends Ship implements QueryCallback
 		if (p != null && 
 			p.m_factionCode != m_factionCode &&
 			p.m_isTargetable &&
-			p.m_factionCode != 0 )
+			p.m_factionCode != 0 &&
+			Ship.class.isInstance(p) )
 		{			
 			Ship s = (Ship) fixture.getBody().getUserData();
 			

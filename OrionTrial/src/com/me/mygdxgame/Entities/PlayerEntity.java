@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 import com.me.mygdxgame.Equipables.CounterMeasure;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
@@ -29,26 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 public class PlayerEntity extends Ship implements InputProcessor, RayCastCallback, QueryCallback
 {
 
-	public PlayerEntity(String appearanceLocation, World world, float startX,
-			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam, Stage stage ) 
-	{
-		super(appearanceLocation, world, startX, startY, maxV, aliveThings, 1 );
-		// TODO Auto-generated constructor stub
-		
-		m_objectSprite.rotate((float) initialAngleAdjust);
-		m_body.setFixedRotation(true);
-		MassData data = m_body.getMassData();
-		data.mass = 10;
-		m_body.setMassData(data);
-		m_body.setUserData(this);		
-		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));
-		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
-		m_pooledDeathEffect = m_deathEffectPool.obtain();	
-		m_cam = cam;
-		m_buttonListener = new PlayerButtonListener(this, stage );
-		m_equipChangeListener = new EquipChangeListener( this );
-	}
-	
 	int m_lastKey = -1;
 	long m_keyPressedMilliseconds = 0;
 	ParallaxCamera m_cam;
@@ -59,8 +40,39 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public Button m_shortRange;
 	public Button m_changeEquipment;
 	public Window m_window;	
+	WingBlade m_leftWing;
 	
 	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
+	
+	public PlayerEntity(String appearanceLocation, String collisionData, World world, float startX,
+			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam, Stage stage ) 
+	{
+		super(appearanceLocation, collisionData, world, startX, startY, maxV, aliveThings, 1 );
+		// TODO Auto-generated constructor stub
+		
+		//m_objectSprite.rotate((float) initialAngleAdjust);
+		m_body.setFixedRotation(true);
+		m_body.setTransform(m_body.getPosition(), (float) Math.toRadians(0 ) );
+		MassData data = m_body.getMassData();
+		data.mass = 10;
+		m_body.setMassData(data);
+		m_body.setUserData(this);		
+		m_deathEffect.load(Gdx.files.internal("data/explosionred.p"), Gdx.files.internal("data/"));
+		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
+		m_pooledDeathEffect = m_deathEffectPool.obtain();	
+		m_cam = cam;
+		m_buttonListener = new PlayerButtonListener(this, stage );
+		m_equipChangeListener = new EquipChangeListener( this );
+		
+		m_leftWing = new WingBlade("data/wingblade.png", m_world, m_body.getPosition().x, m_body.getPosition().y-.2f, aliveThings, 1, this );
+		
+		DistanceJointDef jointDef = new DistanceJointDef(); 
+		jointDef.initialize(m_body, m_leftWing.m_body, m_body.getPosition(), m_leftWing.m_body.getPosition() );
+		
+		m_world.createJoint(jointDef);
+	}
+	
+	
 	   
    public void HandleMovement(ParallaxCamera cam)
    {
@@ -70,11 +82,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
       cam.unproject( vec );
       m_angleRadians = Math.atan2(vec.y - pos.y*29f, vec.x - pos.x*29f);
       
-      float degrees = (float) (m_angleRadians * 180 / Math.PI);
+      float degrees = (float) Math.toDegrees(m_angleRadians);
       float difference = degrees - m_angleDegrees;
-      m_objectSprite.rotate( (float) (difference) );
+      m_objectSprite.setRotation(m_angleDegrees - 90f );//rotate( (float) (difference) );
       m_angleDegrees = (float) degrees;
-      m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees ) );
+      m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees- 90f ) );
       
       
       

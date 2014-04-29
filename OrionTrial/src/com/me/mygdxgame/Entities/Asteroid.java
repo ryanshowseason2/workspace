@@ -10,8 +10,8 @@ import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class Asteroid extends ViewedCollidable {
 
-	public Asteroid(String appearanceLocation, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
-		super(appearanceLocation, world, startX, startY, aliveThings, 0);
+	public Asteroid(String appearanceLocation, String collisionData, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
+		super(appearanceLocation, collisionData, world, startX, startY, aliveThings, 0);
 		// TODO Auto-generated constructor stub
 		
 		MassData data = m_body.getMassData();

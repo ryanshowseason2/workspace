@@ -36,15 +36,15 @@ public class Projectile extends ViewedCollidable
 	Ship m_ship;
 	ViewedCollidable m_originalTarget;
 	
-	public Projectile(String appearanceLocation, World world, float startX,
+	public Projectile(String appearanceLocation, String collisionData, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
 	{
-		super(appearanceLocation, world, startX, startY, aliveThings, factionCode);
+		super(appearanceLocation, collisionData, world, startX, startY, aliveThings, factionCode);
 		// TODO Auto-generated constructor stub		
 		m_originX = startX;
 		m_originY = startY;
 		MassData data = m_body.getMassData();
-		data.mass = 1f;
+		data.mass = .00001f;
 		m_body.setMassData(data);
 		m_body.setBullet(true);
 		m_body.setUserData(this);

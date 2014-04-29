@@ -27,7 +27,7 @@ import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class MagneticWave extends CounterMeasure implements QueryCallback
 {	
-	float m_potency = -22f;
+	float m_potency = -32f;
 	float m_engagedMultiplier = 50f;
 	boolean m_engaged = false;
 	float m_beliceSpecialMultiplier = 1f;

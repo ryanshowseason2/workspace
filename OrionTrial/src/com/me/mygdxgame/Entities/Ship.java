@@ -49,9 +49,9 @@ public class Ship extends ViewedCollidable
     ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList< OverTimeEffect >();
 	boolean m_freezeShip = false;
 	
-	public Ship(String appearanceLocation, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
+	public Ship(String appearanceLocation, String collisionData, World world, float startX, float startY, float maxV, ArrayList<ViewedCollidable> aliveThings, int factionCode ) 
 	{
-		super(appearanceLocation, world, startX, startY, aliveThings, factionCode );
+		super(appearanceLocation, collisionData, world, startX, startY, aliveThings, factionCode );
 		// TODO Auto-generated constructor stub
 		m_maxVelocity = maxV;
 		me = new ConventionalManeuverEngine( this, maxV );

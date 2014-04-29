@@ -129,16 +129,16 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
-        player = new PlayerEntity("data/shipsized.png", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
+        player = new PlayerEntity("data/shipsized.png", "data/myshipcollision.json", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
-        asty = new Asteroid("data/asteroid.png", w, 0, 40, m_aliveThings );
-        asty = new Asteroid("data/asteroid.png", w, 5, 40, m_aliveThings );
-        asty = new Asteroid("data/asteroid.png", w, 10, 40, m_aliveThings );
-        asty = new Asteroid("data/asteroid.png", w, -5, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", "", w, 0, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", "",w, 5, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", "",w, 10, 40, m_aliveThings );
+        asty = new Asteroid("data/asteroid.png", "",w, -5, 40, m_aliveThings );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
-        shippy = new EnemyShip( "data/stateczek.png", w, 0, 50, -90, 50, 2, m_aliveThings );
-        shippy.AddToFighterGroup( new EnemyShip( "data/stateczek.png", w, 0, 90, -90, 50, 2, m_aliveThings ) );
+        shippy = new EnemyShip( "data/stateczek.png", "",w, 0, 50, -90, 50, 2, m_aliveThings );
+        shippy.AddToFighterGroup( new EnemyShip( "data/stateczek.png", "", w, 0, 90, -90, 50, 2, m_aliveThings ) );
         shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
         /** BOX2D LIGHT STUFF BEGIN */
