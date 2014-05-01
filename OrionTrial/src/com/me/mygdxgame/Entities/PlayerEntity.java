@@ -18,6 +18,8 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 import com.me.mygdxgame.Equipables.CounterMeasure;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
@@ -40,7 +42,8 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public Button m_shortRange;
 	public Button m_changeEquipment;
 	public Window m_window;	
-	WingBlade m_leftWing;
+	public WingBlade m_leftWing;
+	public WingBlade m_rightWing;
 	
 	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
 	
@@ -64,12 +67,12 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_buttonListener = new PlayerButtonListener(this, stage );
 		m_equipChangeListener = new EquipChangeListener( this );
 		
-		m_leftWing = new WingBlade("data/wingblade.png", m_world, m_body.getPosition().x, m_body.getPosition().y-.2f, aliveThings, 1, this );
+		m_leftWing = new WingBlade("data/wingblade.png", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
+		m_leftWing.m_body.setTransform(m_body.getPosition().x - 2.5f, m_body.getPosition().y + .65f, (float) (Math.PI - Math.PI/8));
 		
-		DistanceJointDef jointDef = new DistanceJointDef(); 
-		jointDef.initialize(m_body, m_leftWing.m_body, m_body.getPosition(), m_leftWing.m_body.getPosition() );
-		
-		m_world.createJoint(jointDef);
+		m_rightWing = new WingBlade("data/wingblade.png", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
+		m_rightWing.m_rightSide = true;
+		m_rightWing.m_body.setTransform(m_body.getPosition().x + 2.5f, m_body.getPosition().y + .65f, (float) ( Math.PI/8));
 	}
 	
 	
@@ -86,7 +89,14 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
       float difference = degrees - m_angleDegrees;
       m_objectSprite.setRotation(m_angleDegrees - 90f );//rotate( (float) (difference) );
       m_angleDegrees = (float) degrees;
-      m_body.setTransform(m_body.getPosition(), (float) Math.toRadians( m_angleDegrees- 90f ) );
+      
+      //Normalize angle so that joints don't go fuckin nuts
+      float bodyTransformAngle = (float) (m_angleRadians - Math.PI/2);
+      if( bodyTransformAngle < 0 )
+      {
+    	  bodyTransformAngle+= 2*Math.PI;
+      }
+      m_body.setTransform(m_body.getPosition(), bodyTransformAngle );
       
       
       

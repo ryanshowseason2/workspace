@@ -353,7 +353,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
     			}
     		}
     		spriteBatch.end();
-    		
+    		Vector3 vec = new Vector3( Gdx.input.getX(0), Gdx.input.getY(0) ,0 );
+  	      cam.unproject( vec );
     		/** BOX2D LIGHT STUFF BEGIN */
 
     		
@@ -375,17 +376,22 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		m_stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
     		m_stage.draw();
+
     		
-    		/*
+    	      Vector2 pos = player.m_body.getPosition();
+    	      Vector2 pos2 =  player.m_leftWing.m_body.getPosition();
+    		
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-     		font.draw(spriteBatch, "Integrity: " + shippy.m_integrity , 0, 150);
-     		font.draw(spriteBatch, "boost juice: " + player.me.m_boostJuice , 0, 120);
-     		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
+     		font.draw(spriteBatch, "angle: " + Math.toRadians( player.m_angleRadians ) , 0, 150);
+     		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 120);
+     		font.draw(spriteBatch, "wing x:  " + pos2.x*29f + " y: " + pos2.y*29f , 0, 90);
+     		font.draw(spriteBatch, "wing x:  " + player.m_leftWing.m_objectXPosition + " y: " + player.m_leftWing.m_objectYPosition , 0, 60);
+     		/*font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
-     		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
-    		spriteBatch.end();*/
+     		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);*/
+    		spriteBatch.end();
     		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{

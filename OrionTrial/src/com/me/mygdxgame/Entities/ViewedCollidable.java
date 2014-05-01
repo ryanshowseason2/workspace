@@ -115,26 +115,15 @@ public abstract class ViewedCollidable
 	   {
 		   m_objectXPosition = m_body.getPosition().x*29f;
 		   m_objectYPosition = m_body.getPosition().y*29f;
-		   /*renderer.draw(m_objectAppearance,
-				   (Gdx.graphics.getWidth() - m_objectAppearance.getWidth()) / 2.0f,
-				   (Gdx.graphics.getHeight() - m_objectAppearance.getHeight()) / 2.0f
-				   ,m_objectAppearance.getWidth()/2.0f,
-				   m_objectAppearance.getHeight()/2.0f, 
-				   m_objectAppearance.getWidth(), 
-				   m_objectAppearance.getHeight(),
-				   1f, 
-				   1f,
-				   false,
-				   false);*/
+
 		   m_objectSprite.setPosition(m_objectXPosition - m_objectAppearance.getWidth() / 2, m_objectYPosition - m_objectAppearance.getHeight() / 2 );
 		   m_objectSprite.draw( renderer );
+		   
 		   if( m_integrity <= 0 )
 		   {
 			   m_pooledDeathEffect.setPosition(m_objectXPosition, m_objectYPosition);
 			   m_pooledDeathEffect.draw(renderer, 1f/60f );   
-		   }
-		   
-	      //renderer.draw( m_objectAppearance, m_objectXPosition - m_objectAppearance.getWidth() / 2, m_objectYPosition - m_objectAppearance.getHeight() / 2 );
+		   }		   
 	   }
 	   
 	   void Setlocation( float x, float y )

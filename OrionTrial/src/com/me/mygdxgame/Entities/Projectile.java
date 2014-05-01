@@ -72,8 +72,9 @@ public class Projectile extends ViewedCollidable
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity)
 	{
-		if( (!m_etherealBullet && object2.m_isTargetable) ||
-			( m_etherealBullet && object2.m_factionCode != 0 ) )
+		if( ((!m_etherealBullet && object2.m_isTargetable) ||
+			( m_etherealBullet && object2.m_factionCode != 0 ) ) &&
+			!WingBlade.class.isInstance(object2 ) )
 		{
 			DamageType dType = DamageType.Penetration;
 			
