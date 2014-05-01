@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -44,6 +45,7 @@ import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.WingBlade;
 import com.me.mygdxgame.Equipables.Hacking;
 import com.me.mygdxgame.Equipables.Laser;
 import com.me.mygdxgame.Equipables.LongRangeSensors;
@@ -112,7 +114,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Button m_shortRange;
 	Button m_changeEquipment;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
-    
+	
 	public CombatScreen()
 	{
 		background = new Texture(Gdx.files.internal("data/background.jpg"));
@@ -352,6 +354,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
     				m_deadThings.add( tmp );
     			}
     		}
+    		
+    		
     		spriteBatch.end();
     		Vector3 vec = new Vector3( Gdx.input.getX(0), Gdx.input.getY(0) ,0 );
   	      cam.unproject( vec );
@@ -506,7 +510,19 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	public void preSolve(Contact contact, Manifold oldManifold) 
 	{
 		// TODO Auto-generated method stub
+		if( WingBlade.class.isInstance( contact.getFixtureA().getBody().getUserData() ) )
+		{
+			contact.setEnabled(false);
+			WingBlade wb = (WingBlade) contact.getFixtureA().getBody().getUserData();
+			wb.HandleContact(contact);
+		}
 		
+		if( WingBlade.class.isInstance( contact.getFixtureB().getBody().getUserData() ) )
+		{
+			contact.setEnabled(false);
+			WingBlade wb = (WingBlade) contact.getFixtureB().getBody().getUserData();
+			wb.HandleContact(contact);
+		}
 	}
 
 	@Override
