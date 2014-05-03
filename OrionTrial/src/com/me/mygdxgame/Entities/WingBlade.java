@@ -21,9 +21,9 @@ public class WingBlade extends ViewedCollidable
 	boolean m_rightSide = false;
 	ArrayList<Vector2>  m_contactPoints = new ArrayList<Vector2>();
 	
-	ParticleEffect m_engineEffect = new ParticleEffect();
-    ParticleEffectPool m_engineEffectPool;
-    PooledEffect m_pooledEngineEffect;
+	ParticleEffect m_saberHitEffect = new ParticleEffect();
+    ParticleEffectPool m_saberHitEffectPool;
+    PooledEffect m_pooledSaberHitEffect;
 	
 	public WingBlade(String appearanceLocation,
 			World world, float startX, float startY,
@@ -43,9 +43,9 @@ public class WingBlade extends ViewedCollidable
 		m_objectSprite.setPosition(startX * 29f, startY* 29f);
 		m_ship = s;
 		
-		m_engineEffect.load(Gdx.files.internal("data/engine.p"), Gdx.files.internal("data/"));
-		m_engineEffectPool = new ParticleEffectPool(m_engineEffect, 1, 2);
-		m_pooledEngineEffect = m_engineEffectPool.obtain();
+		m_saberHitEffect.load(Gdx.files.internal("data/saberhit.p"), Gdx.files.internal("data/"));
+		m_saberHitEffectPool = new ParticleEffectPool(m_saberHitEffect, 1, 2);
+		m_pooledSaberHitEffect = m_saberHitEffectPool.obtain();
 	}
 
 	@Override
@@ -93,8 +93,8 @@ public class WingBlade extends ViewedCollidable
 	   	   {
 			   Vector2 contactPoint = m_contactPoints.get(i);
 	   		   //font.draw(spriteBatch, "X", contactPoint.x * 29f, contactPoint.y * 29f );
-			   m_pooledEngineEffect.setPosition( contactPoint.x * 29f, contactPoint.y * 29f );
-				m_pooledEngineEffect.draw(renderer, 1f/60f);
+			   m_pooledSaberHitEffect.setPosition( contactPoint.x * 29f, contactPoint.y * 29f );
+			   m_pooledSaberHitEffect.draw(renderer, 1f/60f);
 	   	   }
 	   	   m_contactPoints.clear();
 		   
@@ -108,10 +108,24 @@ public class WingBlade extends ViewedCollidable
 	
 	public void HandleContact( Contact contact )
 	{
-		ExtractContactPoints(contact.getFixtureA() );
-		ExtractContactPoints(contact.getFixtureB() );
+		if( m_activated )
+		{
+			ExtractContactPoints(contact.getFixtureA() );
+			ExtractContactPoints(contact.getFixtureB() );
+			ApplyDamage(contact.getFixtureA());
+			ApplyDamage(contact.getFixtureB());
+		}
 	}
 
+	private void ApplyDamage( Fixture fixture)
+	{
+		if( !WingBlade.class.isInstance( fixture.getBody().getUserData()))
+		{
+			ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
+			vc.damageIntegrity( 2, DamageType.Energy );
+		}
+	}
+	
 	private void ExtractContactPoints(Fixture fixture )
 	{
 		if( PolygonShape.class.isInstance( fixture.getShape()) )

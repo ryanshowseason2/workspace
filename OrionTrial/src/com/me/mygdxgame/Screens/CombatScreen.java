@@ -357,8 +357,6 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		
     		spriteBatch.end();
-    		Vector3 vec = new Vector3( Gdx.input.getX(0), Gdx.input.getY(0) ,0 );
-  	      cam.unproject( vec );
     		/** BOX2D LIGHT STUFF BEGIN */
 
     		
@@ -385,7 +383,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     	      Vector2 pos = player.m_body.getPosition();
     	      Vector2 pos2 =  player.m_leftWing.m_body.getPosition();
     		
-     	// draw fps
+     	/*/ draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
      		font.draw(spriteBatch, "angle: " + Math.toRadians( player.m_angleRadians ) , 0, 150);
@@ -394,8 +392,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		font.draw(spriteBatch, "wing x:  " + player.m_leftWing.m_objectXPosition + " y: " + player.m_leftWing.m_objectYPosition , 0, 60);
      		/*font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
-     		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);*/
-    		spriteBatch.end();
+     		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
+    		spriteBatch.end();*/
     		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{

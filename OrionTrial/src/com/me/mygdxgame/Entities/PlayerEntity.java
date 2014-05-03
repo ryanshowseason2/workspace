@@ -92,10 +92,6 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
       
       //Normalize angle so that joints don't go fuckin nuts
       float bodyTransformAngle = (float) (m_angleRadians - Math.PI/2);
-      if( bodyTransformAngle < 0 )
-      {
-    	  bodyTransformAngle+= 2*Math.PI;
-      }
       m_body.setTransform(m_body.getPosition(), bodyTransformAngle );
       
       
