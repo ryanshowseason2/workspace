@@ -45,6 +45,7 @@ public class Ship extends ViewedCollidable
     int m_hackedDrawCounter = 0;
     BitmapFont m_font;
     EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
+    public boolean m_isEthereal = false;
     
     ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList< OverTimeEffect >();
 	boolean m_freezeShip = false;

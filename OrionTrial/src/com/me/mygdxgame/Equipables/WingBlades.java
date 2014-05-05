@@ -15,9 +15,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.Projectile.Characters;
+import com.me.mygdxgame.Entities.WingBlade;
 
 public class WingBlades extends CounterMeasure
 {
@@ -26,6 +29,9 @@ public class WingBlades extends CounterMeasure
     ParticleEffectPool m_sawEffectPool;
     PooledEffect m_pooledSawEffect;
     PooledEffect m_pooledSawEffectOriginal;
+    WingBlade m_left;
+    WingBlade m_right;
+    int m_activatedCounter = 0;
     
 	public WingBlades(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -49,6 +55,23 @@ public class WingBlades extends CounterMeasure
 
 	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Belice) )
+		{
+			DrawChainsaw(renderer);
+		}
+		
+		if(m_activatedCounter > 0)
+		{
+			m_activatedCounter--;
+			if(m_activatedCounter <= 0 )
+			{
+				DisengageCM();
+			}
+		}
+	}
+
+	private void DrawChainsaw(SpriteBatch renderer)
 	{
 		float centerX = m_ship.m_body.getPosition().x;
 		float centerY = m_ship.m_body.getPosition().y;
@@ -102,12 +125,39 @@ public class WingBlades extends CounterMeasure
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
+		m_ship.m_isEthereal = true;
+		m_activatedCounter = 250;
 	}
 
 	@Override
 	public void DisengageCM()
 	{
 		super.DisengageCM();
+		m_ship.m_isEthereal = false;
 	}
+	
+	@Override
+	public void Equip( int rangeIndex )
+	{
+		super.Equip(rangeIndex);
+		
+		if( PlayerEntity.class.isInstance( m_ship ) )
+		{
+			PlayerEntity p = (PlayerEntity) m_ship;
+			m_left = p.m_leftWing;
+			m_right = p.m_rightWing;
+			m_left.m_activated = true;
+			m_right.m_activated = true;
+			m_left.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
+			m_right.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
+		}
+	}
+	
+	public void Unequip()
+	{
+		m_left.m_activated = false;
+		m_right.m_activated = false;
+	}
+
 
 }

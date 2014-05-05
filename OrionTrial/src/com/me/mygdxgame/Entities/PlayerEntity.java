@@ -47,6 +47,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	
 	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
 	
+	
 	public PlayerEntity(String appearanceLocation, String collisionData, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam, Stage stage ) 
 	{
@@ -335,6 +336,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	{
 		if( rangeIndex == 0 )
 		{
+			for(int i = 0; i< m_shortRangeCMS.size(); i++ )
+			{
+				CounterMeasure tmp = m_shortRangeCMS.get(i);
+				tmp.Unequip();
+			}
 			m_shortRangeCMS.clear();
 			super.AddShortRangeCounterMeasure(c);
 			m_shortRange.clearChildren();
@@ -344,6 +350,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		
 		if( rangeIndex == 1 )
 		{
+			for(int i = 0; i< m_mediumRangeCMS.size(); i++ )
+			{
+				CounterMeasure tmp = m_mediumRangeCMS.get(i);
+				tmp.Unequip();
+			}
 			m_mediumRangeCMS.clear();
 			super.AddMidRangeCounterMeasure(c);
 			m_mediumRange.clearChildren();
@@ -353,6 +364,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		
 		if( rangeIndex == 2 )
 		{
+			for(int i = 0; i< m_longRangeCMS.size(); i++ )
+			{
+				CounterMeasure tmp = m_longRangeCMS.get(i);
+				tmp.Unequip();
+			}
 			m_longRangeCMS.clear();
 			super.AddLongRangeCounterMeasure(c);
 			m_longRange.clearChildren();

@@ -268,9 +268,12 @@ public class EnemyShip extends Ship implements QueryCallback
 		 Waypoint leftPath = null;
 		 Waypoint rightPath = null;
 		 
+		 int iterations = 0;
+		 
 		 // while we don't have a waypoint with LOS
 		 while( !losToEnemy )
 		 {			 
+			 
 			 // for each item in generation list
 			 for( int i = 0; i < generationList.size(); i++ )
 			 {
@@ -290,6 +293,7 @@ public class EnemyShip extends Ship implements QueryCallback
 				 boolean losToWaypoint = false;
 				 Waypoint w = vetList.get(i);
 				 //while
+				 int wayPointIterations = 0;
 				 while ( !losToWaypoint )
 				 {						 
 				 	//if have LOS to generated waypoint
@@ -328,6 +332,13 @@ public class EnemyShip extends Ship implements QueryCallback
 							 w.m_waypoint.y = gen.m_right.m_waypoint.y; 
 						 }							 
 					 }
+					 
+					 wayPointIterations++;
+					 
+					 if( wayPointIterations > 400 )
+					 {
+						 losToWaypoint = true;
+					 }
 				 }
 			 }
 			 
@@ -355,7 +366,15 @@ public class EnemyShip extends Ship implements QueryCallback
 			 }
 			 
 			 validWaypoints.clear();
+			 
+			 iterations++;
+			 
+			 if( iterations > 7 )
+			 {
+				 losToEnemy = true;
+			 }
 		 }
+		 
 		 
 		 if( takeLeftPath )
 		 {

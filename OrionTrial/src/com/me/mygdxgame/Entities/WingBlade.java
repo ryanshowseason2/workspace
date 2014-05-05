@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -12,18 +13,21 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class WingBlade extends ViewedCollidable
 {
-	boolean m_activated = true;
-	Ship m_ship;
+	public boolean m_activated = false;
+	public Ship m_ship;
 	boolean m_rightSide = false;
 	ArrayList<Vector2>  m_contactPoints = new ArrayList<Vector2>();
 	
 	ParticleEffect m_saberHitEffect = new ParticleEffect();
     ParticleEffectPool m_saberHitEffectPool;
     PooledEffect m_pooledSaberHitEffect;
+    
+    public EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
 	
 	public WingBlade(String appearanceLocation,
 			World world, float startX, float startY,
@@ -122,7 +126,7 @@ public class WingBlade extends ViewedCollidable
 		if( !WingBlade.class.isInstance( fixture.getBody().getUserData()))
 		{
 			ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
-			vc.damageIntegrity( 2, DamageType.Energy );
+			//vc.damageIntegrity( 2, DamageType.Energy );
 		}
 	}
 	

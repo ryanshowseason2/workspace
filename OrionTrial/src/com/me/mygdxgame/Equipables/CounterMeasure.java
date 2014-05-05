@@ -89,5 +89,10 @@ public abstract class CounterMeasure
 		m_target = target;
 	}
 
+	public void Unequip()
+	{
+		// Nothing to do in base class
+	}
+
 	
 }

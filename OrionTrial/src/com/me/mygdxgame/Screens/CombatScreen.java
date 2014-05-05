@@ -521,6 +521,26 @@ public class CombatScreen extends OrionScreen implements ContactListener
 			WingBlade wb = (WingBlade) contact.getFixtureB().getBody().getUserData();
 			wb.HandleContact(contact);
 		}
+		
+		if( PlayerEntity.class.isInstance( contact.getFixtureA().getBody().getUserData() ) )
+		{
+			PlayerEntity p = (PlayerEntity) contact.getFixtureA().getBody().getUserData();
+			if( p.m_isEthereal )
+			{
+				contact.setEnabled(false);
+				p.m_leftWing.HandleContact(contact);
+			}
+		}
+		
+		if( PlayerEntity.class.isInstance( contact.getFixtureB().getBody().getUserData() ) )
+		{
+			PlayerEntity p = (PlayerEntity) contact.getFixtureB().getBody().getUserData();
+			if( p.m_isEthereal )
+			{
+				contact.setEnabled(false);
+				p.m_leftWing.HandleContact(contact);
+			}
+		}
 	}
 
 	@Override
