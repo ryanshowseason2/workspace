@@ -92,7 +92,6 @@ public class WingBlade extends ViewedCollidable
 		   for( int i = 0; i < m_contactPoints.size(); i++ )
 	   	   {
 			   Vector2 contactPoint = m_contactPoints.get(i);
-	   		   //font.draw(spriteBatch, "X", contactPoint.x * 29f, contactPoint.y * 29f );
 			   m_pooledSaberHitEffect.setPosition( contactPoint.x * 29f, contactPoint.y * 29f );
 			   m_pooledSaberHitEffect.draw(renderer, 1f/60f);
 	   	   }
@@ -128,7 +127,8 @@ public class WingBlade extends ViewedCollidable
 		if( !WingBlade.class.isInstance( fixture.getBody().getUserData()))
 		{
 			ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
-			vc.damageIntegrity( .25f, DamageType.Energy, true, false, false );
+			boolean directDamage = m_specialAbilitiesActivated.get(Characters.Yashpal);
+			vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
 			vc.damageIntegrity( m_extraDamage, DamageType.Energy );
 			m_extraDamage*=.6f;
 		}

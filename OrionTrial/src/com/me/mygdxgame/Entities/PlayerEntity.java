@@ -48,10 +48,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
 	
 	
-	public PlayerEntity(String appearanceLocation, String collisionData, World world, float startX,
+	public PlayerEntity(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam, Stage stage ) 
 	{
-		super(appearanceLocation, collisionData, world, startX, startY, maxV, aliveThings, 1 );
+		super(appearanceLocation+".png", appearanceLocation+".json", world, startX, startY, maxV, aliveThings, 1 );
 		// TODO Auto-generated constructor stub
 		
 		//m_objectSprite.rotate((float) initialAngleAdjust);
@@ -86,13 +86,11 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
       cam.unproject( vec );
       m_angleRadians = Math.atan2(vec.y - pos.y*29f, vec.x - pos.x*29f);
       
-      float degrees = (float) Math.toDegrees(m_angleRadians);
-      float difference = degrees - m_angleDegrees;
-      m_objectSprite.setRotation(m_angleDegrees - 90f );//rotate( (float) (difference) );
-      m_angleDegrees = (float) degrees;
+      m_angleDegrees = (float) Math.toDegrees(m_angleRadians);
+      m_objectSprite.setRotation(m_angleDegrees );//rotate( (float) (difference) );
       
       //Normalize angle so that joints don't go fuckin nuts
-      float bodyTransformAngle = (float) (m_angleRadians - Math.PI/2);
+      float bodyTransformAngle = (float) (m_angleRadians);
       m_body.setTransform(m_body.getPosition(), bodyTransformAngle );
       
       

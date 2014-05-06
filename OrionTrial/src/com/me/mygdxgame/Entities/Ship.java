@@ -150,11 +150,8 @@ public class Ship extends ViewedCollidable
 			m_detectionRange = 50f;
 			SetShieldColor();
 			m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
-			//m_pooledShieldEffect.getEmitters().get(0).getAngle().setAlwaysActive(true);
-			//m_pooledShieldEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleRadians);
-			//m_pooledShieldEffect.getEmitters().get(0).getAngle().setLow((float) m_angleRadians);
-			m_pooledShieldEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees - 90);
-			m_pooledShieldEffect.getEmitters().get(0).getRotation().setLow((float) m_angleDegrees - 90);
+			m_pooledShieldEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledShieldEffect.getEmitters().get(0).getRotation().setLow((float) m_angleDegrees);
 			m_pooledShieldEffect.draw(renderer, 1f/60f);
 			DrawHackedIndicator(renderer);
 			for( int i = 0; i < m_overTimeEffects.size(); i++ )
