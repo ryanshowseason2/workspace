@@ -299,7 +299,8 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	{
 		ViewedCollidable target = (ViewedCollidable) fixture.getBody().getUserData();
 		if( target != this &&
-			target.m_isTargetable )
+			target.m_isTargetable &&
+			target.m_factionCode != m_factionCode )
 		{
 			for( int i = 0; i < m_shortRangeCMS.size(); i++ )
 			{

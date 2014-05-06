@@ -234,7 +234,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 			Ship s = (Ship) vc;
 			if( s.m_shieldIntegrity > 0 )
 			{
-				s.damageIntegrity( 1f, DamageType.Energy, true );
+				s.damageIntegrity( 1f, DamageType.Energy, true, true, true );
 				activated = true;
 			}
 		}

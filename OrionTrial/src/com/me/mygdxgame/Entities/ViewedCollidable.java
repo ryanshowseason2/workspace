@@ -136,10 +136,10 @@ public abstract class ViewedCollidable
 	   
 	   public void damageIntegrity(float damage, DamageType type )
 	   {
-		   damageIntegrity(damage, type, false );
+		   damageIntegrity(damage, type, false, false, false );
 	   }
 	   
-	   public void damageIntegrity(float damage, DamageType type, boolean bypassResistances )
+	   public void damageIntegrity(float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
 	   {
 		   if( !bypassResistances )
 		   {

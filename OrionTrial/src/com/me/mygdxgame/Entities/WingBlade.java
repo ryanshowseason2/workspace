@@ -26,6 +26,7 @@ public class WingBlade extends ViewedCollidable
 	ParticleEffect m_saberHitEffect = new ParticleEffect();
     ParticleEffectPool m_saberHitEffectPool;
     PooledEffect m_pooledSaberHitEffect;
+    public float m_extraDamage = 100;
     
     public EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(Characters.class);
 	
@@ -37,11 +38,6 @@ public class WingBlade extends ViewedCollidable
 				aliveThings, factionCode);
 		m_body.setUserData(this);
 		m_ignoreForPathing = true;
-		
-		for(int i = 0; i < m_body.getFixtureList().size; i++ )
-		{
-			//m_body.getFixtureList().get(i).setSensor(true);
-		}
 		
 		//m_objectSprite.setOrigin(0, m_objectSprite.getHeight()/2);
 		m_objectSprite.setPosition(startX * 29f, startY* 29f);
@@ -63,7 +59,7 @@ public class WingBlade extends ViewedCollidable
 	}
 
 	@Override
-	public void damageIntegrity(float damage, DamageType type, boolean bypassResistances )
+	public void damageIntegrity(float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
     {
     }
 	
@@ -107,6 +103,12 @@ public class WingBlade extends ViewedCollidable
 			   m_pooledDeathEffect.setPosition(m_objectXPosition, m_objectYPosition);
 			   m_pooledDeathEffect.draw(renderer, 1f/60f );   
 		   }
+		   
+		   m_extraDamage*=2;
+		   if( m_extraDamage > 100 )
+		   {
+			   m_extraDamage = 100;
+		   }
 		}
     }
 	
@@ -126,7 +128,9 @@ public class WingBlade extends ViewedCollidable
 		if( !WingBlade.class.isInstance( fixture.getBody().getUserData()))
 		{
 			ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
-			//vc.damageIntegrity( 2, DamageType.Energy );
+			vc.damageIntegrity( .25f, DamageType.Energy, true, false, false );
+			vc.damageIntegrity( m_extraDamage, DamageType.Energy );
+			m_extraDamage*=.6f;
 		}
 	}
 	

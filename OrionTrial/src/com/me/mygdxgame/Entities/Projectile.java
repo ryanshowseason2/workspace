@@ -80,7 +80,7 @@ public class Projectile extends ViewedCollidable
 			
 			dType = ShavretsDamageType(object2);
 			
-			object2.damageIntegrity(crashVelocity, dType );	
+			object2.damageIntegrity(crashVelocity/5, dType );	
 			m_integrity -=1;
 			
 			BobbisHackingBullets(object2);

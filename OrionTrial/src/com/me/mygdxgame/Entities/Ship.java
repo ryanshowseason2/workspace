@@ -59,7 +59,7 @@ public class Ship extends ViewedCollidable
 		ce = new ConventionalCruiseEngine( this, maxV );
 		m_aliveThings = aliveThings;
 		
-		m_shieldEffect.load(Gdx.files.internal("data/shield.p"), Gdx.files.internal("data/"));
+		m_shieldEffect.load(Gdx.files.internal("data/newshield.p"), Gdx.files.internal("data/"));
 		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 		m_detectionRange = 50f;
@@ -77,18 +77,21 @@ public class Ship extends ViewedCollidable
 	@Override
 	public void damageIntegrity(float damage, DamageType type )
     {
-	    damageIntegrity(damage, type, false );
+	    damageIntegrity(damage, type, false, false, false );
     }
 	
 	@Override
-	public void damageIntegrity(float damage, DamageType type, boolean bypassResistances )
+	public void damageIntegrity(float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
     {
 		float damageToIntegrity = damage;
 		
-	    if( m_shieldIntegrity > 0 && !bypassResistances )
-	    {		   		  
-		   damage = damage * m_shieldDamageResistances[type.value];
-		   damage = damage > m_shieldDamageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
+	    if( m_shieldIntegrity > 0 && !bypassShields )
+	    {		 
+	       if( !bypassShieldResistances )
+	       {
+			   damage = damage * m_shieldDamageResistances[type.value];
+			   damage = damage > m_shieldDamageReductions[type.value] ? damage - m_damageReductions[type.value] : 0;
+	       }
 		   damageToIntegrity = 0;
 		   m_shieldIntegrity = damage > m_shieldIntegrity ? 0 : m_shieldIntegrity - damage;		  
 	    }	    
@@ -98,7 +101,7 @@ public class Ship extends ViewedCollidable
 		   m_shieldRechargeCounter = m_shieldRechargeDelay;
 	    }
 	    
-	    //super.damageIntegrity(damageToIntegrity, type, bypassResistances );
+	    //super.damageIntegrity(damageToIntegrity, type, bypassShieldResistances, bypassShields, bypassResistances  );
     }
 	
 	public void AddShortRangeCounterMeasure( CounterMeasure c)
@@ -139,15 +142,19 @@ public class Ship extends ViewedCollidable
 	
 	@Override
 	public void Draw( SpriteBatch renderer )
-	{
+	{		
 		super.Draw(renderer);
-		
 		if( !m_inMenu )
 		{
 			
 			m_detectionRange = 50f;
 			SetShieldColor();
 			m_pooledShieldEffect.setPosition( m_objectXPosition , m_objectYPosition );
+			//m_pooledShieldEffect.getEmitters().get(0).getAngle().setAlwaysActive(true);
+			//m_pooledShieldEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleRadians);
+			//m_pooledShieldEffect.getEmitters().get(0).getAngle().setLow((float) m_angleRadians);
+			m_pooledShieldEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees - 90);
+			m_pooledShieldEffect.getEmitters().get(0).getRotation().setLow((float) m_angleDegrees - 90);
 			m_pooledShieldEffect.draw(renderer, 1f/60f);
 			DrawHackedIndicator(renderer);
 			for( int i = 0; i < m_overTimeEffects.size(); i++ )
@@ -166,6 +173,8 @@ public class Ship extends ViewedCollidable
 				HandleShieldRecharging();
 			}
 		}
+		
+		super.Draw(renderer);
 	}
 
 	private void DrawHackedIndicator(SpriteBatch renderer)
@@ -199,7 +208,14 @@ public class Ship extends ViewedCollidable
 		float[] r ={1,1,1,1};
 		float shieldPercent = m_shieldIntegrity / 1000f;
 		
-		if(shieldPercent > .9f )
+		if( m_isEthereal )
+		{
+			//blue
+			r[0] = .1f;
+			r[1] = .75f;
+			r[2] = 1f;
+		}
+		else if(shieldPercent > .9f )
 		{
 			// white
 			r[0] = 1f;
@@ -210,8 +226,8 @@ public class Ship extends ViewedCollidable
 		{
 			//blue
 			r[0] = .1f;
-			r[1] = .75f;
-			r[2] = 1f;
+			r[1] = .95f;
+			r[2] = .1f;
 		}
 		else if(shieldPercent > .5f )
 		{
