@@ -5,9 +5,9 @@ import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 public class EngineIntegrityCompromisedEffect extends OverTimeEffect
 {
 	Ship m_ship;
-	public EngineIntegrityCompromisedEffect(float counter, int effectCode, Ship ship)
+	public EngineIntegrityCompromisedEffect(float counter, Ship ship)
 	{
-		super(counter, effectCode);
+		super(counter, EffectCode.EngineIntegrity);
 		m_ship = ship;
 	}
 

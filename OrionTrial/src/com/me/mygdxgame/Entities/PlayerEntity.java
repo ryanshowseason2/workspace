@@ -69,11 +69,9 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_equipChangeListener = new EquipChangeListener( this );
 		
 		m_leftWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
-		m_leftWing.m_body.setTransform(m_body.getPosition().x - 2.5f, m_body.getPosition().y + .65f, (float) (Math.PI - Math.PI/8));
 		
 		m_rightWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
 		m_rightWing.m_rightSide = true;
-		m_rightWing.m_body.setTransform(m_body.getPosition().x + 2.5f, m_body.getPosition().y + .65f, (float) ( Math.PI/8));
 	}
 	
 	

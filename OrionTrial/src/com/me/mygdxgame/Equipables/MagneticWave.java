@@ -169,7 +169,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 			Ship ship = (Ship) vc;
 			if(ship.AttemptHack(.1f))
 			{
-				ship.AddOverTimeEffect( new FreezeShip(300, 3, ship));
+				ship.AddOverTimeEffect( new FreezeShip(300, ship));
 			}
 		}
 	}
@@ -192,7 +192,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 			Ship.class.isInstance(vc) )
 		{
 			Ship ship = (Ship) vc;
-			ship.AddOverTimeEffect( new EngineIntegrityCompromisedEffect(60, 2, ship ));
+			ship.AddOverTimeEffect( new EngineIntegrityCompromisedEffect(60, ship ));
 		}
 	}
 
@@ -205,7 +205,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 			
 			if( ship.AttemptHack( .1f ) )
 			{
-				ship.AddOverTimeEffect( new EngineBrakeEffect(420f, 1, ship ));
+				ship.AddOverTimeEffect( new EngineBrakeEffect(420f, ship ));
 			}
 		}
 	}

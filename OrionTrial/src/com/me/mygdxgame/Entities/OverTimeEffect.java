@@ -2,9 +2,17 @@ package com.me.mygdxgame.Entities;
 
 public abstract class OverTimeEffect
 {
+	public enum EffectCode
+	{
+		EngineBrake,
+		FreezeShip,
+		EngineIntegrity,
+		RunawayStarSling
+	}
+	
 	float m_counter = 60;
-	int m_effectCode;
-	public OverTimeEffect( float counter, int effectCode )
+	EffectCode m_effectCode;
+	public OverTimeEffect( float counter, EffectCode effectCode )
 	{
 		m_counter = counter;
 		m_effectCode = effectCode;

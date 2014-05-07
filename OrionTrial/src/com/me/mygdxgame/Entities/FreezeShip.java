@@ -5,9 +5,9 @@ import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 public class FreezeShip extends OverTimeEffect
 {
 	Ship m_ship;
-	public FreezeShip(float counter, int effectCode, Ship ship)
+	public FreezeShip(float counter, Ship ship)
 	{
-		super(counter, effectCode);
+		super(counter, EffectCode.FreezeShip);
 		m_ship = ship;
 	}
 

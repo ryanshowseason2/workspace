@@ -3,9 +3,9 @@ package com.me.mygdxgame.Entities;
 public class EngineBrakeEffect extends OverTimeEffect
 {
 	Ship m_ship;
-	public EngineBrakeEffect(float counter, int effectCode, Ship ship )
+	public EngineBrakeEffect(float counter, Ship ship )
 	{
-		super(counter, effectCode);
+		super(counter, EffectCode.EngineBrake);
 		m_ship = ship;
 	}
 

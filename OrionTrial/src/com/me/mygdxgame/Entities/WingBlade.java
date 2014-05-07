@@ -132,18 +132,31 @@ public class WingBlade extends ViewedCollidable
 			vc.damageIntegrity( m_extraDamage, DamageType.Energy );
 			m_extraDamage*=.6f;
 			
+			ShavretBladeSpecial(vc);
+			
 			if( m_specialAbilitiesActivated.get(Characters.Gourt) &&
-				!PlayerEntity.class.isInstance(vc) )
+				Ship.class.isInstance(vc) )
 			{
-				float centerX = m_ship.m_body.getPosition().x;
-				float centerY = m_ship.m_body.getPosition().y;
-				float targetCenterX = vc.m_body.getPosition().x;
-				float targetCenterY = vc.m_body.getPosition().y;
-				double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
-				float xForce =  (float)( -m_extraDamage*10 * Math.cos(angleRadians));
-		        float yForce =  (float)( -m_extraDamage*10 * Math.sin(angleRadians));
-		        vc.m_body.applyLinearImpulse(xForce, yForce, vc.m_body.getPosition().x, vc.m_body.getPosition().y, true);
+				Ship ship = (Ship) vc;
+				ship.AddOverTimeEffect( new RunawayStarSling(300, ship));
+				
 			}
+		}
+	}
+
+	private void ShavretBladeSpecial(ViewedCollidable vc)
+	{
+		if( m_specialAbilitiesActivated.get(Characters.Shavret) &&
+			!PlayerEntity.class.isInstance(vc) )
+		{
+			float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			float targetCenterX = vc.m_body.getPosition().x;
+			float targetCenterY = vc.m_body.getPosition().y;
+			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
+			float xForce =  (float)( -m_extraDamage*10 * Math.cos(angleRadians));
+		    float yForce =  (float)( -m_extraDamage*10 * Math.sin(angleRadians));
+		    vc.m_body.applyLinearImpulse(xForce, yForce, vc.m_body.getPosition().x, vc.m_body.getPosition().y, true);
 		}
 	}
 	

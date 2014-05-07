@@ -17,7 +17,7 @@ public class Asteroid extends ViewedCollidable {
 		
 		MassData data = new MassData();
 		data.mass = 300;
-		data.I = .3f;
+		data.I = .2f;
 		m_body.setMassData(data);
 		m_body.setUserData(this);
 		m_deathEffect.load(Gdx.files.internal("data/explosionwhite.p"), Gdx.files.internal("data/"));
