@@ -51,7 +51,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public PlayerEntity(String appearanceLocation, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV, ArrayList<ViewedCollidable> aliveThings, ParallaxCamera cam, Stage stage ) 
 	{
-		super(appearanceLocation+".png", appearanceLocation+".json", world, startX, startY, maxV, aliveThings, 1 );
+		super(appearanceLocation, 5f, world, startX, startY, maxV, aliveThings, 1 );
 		// TODO Auto-generated constructor stub
 		
 		//m_objectSprite.rotate((float) initialAngleAdjust);
@@ -68,10 +68,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_buttonListener = new PlayerButtonListener(this, stage );
 		m_equipChangeListener = new EquipChangeListener( this );
 		
-		m_leftWing = new WingBlade("data/wingblade.png", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
+		m_leftWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
 		m_leftWing.m_body.setTransform(m_body.getPosition().x - 2.5f, m_body.getPosition().y + .65f, (float) (Math.PI - Math.PI/8));
 		
-		m_rightWing = new WingBlade("data/wingblade.png", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
+		m_rightWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
 		m_rightWing.m_rightSide = true;
 		m_rightWing.m_body.setTransform(m_body.getPosition().x + 2.5f, m_body.getPosition().y + .65f, (float) ( Math.PI/8));
 	}

@@ -156,7 +156,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	{
 		if( m_specialAbilitiesActivated.get(Characters.Sandy ) )
 		{
-			vc.damageIntegrity(1f, DamageType.Collision );
+			vc.damageIntegrity(.5f, DamageType.Collision );
 		}
 	}
 

@@ -62,14 +62,14 @@ public abstract class ViewedCollidable
 
      
 	   
-      public ViewedCollidable(String appearanceLocation, String collisionData,	World world, float startX, float startY,ArrayList<ViewedCollidable> aliveThings, int factionCode)
+      public ViewedCollidable(String appearanceLocation, float collisionScale,	World world, float startX, float startY,ArrayList<ViewedCollidable> aliveThings, int factionCode)
 	   {
 		  m_world = world;
 		  m_aliveThings = aliveThings;
 		  m_factionCode = factionCode;
 	      m_objectXPosition = startX*29f;
 	      m_objectYPosition = startY*29f;
-	      m_objectAppearance = new Texture(Gdx.files.internal(appearanceLocation));
+	      m_objectAppearance = new Texture(Gdx.files.internal("data/"+appearanceLocation+ ".png"));
 	      m_objectSprite = new Sprite( m_objectAppearance );
 	      // First we create a body definition
 	      BodyDef bodyDef = new BodyDef();
@@ -93,7 +93,7 @@ public abstract class ViewedCollidable
 	      fixtureDef.restitution = 0.1f; // Make it bounce a little bit
 	      fixtureDef.filter.groupIndex = (short) (m_factionCode * -1);
 	      
-	      if( collisionData.length() == 0 )
+	      if( collisionScale == 0 )
 	      {
 	    	  fixtureDef.shape = circle;
 	    	// Create our fixture and attach it to the body
@@ -101,8 +101,8 @@ public abstract class ViewedCollidable
 	      }
 	      else
 	      {
-	    	  BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal(collisionData));
-	    	  loader.attachFixture(m_body, "Name", fixtureDef, 5f);
+	    	  BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("data/"+appearanceLocation+ ".json"));
+	    	  loader.attachFixture(m_body, "Name", fixtureDef, collisionScale);
 	      }
 	      
 	      // Remember to dispose of any shapes after you're done with them!

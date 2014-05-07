@@ -34,7 +34,7 @@ public class WingBlade extends ViewedCollidable
 			World world, float startX, float startY,
 			ArrayList<ViewedCollidable> aliveThings, int factionCode, Ship s)
 	{
-		super(appearanceLocation, "data/laserblade.json", world, startX, startY,
+		super(appearanceLocation, 5f, world, startX, startY,
 				aliveThings, factionCode);
 		m_body.setUserData(this);
 		m_ignoreForPathing = true;

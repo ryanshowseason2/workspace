@@ -36,10 +36,10 @@ public class Projectile extends ViewedCollidable
 	Ship m_ship;
 	ViewedCollidable m_originalTarget;
 	
-	public Projectile(String appearanceLocation, String collisionData, World world, float startX,
+	public Projectile(String appearanceLocation, float collisionScale, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
 	{
-		super(appearanceLocation, collisionData, world, startX, startY, aliveThings, factionCode);
+		super(appearanceLocation, collisionScale, world, startX, startY, aliveThings, factionCode);
 		// TODO Auto-generated constructor stub		
 		m_originX = startX;
 		m_originY = startY;
