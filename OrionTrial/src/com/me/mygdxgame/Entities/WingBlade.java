@@ -170,6 +170,18 @@ public class WingBlade extends ViewedCollidable
 					
 				}
 			
+			if( m_specialAbilitiesActivated.get(Characters.Sandy) &&
+					Ship.class.isInstance(vc) )
+				{
+					Ship ship = (Ship) vc;
+					if(ship.me.m_boostJuice > 0)
+					{
+						ship.damageIntegrity(ship.me.m_boostJuice, DamageType.Energy);
+						ship.me.m_boostJuice-=ship.me.m_boostJuice;
+					}
+					
+				}
+			
 			if( m_specialAbilitiesActivated.get(Characters.Bobbi) &&
 					Ship.class.isInstance(vc) )
 			{
