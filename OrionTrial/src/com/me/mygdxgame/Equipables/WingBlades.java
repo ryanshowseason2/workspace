@@ -34,6 +34,7 @@ public class WingBlades extends CounterMeasure implements QueryCallback
     PooledEffect m_pooledSawEffectOriginal;
     WingBlade m_left;
     WingBlade m_right;
+    WingBlade m_chainsaw;
     int m_activatedCounter = 0;
     
 	public WingBlades(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
@@ -85,17 +86,17 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 
 	private void DrawChainsaw(SpriteBatch renderer)
 	{
-		float centerX = m_ship.m_body.getPosition().x;
-		float centerY = m_ship.m_body.getPosition().y;
+		float centerX = (float) (m_ship.m_body.getPosition().x + Math.cos(m_ship.m_angleRadians - Math.PI/2));
+		float centerY = (float) (m_ship.m_body.getPosition().y + Math.sin(m_ship.m_angleRadians - Math.PI/2));
 		
 		float radius = (float) Math.sqrt(  m_pooledSawEffectOriginal.getEmitters().get(0).getXOffsetValue().getLowMax() * m_pooledSawEffectOriginal.getEmitters().get(0).getXOffsetValue().getLowMax() +
 										   m_pooledSawEffectOriginal.getEmitters().get(0).getYOffsetValue().getLowMax() * m_pooledSawEffectOriginal.getEmitters().get(0).getYOffsetValue().getLowMax() );
-		float newAngleHigh = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getAngle().getHighMax());
-		float newAngleLow = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getAngle().getLowMax());
-		float newRotationHigh = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getRotation().getHighMax());
-		float newRotationLow = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getRotation().getLowMax());
-		m_pooledSawEffect.getEmitters().get(0).getXOffsetValue().setLow((float) (radius * Math.cos(m_ship.m_angleRadians - Math.PI/2)));
-		m_pooledSawEffect.getEmitters().get(0).getYOffsetValue().setLow((float) (radius * Math.sin(m_ship.m_angleRadians - Math.PI/2)));
+		float newAngleHigh = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getAngle().getHighMax());
+		float newAngleLow = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getAngle().getLowMax());
+		float newRotationHigh = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getRotation().getHighMax());
+		float newRotationLow = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(0).getRotation().getLowMax());
+		m_pooledSawEffect.getEmitters().get(0).getXOffsetValue().setLow((float) (radius * Math.cos(m_ship.m_angleRadians )));
+		m_pooledSawEffect.getEmitters().get(0).getYOffsetValue().setLow((float) (radius * Math.sin(m_ship.m_angleRadians )));
 		m_pooledSawEffect.getEmitters().get(0).getAngle().setHigh(newAngleHigh);
 		m_pooledSawEffect.getEmitters().get(0).getAngle().setLow(newAngleLow);
 		m_pooledSawEffect.getEmitters().get(0).getRotation().setHigh(newRotationHigh);
@@ -103,12 +104,12 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 		
 		radius = (float) Math.sqrt(  m_pooledSawEffectOriginal.getEmitters().get(1).getXOffsetValue().getLowMax() * m_pooledSawEffectOriginal.getEmitters().get(1).getXOffsetValue().getLowMax() +
 									 m_pooledSawEffectOriginal.getEmitters().get(1).getYOffsetValue().getLowMax() * m_pooledSawEffectOriginal.getEmitters().get(1).getYOffsetValue().getLowMax() );
-		newAngleHigh = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getAngle().getHighMax());
-		newAngleLow = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getAngle().getLowMax());
-		newRotationHigh = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getRotation().getHighMax());
-		newRotationLow = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getRotation().getLowMax());
-		m_pooledSawEffect.getEmitters().get(1).getXOffsetValue().setLow((float) (radius * Math.cos(m_ship.m_angleRadians - Math.PI/2)));
-		m_pooledSawEffect.getEmitters().get(1).getYOffsetValue().setLow((float) (radius * Math.sin(m_ship.m_angleRadians - Math.PI/2)));
+		newAngleHigh = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getAngle().getHighMax());
+		newAngleLow = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getAngle().getLowMax());
+		newRotationHigh = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getRotation().getHighMax());
+		newRotationLow = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(1).getRotation().getLowMax());
+		m_pooledSawEffect.getEmitters().get(1).getXOffsetValue().setLow((float) (radius * Math.cos(m_ship.m_angleRadians )));
+		m_pooledSawEffect.getEmitters().get(1).getYOffsetValue().setLow((float) (radius * Math.sin(m_ship.m_angleRadians)));
 		m_pooledSawEffect.getEmitters().get(1).getAngle().setHigh(newAngleHigh);
 		m_pooledSawEffect.getEmitters().get(1).getAngle().setLow(newAngleLow);
 		m_pooledSawEffect.getEmitters().get(1).getRotation().setHigh(newRotationHigh);
@@ -118,18 +119,18 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 		radius = (float) Math.sqrt(  m_pooledSawEffectOriginal.getEmitters().get(2).getXOffsetValue().getLowMax() * m_pooledSawEffectOriginal.getEmitters().get(2).getXOffsetValue().getLowMax() +
 									 m_pooledSawEffectOriginal.getEmitters().get(2).getYOffsetValue().getLowMax() * m_pooledSawEffectOriginal.getEmitters().get(2).getYOffsetValue().getLowMax() );
 		float additionalAngle = (float) Math.atan( m_pooledSawEffectOriginal.getEmitters().get(2).getYOffsetValue().getLowMax() / m_pooledSawEffectOriginal.getEmitters().get(1).getXOffsetValue().getLowMax() );
-		newAngleHigh = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getAngle().getHighMax());
-		newAngleLow = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getAngle().getLowMax());
-		newRotationHigh = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getRotation().getHighMax());
-		newRotationLow = (float) (-90f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getRotation().getLowMax());
-		m_pooledSawEffect.getEmitters().get(2).getXOffsetValue().setLow((float) (radius * Math.cos( additionalAngle + m_ship.m_angleRadians - Math.PI/2)));
-		m_pooledSawEffect.getEmitters().get(2).getYOffsetValue().setLow((float) (radius * Math.sin( additionalAngle + m_ship.m_angleRadians - Math.PI/2)));
+		newAngleHigh = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getAngle().getHighMax());
+		newAngleLow = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getAngle().getLowMax());
+		newRotationHigh = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getRotation().getHighMax());
+		newRotationLow = (float) (0f + m_ship.m_angleDegrees + m_pooledSawEffectOriginal.getEmitters().get(2).getRotation().getLowMax());
+		m_pooledSawEffect.getEmitters().get(2).getXOffsetValue().setLow((float) (radius * Math.cos( additionalAngle + m_ship.m_angleRadians )));
+		m_pooledSawEffect.getEmitters().get(2).getYOffsetValue().setLow((float) (radius * Math.sin( additionalAngle + m_ship.m_angleRadians )));
 		m_pooledSawEffect.getEmitters().get(2).getAngle().setHigh(newAngleHigh);
 		m_pooledSawEffect.getEmitters().get(2).getAngle().setLow(newAngleLow);
 		m_pooledSawEffect.getEmitters().get(2).getRotation().setHigh(newRotationHigh);
 		m_pooledSawEffect.getEmitters().get(2).getRotation().setLow(newRotationLow);
 
-		m_pooledSawEffect.setPosition( m_ship.m_objectXPosition, m_ship.m_objectYPosition );
+		m_pooledSawEffect.setPosition( (float)(m_ship.m_objectXPosition + 29f* Math.cos(m_ship.m_angleRadians + Math.PI/2)), (float)(m_ship.m_objectYPosition + 29f* Math.sin(m_ship.m_angleRadians + Math.PI/2)) );
 		m_pooledSawEffect.draw(renderer, 1f/60f );
 	}
 
@@ -158,10 +159,14 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 			PlayerEntity p = (PlayerEntity) m_ship;
 			m_left = p.m_leftWing;
 			m_right = p.m_rightWing;
+			m_chainsaw = p.m_chainSaw;
 			m_left.m_activated = true;
 			m_right.m_activated = true;
+			m_chainsaw.m_activated = true;
 			m_left.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
 			m_right.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
+			m_chainsaw.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
+			
 		}
 	}
 	
@@ -169,6 +174,7 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 	{
 		m_left.m_activated = false;
 		m_right.m_activated = false;
+		m_chainsaw.m_activated = false;
 	}
 
 	@Override

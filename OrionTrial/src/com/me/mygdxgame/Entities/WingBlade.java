@@ -18,9 +18,15 @@ import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
 public class WingBlade extends ViewedCollidable
 {
+	public enum Placement
+	{
+		Left,
+		Right,
+		Front
+	}
 	public boolean m_activated = false;
 	public Ship m_ship;
-	boolean m_rightSide = false;
+	Placement m_placement = Placement.Left;
 	ArrayList<Vector2>  m_contactPoints = new ArrayList<Vector2>();
 	
 	ParticleEffect m_saberHitEffect = new ParticleEffect();
@@ -68,25 +74,40 @@ public class WingBlade extends ViewedCollidable
 		if(m_activated)
 		{
 			Vector2 tmp = new Vector2();
-			if( m_rightSide )
+			if( m_placement == Placement.Right )
 			{
 				tmp.x = m_ship.m_body.getPosition().x + (float) (2.583112706 * Math.cos( m_ship.m_angleRadians - Math.PI/2 + Math.PI/12));
 				tmp.y = m_ship.m_body.getPosition().y + (float) (2.583112706 * Math.sin( m_ship.m_angleRadians - Math.PI/2 + Math.PI/12));
 				m_body.setTransform(tmp , (float) (m_ship.m_angleRadians - Math.PI/2 + Math.PI/12) );
 			}
-			else
+			else if( m_placement == Placement.Left )
 			{
 				tmp.x = m_ship.m_body.getPosition().x + (float) (2.583112706 * Math.cos( m_ship.m_angleRadians + Math.PI/2 - Math.PI/12));
 				tmp.y = m_ship.m_body.getPosition().y + (float) (2.583112706 * Math.sin( m_ship.m_angleRadians + Math.PI/2 - Math.PI/12));
 				m_body.setTransform(tmp , (float) (m_ship.m_angleRadians + Math.PI/2 - Math.PI/12) );
 			}
-			m_objectSprite.setPosition(m_body.getPosition().x *29f - m_objectAppearance.getWidth() / 2, m_body.getPosition().y *29f - m_objectAppearance.getHeight() / 2   );
+			else
+			{
+				tmp.x = m_ship.m_body.getPosition().x + (float) (1* Math.cos( m_ship.m_angleRadians));
+				tmp.y = m_ship.m_body.getPosition().y + (float) (1 * Math.sin( m_ship.m_angleRadians));
+				m_body.setTransform(tmp , (float) (m_ship.m_angleRadians ) );
+			}
+			
 			
 			float degrees = (float) Math.toDegrees( m_body.getAngle() );
 			m_objectSprite.setRotation(degrees);
 			
-			
-		   m_objectSprite.setScale(.5f);
+			if( m_placement == Placement.Front )
+			{
+				m_objectSprite.setPosition((m_body.getPosition().x + (float) (1* Math.cos( m_ship.m_angleRadians))) *29f - m_objectAppearance.getWidth() / 2, (m_body.getPosition().y + (float) (1* Math.sin( m_ship.m_angleRadians))) *29f - m_objectAppearance.getHeight() / 2   );
+				m_objectSprite.setScale(1.1f,1f);
+			}
+			else
+			{
+				m_objectSprite.setPosition(m_body.getPosition().x *29f - m_objectAppearance.getWidth() / 2, m_body.getPosition().y *29f - m_objectAppearance.getHeight() / 2   );
+				m_objectSprite.setScale(.5f);
+			}
+		   
 		   m_objectSprite.draw( renderer );
 		   
 		   for( int i = 0; i < m_contactPoints.size(); i++ )
@@ -130,6 +151,13 @@ public class WingBlade extends ViewedCollidable
 			boolean directDamage = m_specialAbilitiesActivated.get(Characters.Yashpal);
 			vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
 			vc.damageIntegrity( m_extraDamage, DamageType.Energy );
+			
+			if( m_placement == Placement.Front )
+			{
+				vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
+				vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
+				vc.damageIntegrity( m_extraDamage, DamageType.Energy );
+			}
 			m_extraDamage*=.6f;
 			
 			ShavretBladeSpecial(vc);

@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
+import com.me.mygdxgame.Entities.WingBlade.Placement;
 import com.me.mygdxgame.Equipables.CounterMeasure;
 import com.me.mygdxgame.Screens.CombatScreen.ParallaxCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -44,6 +45,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public Window m_window;	
 	public WingBlade m_leftWing;
 	public WingBlade m_rightWing;
+	public WingBlade m_chainSaw;
 	
 	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
 	
@@ -69,9 +71,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_equipChangeListener = new EquipChangeListener( this );
 		
 		m_leftWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
-		
+		m_chainSaw = new WingBlade("chainblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
+		m_chainSaw.m_placement = Placement.Front;
 		m_rightWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
-		m_rightWing.m_rightSide = true;
+		m_rightWing.m_placement = Placement.Right;
 	}
 	
 	

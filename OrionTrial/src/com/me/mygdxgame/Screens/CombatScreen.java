@@ -132,7 +132,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
         player = new PlayerEntity("shipsized", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
-        //player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
+        m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, w, 0, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, 5, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, 10, 40, m_aliveThings );
@@ -285,26 +285,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 
         cam.position.set( player.m_body.getPosition().x*29f, player.m_body.getPosition().y*29f, 0);
         cam.update();
-        //cam.apply(gl);
-        
 
-		/*viewMatrix.setToOrtho2D(0, 0, 480, 320);
-		spriteBatch.setProjectionMatrix(cam.combined);
-		//spriteBatch.setTransformMatrix(transformMatrix);
-		spriteBatch.begin();
-		spriteBatch.disableBlending();
-		spriteBatch.setColor(Color.WHITE);
-		spriteBatch.draw(background, 0, 0 );
-		spriteBatch.enableBlending();
-		spriteBatch.setBlendFunction(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		/*float width = font.getBounds(text).width;
-		font.draw(spriteBatch, text, 240 - width / 2, 128);
-		if (Gdx.app.getType() == ApplicationType.WebGL) {
-			text = "Press Enter for Fullscreen Mode";
-			width = font.getBounds(text).width;
-			font.draw(spriteBatch, "Press Enter for Fullscreen Mode", 240 - width / 2, 128 - font.getLineHeight());
-		}
-		spriteBatch.end();*/
         
      // background layer, no parallax, centered around origin
         spriteBatch.setProjectionMatrix(cam.calculateParallaxMatrix(0, 0));
@@ -331,11 +312,6 @@ public class CombatScreen extends OrionScreen implements ContactListener
      		// foreground layer, 1.0 parallax (move at full speed)
      		// layer is 2048x320
      		spriteBatch.setProjectionMatrix(cam.calculateParallaxMatrix(1f, 1f));
-     		spriteBatch.begin();
-     		for (int i = 0; i < 9; i++) {
-     			//spriteBatch.draw(parralax2, i * parralax2.getWidth() - 1024, -160);
-     		}
-     		spriteBatch.end();
      		
      		spriteBatch.begin();
     		//player.Draw( spriteBatch );
@@ -355,6 +331,14 @@ public class CombatScreen extends OrionScreen implements ContactListener
     			}
     		}
     		
+    		if(player.m_integrity > 0 || !player.deathThroesDone() )
+			{
+    			player.Draw(spriteBatch);
+			}
+			else
+			{				
+				m_deadThings.add( player );
+			}
     		
     		spriteBatch.end();
     		/** BOX2D LIGHT STUFF BEGIN */
@@ -383,17 +367,17 @@ public class CombatScreen extends OrionScreen implements ContactListener
     	      Vector2 pos = player.m_body.getPosition();
     	      Vector2 pos2 =  player.m_leftWing.m_body.getPosition();
     		
-     	/*/ draw fps
+     	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-     		font.draw(spriteBatch, "angle: " + Math.toRadians( player.m_angleRadians ) , 0, 150);
+     		font.draw(spriteBatch, "X: " + Gdx.input.getX(0) + " Y: " + Gdx.input.getY(0) , 0, 150);
      		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 120);
      		font.draw(spriteBatch, "wing x:  " + pos2.x*29f + " y: " + pos2.y*29f , 0, 90);
      		font.draw(spriteBatch, "wing x:  " + player.m_leftWing.m_objectXPosition + " y: " + player.m_leftWing.m_objectYPosition , 0, 60);
-     		/*font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
+     		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
      		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
-    		spriteBatch.end();*/
+    		spriteBatch.end();
     		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{
