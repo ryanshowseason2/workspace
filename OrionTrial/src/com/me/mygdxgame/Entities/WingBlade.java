@@ -176,6 +176,17 @@ public class WingBlade extends ViewedCollidable
 				Ship ship = (Ship) vc;
 				ship.AddOverTimeEffect( new EngineBrakeFailure(700, ship));				
 			}
+			
+			if( m_specialAbilitiesActivated.get(Characters.Noel) &&
+					Ship.class.isInstance(vc) )
+			{
+				Ship ship = (Ship) vc;
+				if( ship.AttemptHack(.01f) && ship.m_dogeCoin > 0 )
+				{
+					m_ship.m_dogeCoin+= 1;
+					ship.m_dogeCoin-=1;
+				}
+			}
 		}
 	}
 

@@ -44,6 +44,11 @@ public abstract class ViewedCollidable
     public static boolean m_inMenu = false;
     float m_detectionRange = Float.MAX_VALUE;
     
+    float m_organicMatter = 0;
+    float m_rareMetals = 0;
+    float m_water = 0;
+    float m_dogeCoin = 0;
+    
     public enum DamageType 
     {
         Collision(0), 

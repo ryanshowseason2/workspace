@@ -159,13 +159,20 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 			PlayerEntity p = (PlayerEntity) m_ship;
 			m_left = p.m_leftWing;
 			m_right = p.m_rightWing;
-			m_chainsaw = p.m_chainSaw;
+			
 			m_left.m_activated = true;
 			m_right.m_activated = true;
-			m_chainsaw.m_activated = true;
+			
 			m_left.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
 			m_right.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
-			m_chainsaw.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
+			
+			
+			if( m_specialAbilitiesActivated.get(Characters.Belice) )
+			{
+				m_chainsaw = p.m_chainSaw;
+				m_chainsaw.m_activated = true;
+				m_chainsaw.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
+			}
 			
 		}
 	}
