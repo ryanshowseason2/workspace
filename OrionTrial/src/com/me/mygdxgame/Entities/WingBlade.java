@@ -135,11 +135,18 @@ public class WingBlade extends ViewedCollidable
 			ShavretBladeSpecial(vc);
 			
 			if( m_specialAbilitiesActivated.get(Characters.Gourt) &&
-				Ship.class.isInstance(vc) )
+					Ship.class.isInstance(vc) )
+				{
+					Ship ship = (Ship) vc;
+					ship.AddOverTimeEffect( new RunawayStarSling(300, ship));
+					
+				}
+			
+			if( m_specialAbilitiesActivated.get(Characters.Bobbi) &&
+					Ship.class.isInstance(vc) )
 			{
 				Ship ship = (Ship) vc;
-				ship.AddOverTimeEffect( new RunawayStarSling(300, ship));
-				
+				ship.AddOverTimeEffect( new EngineBrakeFailure(700, ship));				
 			}
 		}
 	}

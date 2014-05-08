@@ -7,7 +7,8 @@ public abstract class OverTimeEffect
 		EngineBrake,
 		FreezeShip,
 		EngineIntegrity,
-		RunawayStarSling
+		RunawayStarSling,
+		EngineBrakeFailure
 	}
 	
 	float m_counter = 60;

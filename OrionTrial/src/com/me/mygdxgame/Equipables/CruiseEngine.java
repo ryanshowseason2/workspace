@@ -18,7 +18,7 @@ public abstract class CruiseEngine
 	float m_lastXForce;
 	float m_lastYForce;
 	public float m_enginePotency;
-	float m_brakePotency;
+	public float m_brakePotency;
 	
 	ParticleEffect m_engineEffect = new ParticleEffect();
     ParticleEffectPool m_engineEffectPool;
