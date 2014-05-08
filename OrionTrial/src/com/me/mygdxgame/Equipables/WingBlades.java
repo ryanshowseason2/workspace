@@ -3,6 +3,7 @@ package com.me.mygdxgame.Equipables;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
@@ -11,10 +12,12 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
@@ -22,7 +25,7 @@ import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Entities.Projectile.Characters;
 import com.me.mygdxgame.Entities.WingBlade;
 
-public class WingBlades extends CounterMeasure
+public class WingBlades extends CounterMeasure implements QueryCallback
 {
 
 	ParticleEffect m_sawEffect = new ParticleEffect();
@@ -59,6 +62,15 @@ public class WingBlades extends CounterMeasure
 		if( m_specialAbilitiesActivated.get(Characters.Belice) )
 		{
 			DrawChainsaw(renderer);
+		}
+		
+		if( m_specialAbilitiesActivated.get(Characters.SSid) )
+		{
+			float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			m_world.QueryAABB(this, centerX - m_range, centerY
+					- m_range, centerX + m_range,
+					centerY + m_range);
 		}
 		
 		if(m_activatedCounter > 0)
@@ -157,6 +169,19 @@ public class WingBlades extends CounterMeasure
 	{
 		m_left.m_activated = false;
 		m_right.m_activated = false;
+	}
+
+	@Override
+	public boolean reportFixture(Fixture fixture)
+	{
+		ViewedCollidable vc = (ViewedCollidable)fixture.getBody().getUserData();
+		if( EnemyShip.class.isInstance(vc) &&
+			vc.m_factionCode != m_ship.m_factionCode )
+		{
+			EnemyShip e = (EnemyShip)vc;
+			e.m_soundTheAlarmCounter = 0;
+		}
+		return true;
 	}
 
 
