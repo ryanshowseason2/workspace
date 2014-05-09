@@ -35,6 +35,8 @@ public class Projectile extends ViewedCollidable
 	float m_minDistance;
 	Ship m_ship;
 	ViewedCollidable m_originalTarget;
+	public boolean m_stopAtFirstShields = false;
+	public float m_additionalDamage = 0;
 	
 	public Projectile(String appearanceLocation, float collisionScale, World world, float startX,
 			float startY, ArrayList<ViewedCollidable> aliveThings, int factionCode)
@@ -80,8 +82,24 @@ public class Projectile extends ViewedCollidable
 			
 			dType = ShavretsDamageType(object2);
 			
-			object2.damageIntegrity(crashVelocity/5, dType );	
-			m_integrity -=1;
+			object2.damageIntegrity(crashVelocity/5 + m_additionalDamage, dType );	
+			
+			
+			if( m_stopAtFirstShields )
+			{
+				if( Ship.class.isInstance(object2) )
+				{
+					Ship s = (Ship)object2;
+					if(s.m_shieldIntegrity>0)
+					{
+						m_integrity = 0;
+					}
+				}
+			}
+			else
+			{
+				m_integrity -=1;
+			}
 			
 			BobbisHackingBullets(object2);
 			SSidsHackingBullets(object2);

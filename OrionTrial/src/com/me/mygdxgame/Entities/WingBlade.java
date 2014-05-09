@@ -145,7 +145,8 @@ public class WingBlade extends ViewedCollidable
 
 	private void ApplyDamage( Fixture fixture)
 	{
-		if( !WingBlade.class.isInstance( fixture.getBody().getUserData()))
+		if( !WingBlade.class.isInstance( fixture.getBody().getUserData()) &&
+			!PlayerEntity.class.isInstance( fixture.getBody().getUserData()))
 		{
 			ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
 			boolean directDamage = m_specialAbilitiesActivated.get(Characters.Yashpal);
