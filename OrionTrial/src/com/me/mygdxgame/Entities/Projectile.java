@@ -45,7 +45,7 @@ public class Projectile extends ViewedCollidable
 		// TODO Auto-generated constructor stub		
 		m_originX = startX;
 		m_originY = startY;
-		MassData data = m_body.getMassData();
+		MassData data = new MassData();
 		data.mass = .00001f;
 		m_body.setMassData(data);
 		m_body.setBullet(true);

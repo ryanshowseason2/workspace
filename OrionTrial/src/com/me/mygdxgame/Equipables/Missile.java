@@ -12,39 +12,78 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.me.mygdxgame.Entities.MissileEntity;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class Missile extends CounterMeasure
 {
-	ViewedCollidable m_secondaryTarget = null;
-	int m_activateSecondaryMode = 0;
 	
 	public Missile(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
-		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/missile.png") ) ) );
+		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/missileicon.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[1] = 1f;
+		m_fireFrequency = 50;
+		m_fireCounter = 0;		
 	}
 	
 	@Override
 	public Image GetImageCopy()
 	{
-		return new Image( new Texture(Gdx.files.internal("data/missile.png") ) );
+		return new Image( new Texture(Gdx.files.internal("data/missileicon.png") ) );
 	}
 
 	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
 	{
+		if( ( m_target != null && m_target.m_integrity <= 0 ) )
+		{
+			m_target = null;
+		}
+		
+		if( m_target == null )
+		{
+			// Pull the closest tracked target from the ship computer! 
+			float leastDistance = Float.MAX_VALUE;
+			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			{
+				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
+				if( distance <= m_range && distance < leastDistance )
+				{
+					leastDistance = distance;
+					m_target = vc;
+				}
+			}
+		}
+		
+		if( m_target != null && m_fireCounter <= 0 )
+		{
+			float distanceToCurrentTarget = m_target.m_body.getPosition().dst(m_ship.m_body.getPosition() );
 
+			if( distanceToCurrentTarget <= m_range )
+			{
+				 new MissileEntity( m_target, m_world, m_ship.m_body.getPosition().x, m_ship.m_body.getPosition().y, 0,
+							50f, m_ship.m_factionCode, m_aliveThings );
+				 m_fireCounter = m_fireFrequency;
+			}
+			else
+			{
+				m_target = null;
+			}
+		}
+		else
+		{
+			m_fireCounter-= 1;
+		}
 	}
 
 	@Override
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_activateSecondaryMode = 120;
 	}
 
 	@Override

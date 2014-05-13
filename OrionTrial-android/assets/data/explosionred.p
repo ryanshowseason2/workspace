@@ -40,37 +40,45 @@ active: false
 - Y Offset - 
 active: false
 - Spawn Shape - 
-shape: point
+shape: ellipse
+edges: true
+side: both
 - Spawn Width - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 0.0
-highMax: 0.0
+highMin: 95.0
+highMax: 95.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 1.0
-timelineCount: 1
+scaling1: 0.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Spawn Height - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 0.0
-highMax: 0.0
+highMin: 95.0
+highMax: 95.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 1.0
-timelineCount: 1
+scaling1: 0.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Scale - 
-lowMin: 32.0
-lowMax: 32.0
-highMin: 32.0
-highMax: 32.0
+lowMin: 1.0
+lowMax: 1.0
+highMin: 180.0
+highMax: 180.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 1.0
-timelineCount: 1
+scaling1: 0.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Velocity - 
 active: true
 lowMin: 10.0
@@ -85,7 +93,7 @@ timeline0: 0.0
 - Angle - 
 active: true
 lowMin: 0.0
-lowMax: 359.0
+lowMax: 0.0
 highMin: 0.0
 highMax: 359.0
 relative: false
@@ -95,21 +103,10 @@ scaling1: 1.0
 scaling2: 1.0
 timelineCount: 3
 timeline0: 0.0
-timeline1: 0.49905124
+timeline1: 0.5068493
 timeline2: 1.0
 - Rotation - 
-active: true
-lowMin: 1.0
-lowMax: 360.0
-highMin: 180.0
-highMax: 180.0
-relative: true
-scalingCount: 2
-scaling0: 0.0
-scaling1: 1.0
-timelineCount: 2
-timeline0: 0.0
-timeline1: 1.0
+active: false
 - Wind - 
 active: false
 - Gravity - 
@@ -138,13 +135,13 @@ timeline1: 0.2
 timeline2: 0.8
 timeline3: 1.0
 - Options - 
-attached: false
+attached: true
 continuous: false
 aligned: false
 additive: true
 behind: false
 - Image Path -
-C:\Users\OX\Documents\dust.png
+C:\Users\OX\workspace\OrionTrial-android\assets\data\particle.png
 
 
 Untitled
@@ -155,22 +152,26 @@ lowMin: 1000.0
 lowMax: 1000.0
 - Count - 
 min: 0
-max: 25
+max: 250
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 50.0
-highMax: 50.0
+highMin: 1000.0
+highMax: 1000.0
 relative: false
-scalingCount: 1
+scalingCount: 3
 scaling0: 1.0
-timelineCount: 1
+scaling1: 1.0
+scaling2: 0.0
+timelineCount: 3
 timeline0: 0.0
+timeline1: 0.24657534
+timeline2: 0.24757534
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 500.0
-highMax: 500.0
+highMin: 1000.0
+highMax: 1000.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -187,13 +188,15 @@ shape: point
 - Spawn Width - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 0.0
-highMax: 0.0
+highMin: 200.0
+highMax: 200.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 1.0
-timelineCount: 1
+scaling1: 1.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Spawn Height - 
 lowMin: 0.0
 lowMax: 0.0
@@ -207,8 +210,8 @@ timeline0: 0.0
 - Scale - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 32.0
-highMax: 32.0
+highMin: 3.0
+highMax: 3.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -218,7 +221,7 @@ timeline0: 0.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 200.0
+highMin: 500.0
 highMax: 60.0
 relative: false
 scalingCount: 1
@@ -245,7 +248,7 @@ active: false
 - Tint - 
 colorsCount: 3
 colors0: 1.0
-colors1: 0.003921569
+colors1: 0.59607846
 colors2: 0.003921569
 timelineCount: 1
 timeline0: 0.0
@@ -255,15 +258,17 @@ lowMax: 0.0
 highMin: 1.0
 highMax: 1.0
 relative: false
-scalingCount: 1
+scalingCount: 2
 scaling0: 1.0
-timelineCount: 1
+scaling1: 0.0
+timelineCount: 2
 timeline0: 0.0
+timeline1: 1.0
 - Options - 
-attached: false
+attached: true
 continuous: false
 aligned: false
 additive: true
 behind: false
 - Image Path -
-particle.png
+C:\Users\OX\workspace\OrionTrial-android\assets\data\particle.png

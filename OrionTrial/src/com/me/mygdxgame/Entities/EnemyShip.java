@@ -42,7 +42,7 @@ public class EnemyShip extends Ship implements QueryCallback
 				factionCode);
 		m_factionCode = factionCode;
 		m_objectSprite.rotate((float) initialAngleAdjust);
-		MassData data = m_body.getMassData();
+		MassData data = new MassData();
 		data.mass = 10;
 		m_body.setMassData(data);
 		m_body.setUserData(this);
@@ -378,13 +378,31 @@ public class EnemyShip extends Ship implements QueryCallback
 		 
 		 if( takeLeftPath )
 		 {
-			 m_wayPointX = leftPath.m_waypoint.x;
-			 m_wayPointY = leftPath.m_waypoint.y;
+			 if( leftPath != null )
+			 {
+				 m_wayPointX = leftPath.m_waypoint.x;
+				 m_wayPointY = leftPath.m_waypoint.y;
+			 }
+			 else
+			 {
+				 // if we got through the loop and got nothing just blow through!
+				 m_wayPointX = m_navigatingTo.x;
+				 m_wayPointY = m_navigatingTo.y;
+			 }
 		 }
 		 else
 		 {
-			 m_wayPointX = rightPath.m_waypoint.x;
-			 m_wayPointY = rightPath.m_waypoint.y;
+			 if( rightPath != null )
+			 {
+				 m_wayPointX = rightPath.m_waypoint.x;
+				 m_wayPointY = rightPath.m_waypoint.y;
+			 }
+			 else
+			 {
+				 // if we got through the loop and got nothing just blow through!
+				 m_wayPointX = m_navigatingTo.x;
+				 m_wayPointY = m_navigatingTo.y;
+			 }
 		 }
 	}
 

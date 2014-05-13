@@ -59,7 +59,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		//m_objectSprite.rotate((float) initialAngleAdjust);
 		m_body.setFixedRotation(true);
 		m_body.setTransform(m_body.getPosition(), (float) Math.toRadians(0 ) );
-		MassData data = m_body.getMassData();
+		MassData data = new MassData();
 		data.mass = 10;
 		m_body.setMassData(data);
 		m_body.setUserData(this);		

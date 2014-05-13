@@ -147,7 +147,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
         rayHandler = new RayHandler(w);
-        rayHandler.setAmbientLight(0.05f, 0.05f, 0.05f, 0.1f);
+        rayHandler.setAmbientLight(0.75f, 0.75f, 0.75f, 0.1f);
         rayHandler.setCulling(true);
         // rayHandler.setBlur(false);
         rayHandler.setBlurNum(1);
