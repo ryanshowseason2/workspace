@@ -19,6 +19,9 @@ import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class Missile extends CounterMeasure
 {
+	int m_missileCounter = 0;
+	boolean m_missileSpecialActivated = false;
+	int m_rememberedFrequency;
 	
 	public Missile(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -68,6 +71,7 @@ public class Missile extends CounterMeasure
 				 new MissileEntity( m_target, m_world, m_ship.m_body.getPosition().x, m_ship.m_body.getPosition().y, 0,
 							50f, m_ship.m_factionCode, m_aliveThings );
 				 m_fireCounter = m_fireFrequency;
+				 m_missileCounter++;
 			}
 			else
 			{
@@ -78,18 +82,30 @@ public class Missile extends CounterMeasure
 		{
 			m_fireCounter-= 1;
 		}
+		
+		if( m_missileSpecialActivated && m_missileCounter > 10 )
+		{
+			DisengageCM();
+		}
 	}
 
 	@Override
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
+		m_missileCounter = 0;
+		m_missileSpecialActivated = true;
+		m_rememberedFrequency = m_fireFrequency;
+		m_fireFrequency = 10;
+		m_fireCounter = 0;
 	}
 
 	@Override
 	public void DisengageCM()
 	{
 		super.DisengageCM();
+		m_fireFrequency = m_rememberedFrequency;
+		m_missileSpecialActivated = false;
 	}
 
 }

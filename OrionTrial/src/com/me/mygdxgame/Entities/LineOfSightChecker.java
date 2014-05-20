@@ -9,12 +9,17 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 public class LineOfSightChecker implements RayCastCallback
 {
 	
-	Body m_body;
+	Body m_body = null;
+	ViewedCollidable m_targetObject = null;
 	Body m_self;
 	public boolean m_hasLineOfSight;
 	public LineOfSightChecker( Body target, Body self )
 	{
 		m_body = target;
+		if( target != null )
+		{
+			m_targetObject = ( ViewedCollidable ) target.getUserData();
+		}
 		m_self = self;
 		Reset();
 	}
@@ -33,7 +38,7 @@ public class LineOfSightChecker implements RayCastCallback
 		
 		if( fixture.getBody() != m_body &&
 			fixture.getBody() != m_self &&
-			inTheWay.m_factionCode == 0 &&
+			( m_targetObject != null && m_targetObject != inTheWay && inTheWay.m_factionCode == 0) &&
 			!inTheWay.m_ignoreForPathing )
 		{
 			m_hasLineOfSight = false;

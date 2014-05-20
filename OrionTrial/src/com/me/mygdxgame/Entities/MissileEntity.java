@@ -11,7 +11,7 @@ import com.me.mygdxgame.Entities.EnemyShip.SeekType;
 
 public class MissileEntity extends EnemyShip implements QueryCallback
 {
-	
+	float m_missileDamage = 40;
 	public MissileEntity( ViewedCollidable target, World world, float startX, float startY, float initialAngleAdjust,
 			float maxV, int factionCode, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -20,7 +20,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		m_onDeckSeekType = m_seekType = SeekType.RamTarget;
 		m_target = target;
 		MassData data = new MassData();
-		data.mass = 1f;
+		data.mass = 2f;
 		m_body.setMassData(data);
 		m_body.setBullet(true);
 		m_shieldIntegrityRechargeFactor = 0;
@@ -46,7 +46,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		super.Draw(renderer);
 		m_integrity-=5;
 		
-		if(m_integrity <=0)
+		if(m_integrity <=0 && m_missileDamage > 0)
 		{
 			float centerX = m_body.getPosition().x;
 			float centerY = m_body.getPosition().y;
@@ -54,6 +54,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 									centerY - 3f / 2f,
 									centerX + 3f / 2f,
 									centerY + 3f / 2f );
+			m_missileDamage/=2;
 		}
 	}
 	
@@ -66,16 +67,16 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 			vc.m_factionCode != m_factionCode )
 		{			
 			float dst = vc.m_body.getPosition().dst(m_body.getPosition());
-			vc.damageIntegrity(40/dst, DamageType.Explosion );
+			vc.damageIntegrity(m_missileDamage/dst, DamageType.Explosion );
 			
 			float centerX = m_body.getPosition().x;
 			float centerY = m_body.getPosition().y;
 			float targetCenterX = vc.m_body.getPosition().x;
 			float targetCenterY = vc.m_body.getPosition().y;
 			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
-			float xForce =  (float)( -40 * Math.cos(angleRadians));
-		    float yForce =  (float)( -40 * Math.sin(angleRadians));
-		    vc.m_body.applyLinearImpulse(xForce, yForce, vc.m_body.getPosition().x, vc.m_body.getPosition().y, true);
+			float xForce =  (float)( -m_missileDamage * Math.cos(angleRadians));
+		    float yForce =  (float)( -m_missileDamage * Math.sin(angleRadians));
+		    vc.m_body.applyLinearImpulse(2*xForce, 2*yForce, vc.m_body.getPosition().x, vc.m_body.getPosition().y, true);
 		}
 		return true;
 	}
