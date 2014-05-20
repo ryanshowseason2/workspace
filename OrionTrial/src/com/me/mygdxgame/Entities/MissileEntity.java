@@ -3,6 +3,7 @@ package com.me.mygdxgame.Entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -48,6 +49,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		
 		if(m_integrity <=0 && m_missileDamage > 0)
 		{
+			m_body.setLinearDamping(.5f);
 			float centerX = m_body.getPosition().x;
 			float centerY = m_body.getPosition().y;
 			m_world.QueryAABB(this, centerX - 3f / 2f,
@@ -55,6 +57,32 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 									centerX + 3f / 2f,
 									centerY + 3f / 2f );
 			m_missileDamage/=2;
+		}
+	}
+	
+	@Override
+	protected void RegularPathFinding(float radius)
+	{
+		if( false )
+		{
+			super.RegularPathFinding(radius);
+		}
+	}
+	
+	@Override
+	protected void RammingLogic(Vector2 pos, Vector2 vec)
+	{
+		if ((m_body.getLinearVelocity().x > 5 && vec.x < pos.x)
+				|| (m_body.getLinearVelocity().x < -5 && vec.x > pos.x)
+				|| (m_body.getLinearVelocity().y > 5 && vec.y < pos.y)
+				|| (m_body.getLinearVelocity().y < -5 && vec.y > pos.y))
+		{
+			ce.EngineBrake();
+		} 
+		else if( m_integrity > 0 )
+		{
+			ce.ThrottleForward();
+			ce.EngageEngine();
 		}
 	}
 	

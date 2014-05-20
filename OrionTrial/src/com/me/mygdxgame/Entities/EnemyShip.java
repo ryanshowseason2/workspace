@@ -184,7 +184,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		
 	}
 
-	private void RammingLogic(Vector2 pos, Vector2 vec)
+	protected void RammingLogic(Vector2 pos, Vector2 vec)
 	{
 		if ((m_body.getLinearVelocity().x > 5 && vec.x < pos.x)
 				|| (m_body.getLinearVelocity().x < -5 && vec.x > pos.x)
@@ -199,7 +199,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		}
 	}
 	
-	private void FiringDistanceLogic(Vector2 pos, Vector2 vec)
+	protected void FiringDistanceLogic(Vector2 pos, Vector2 vec)
 	{
 		float distance = pos.dst(vec);
 		if ((m_body.getLinearVelocity().x > 5 && vec.x < pos.x)
@@ -252,7 +252,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		 }
 	}
 
-	private void RegularPathFinding(float radius)
+	protected void RegularPathFinding(float radius)
 	{
 		// we've got a path to find
 		 m_seekType = SeekType.TravelingToWaypoint;
