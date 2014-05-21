@@ -121,8 +121,12 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		{
 			ce.EngineBrake();
 		} 
-		else if( m_integrity > 0 )
+		else if( m_integrity > 0 ||  m_specialAbilitiesActivated.get(Characters.Bobbi) )
 		{
+			if( m_integrity < 0 )
+			{
+				ce.m_enginePotency = (float) (ce.m_enginePotency * 1.3);
+			}
 			ce.ThrottleForward();
 			ce.EngageEngine();
 		}
