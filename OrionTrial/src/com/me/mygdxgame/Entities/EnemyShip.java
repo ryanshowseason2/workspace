@@ -141,7 +141,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		}
 	}
 
-	private void NavigateToTarget()
+	protected void NavigateToTarget()
 	{
 		CalculateWaypoint();
 		DriveEnginesToWaypoint();

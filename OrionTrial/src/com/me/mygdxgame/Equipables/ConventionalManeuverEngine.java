@@ -18,8 +18,8 @@ public class ConventionalManeuverEngine extends ManeuverEngine
 		float xForce = 0;
 		float yForce = 0;
 		// TODO Auto-generated method stub
-		xForce = (float)(15000f * Math.cos(m_ship.m_angleRadians));
-        yForce = (float)(15000.0f * Math.sin(m_ship.m_angleRadians));
+		xForce = (float)(m_boostMagnitude * Math.cos(m_ship.m_angleRadians));
+        yForce = (float)(m_boostMagnitude * Math.sin(m_ship.m_angleRadians));
         m_boostJuice -= 20;	
         
 	    m_ship.m_body.applyForceToCenter( xForce, yForce, true);
@@ -32,8 +32,8 @@ public class ConventionalManeuverEngine extends ManeuverEngine
 		float xForce = 0;
 		float yForce = 0;
 		// TODO Auto-generated method stub
-		xForce = (float)(-15000f * Math.cos(m_ship.m_angleRadians));
-        yForce = (float)(-15000.0f * Math.sin(m_ship.m_angleRadians));
+		xForce = (float)(-m_boostMagnitude * Math.cos(m_ship.m_angleRadians));
+        yForce = (float)(-m_boostMagnitude * Math.sin(m_ship.m_angleRadians));
         m_boostJuice -= 20;	
         
 	    m_ship.m_body.applyForceToCenter( xForce, yForce, true);
@@ -46,8 +46,8 @@ public class ConventionalManeuverEngine extends ManeuverEngine
 		float xForce = 0;
 		float yForce = 0;
 		// TODO Auto-generated method stub
-		xForce = (float)(-15000f * Math.sin(m_ship.m_angleRadians));
-        yForce = (float)(15000.0f * Math.cos(m_ship.m_angleRadians));
+		xForce = (float)(-m_boostMagnitude * Math.sin(m_ship.m_angleRadians));
+        yForce = (float)(m_boostMagnitude * Math.cos(m_ship.m_angleRadians));
         m_boostJuice -= 20;	
         
 	    m_ship.m_body.applyForceToCenter( xForce, yForce, true);
@@ -60,8 +60,8 @@ public class ConventionalManeuverEngine extends ManeuverEngine
 		float xForce = 0;
 		float yForce = 0;
 		// TODO Auto-generated method stub
-		xForce = (float)(15000f * Math.sin(m_ship.m_angleRadians));
-        yForce = (float)(-15000.0f * Math.cos(m_ship.m_angleRadians));
+		xForce = (float)(m_boostMagnitude * Math.sin(m_ship.m_angleRadians));
+        yForce = (float)(-m_boostMagnitude * Math.cos(m_ship.m_angleRadians));
         m_boostJuice -= 20;	
         
 	    m_ship.m_body.applyForceToCenter( xForce, yForce, true);

@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Equipables;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,21 +17,24 @@ import com.me.mygdxgame.Entities.MissileEntity;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 
 public class Missile extends CounterMeasure
 {
 	int m_missileCounter = 0;
 	boolean m_missileSpecialActivated = false;
-	int m_rememberedFrequency;
+	int m_rememberedFrequency;	
 	
 	public Missile(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
 		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/missileicon.png") ) ) );
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[1] = 1f;
-		m_fireFrequency = 50;
+		m_fireFrequency = 60;
 		m_fireCounter = 0;		
 	}
+	
+	
 	
 	@Override
 	public Image GetImageCopy()
@@ -68,8 +72,9 @@ public class Missile extends CounterMeasure
 
 			if( distanceToCurrentTarget <= m_range )
 			{
-				 new MissileEntity( m_target, m_world, m_ship.m_body.getPosition().x, m_ship.m_body.getPosition().y, 0,
+				MissileEntity m = new MissileEntity( m_target, m_world, m_ship.m_body.getPosition().x, m_ship.m_body.getPosition().y, 0,
 							50f, m_ship.m_factionCode, m_aliveThings );
+				m.SetSpecials(m_specialAbilitiesActivated);
 				 m_fireCounter = m_fireFrequency;
 				 m_missileCounter++;
 			}
