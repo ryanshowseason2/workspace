@@ -70,10 +70,11 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 			m_body.setLinearDamping(.5f);
 			float centerX = m_body.getPosition().x;
 			float centerY = m_body.getPosition().y;
-			m_world.QueryAABB(this, centerX - 3f / 2f,
-									centerY - 3f / 2f,
-									centerX + 3f / 2f,
-									centerY + 3f / 2f );
+			float explosionRange = m_specialAbilitiesActivated.get(Characters.Shavret ) ? .5f:2;
+			m_world.QueryAABB(this, centerX - 3f / explosionRange,
+									centerY - 3f / explosionRange,
+									centerX + 3f / explosionRange,
+									centerY + 3f / explosionRange );
 			m_missileDamage/=2;
 		}
 	}
@@ -149,8 +150,9 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 			float targetCenterX = vc.m_body.getPosition().x;
 			float targetCenterY = vc.m_body.getPosition().y;
 			double angleRadians = Math.atan2(centerY - targetCenterY,centerX - targetCenterX);
-			float xForce =  (float)( -m_missileDamage * Math.cos(angleRadians));
-		    float yForce =  (float)( -m_missileDamage * Math.sin(angleRadians));
+			float forceDirection =m_specialAbilitiesActivated.get(Characters.Shavret ) ?-2:1;
+			float xForce =  (float)( -m_missileDamage * Math.cos(angleRadians) * forceDirection);
+		    float yForce =  (float)( -m_missileDamage * Math.sin(angleRadians) * forceDirection);
 		    vc.m_body.applyLinearImpulse(2*xForce, 2*yForce, vc.m_body.getPosition().x, vc.m_body.getPosition().y, true);
 		}
 		return true;
