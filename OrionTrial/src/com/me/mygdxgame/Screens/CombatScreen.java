@@ -114,6 +114,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Button m_shortRange;
 	Button m_changeEquipment;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
+	ArrayList<EnemyIndicatorButton> m_enemyButtons = new ArrayList<EnemyIndicatorButton>();
 	
 	public CombatScreen()
 	{
@@ -131,7 +132,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
-        player = new PlayerEntity("shipsized", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
+        player = new PlayerEntity("shipsized", w, 0, 0, -90, 60f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, w, 0, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, 5, 40, m_aliveThings );
@@ -140,7 +141,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         shippy = new EnemyShip( "stateczek", 0,w, 0, 50, 0, 50, 2, m_aliveThings );
-        shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 50, 2, m_aliveThings ) );
+        shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
         //shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
         /** BOX2D LIGHT STUFF BEGIN */
@@ -362,7 +363,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		m_stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
     		m_stage.draw();
-
+    		
+    		RemoveButtonsForDeadEnemies();
+    		
+    		HandleEnemyButtons();
+    		
+    		
     		
     	      Vector2 pos = player.m_body.getPosition();
     	      Vector2 pos2 =  player.m_leftWing.m_body.getPosition();
@@ -387,6 +393,103 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		}
     		m_deadThings.clear();
 
+	}
+
+	private void HandleEnemyButtons()
+	{
+		for( int i = 0; i< player.m_trackedTargets.size(); i++)
+		{
+			ViewedCollidable vc = player.m_trackedTargets.get(i);
+			if( vc.m_body.getPosition().dst(player.m_body.getPosition()) > 768f/29f )
+			{
+				boolean found = false;
+				for( int j = 0; j < m_enemyButtons.size() && !found; j++)
+				{
+					EnemyIndicatorButton eib = m_enemyButtons.get(j);
+					if(eib.m_trackedEntity == vc && vc.m_integrity > 0 )
+					{
+						found = UpdateEnemyButton(vc, eib);
+					}
+				}
+				
+				if( !found && vc.m_integrity > 0 )
+				{
+					AddNewEnemyButton(vc);
+				}
+			}
+			else
+			{
+				RemoveAnEnemyButton(vc);
+			}
+		}
+	}
+
+	private void RemoveAnEnemyButton(ViewedCollidable vc)
+	{
+		boolean found = false;
+		for( int j = 0; j < m_enemyButtons.size() && !found; j++)
+		{
+			EnemyIndicatorButton eib = m_enemyButtons.get(j);
+			if(eib.m_trackedEntity == vc )
+			{
+				eib.remove();
+				found = true;
+				m_enemyButtons.remove(eib);
+			}
+		}
+	}
+
+	private boolean UpdateEnemyButton(ViewedCollidable vc,
+			EnemyIndicatorButton eib)
+	{
+		boolean found;
+		found = true;
+		float xPosition = vc.m_body.getPosition().x - player.m_body.getPosition().x;
+		xPosition*=29f;
+		xPosition+=512;
+		xPosition = Math.max(0, xPosition);
+		xPosition = Math.min(1024 - eib.getWidth(), xPosition );
+		
+		float yPosition = vc.m_body.getPosition().y - player.m_body.getPosition().y;
+		yPosition*=29f;
+		yPosition+=512;
+		yPosition = Math.max(0, yPosition);
+		yPosition = Math.min(768 - eib.getHeight(), yPosition );
+		
+		eib.setPosition(xPosition, yPosition);
+		return found;
+	}
+
+	private void AddNewEnemyButton(ViewedCollidable vc)
+	{
+		EnemyIndicatorButton eib = new EnemyIndicatorButton(vc);
+		float xPosition = vc.m_body.getPosition().x - player.m_body.getPosition().x;
+		xPosition*=29f;
+		xPosition+=512;
+		xPosition = Math.max(0, xPosition);
+		xPosition = Math.min(1024 - eib.getWidth(), xPosition );
+		
+		float yPosition = vc.m_body.getPosition().y - player.m_body.getPosition().y;
+		yPosition*=29f;
+		yPosition+=512;
+		yPosition = Math.max(0, yPosition);
+		yPosition = Math.min(768 - eib.getHeight(), yPosition );
+		
+		eib.setPosition(xPosition, yPosition);
+		m_stage.addActor( eib );
+		m_enemyButtons.add(eib);
+	}
+
+	private void RemoveButtonsForDeadEnemies()
+	{
+		for( int j = 0; j < m_enemyButtons.size(); j++)
+		{
+			EnemyIndicatorButton eib = m_enemyButtons.get(j);
+			if( eib.m_trackedEntity.m_integrity <= 0)
+			{
+				eib.remove();
+			}
+		}
 	}
 	
 	private void DrawParralaxLayer( float parallaxFactor, Texture texture ) 
