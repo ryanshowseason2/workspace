@@ -301,25 +301,32 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 			target.m_isTargetable &&
 			target.m_factionCode != m_factionCode )
 		{
-			for( int i = 0; i < m_shortRangeCMS.size(); i++ )
-			{
-				m_shortRangeCMS.get(i).SetTarget( target );
-			}
-			
-			for( int i = 0; i < m_mediumRangeCMS.size(); i++ )
-			{
-				m_mediumRangeCMS.get(i).SetTarget( target );
-			}
-			
-			for( int i = 0; i < m_longRangeCMS.size(); i++ )
-			{
-				m_longRangeCMS.get(i).SetTarget( target );
-			}
-			
-			m_trackedTargets.remove( target );
-			m_trackedTargets.add( target );
+			SetPlayerTarget(target);
 		}
 		return 1;
+	}
+
+
+
+	public void SetPlayerTarget(ViewedCollidable target)
+	{
+		for( int i = 0; i < m_shortRangeCMS.size(); i++ )
+		{
+			m_shortRangeCMS.get(i).SetTarget( target );
+		}
+		
+		for( int i = 0; i < m_mediumRangeCMS.size(); i++ )
+		{
+			m_mediumRangeCMS.get(i).SetTarget( target );
+		}
+		
+		for( int i = 0; i < m_longRangeCMS.size(); i++ )
+		{
+			m_longRangeCMS.get(i).SetTarget( target );
+		}
+		
+		m_trackedTargets.remove( target );
+		m_trackedTargets.add( target );
 	}
 	
 	@Override

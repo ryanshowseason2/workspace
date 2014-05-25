@@ -462,7 +462,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 
 	private void AddNewEnemyButton(ViewedCollidable vc)
 	{
-		EnemyIndicatorButton eib = new EnemyIndicatorButton(vc);
+		EnemyIndicatorButton eib = new EnemyIndicatorButton(vc, player);
 		float xPosition = vc.m_body.getPosition().x - player.m_body.getPosition().x;
 		xPosition*=29f;
 		xPosition+=512;
