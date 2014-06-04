@@ -15,6 +15,8 @@ import com.me.mygdxgame.Entities.Projectile.Characters;
 public class MissileEntity extends EnemyShip implements QueryCallback
 {
 	float m_missileDamage = 40;
+	boolean m_detonatedInsideShip = false;
+	
 	public MissileEntity( ViewedCollidable target, World world, float startX, float startY, float initialAngleAdjust,
 			float maxV, int factionCode, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -76,6 +78,40 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 									centerX + 3f / explosionRange,
 									centerY + 3f / explosionRange );
 			m_missileDamage/=2;
+		}
+		
+		if( m_specialAbilitiesActivated.get(Characters.Noel) && m_integrity > 0 )
+		{
+			float centerX = m_body.getPosition().x;
+			float centerY = m_body.getPosition().y;
+			RadialEntityRetriever r = new RadialEntityRetriever( m_world, 5f, centerX, centerY );
+			for( int i = 0; i < r.m_detectedEntities.size(); i++ )
+			{
+				ViewedCollidable vc = r.m_detectedEntities.get(i);
+				if(vc.m_factionCode != 0 && vc.m_factionCode != m_factionCode )
+				{
+					if( MissileEntity.class.isInstance(vc))
+					{
+						Ship s = (Ship)vc;
+						if( s.AttemptHack(.1f))
+						{
+							s.m_integrity = 0;
+							s.m_factionCode = m_factionCode;
+						}
+					}					
+					else if( Ship.class.isInstance(vc))
+					{
+						Ship s = (Ship)vc;
+						if( s.AttemptHack(.1f))
+						{
+							MissileEntity m = new MissileEntity( vc, m_world, vc.m_body.getPosition().x, vc.m_body.getPosition().y, 0,
+									50f, m_factionCode, m_aliveThings );
+							m.m_detonatedInsideShip = true;
+							m.m_integrity = 0;
+						}
+					}
+				}
+			}
 		}
 	}
 	
@@ -142,7 +178,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 			vc.m_factionCode != m_factionCode )
 		{			
 			float dst = vc.m_body.getPosition().dst(m_body.getPosition());
-			boolean trueDamage = m_specialAbilitiesActivated.get(Characters.Yashpal) && vc == m_target;
+			boolean trueDamage = ( m_specialAbilitiesActivated.get(Characters.Yashpal) && vc == m_target ) || m_detonatedInsideShip;
 			vc.damageIntegrity(m_missileDamage/dst, DamageType.Explosion, trueDamage, trueDamage, trueDamage );
 			
 			float centerX = m_body.getPosition().x;

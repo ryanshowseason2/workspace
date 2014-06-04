@@ -63,7 +63,7 @@ public abstract class CounterMeasure
 	
 	public void Equip( int rangeIndex )
 	{
-		m_range = 20 * m_rangeEnablersAndMultipliers[rangeIndex];
+		m_range = 20 * m_rangeEnablersAndMultipliers[rangeIndex] * (rangeIndex + 1);
 	}
 	
 	public abstract void AcquireAndFire(SpriteBatch renderer);
