@@ -158,7 +158,7 @@ public class Ship extends ViewedCollidable
 		if (!m_inMenu)
 		{
 
-			m_detectionRange = 50f;
+			m_detectionRange = m_detectionRangeReset;
 			SetShieldColor();
 			m_pooledShieldEffect.setPosition(m_objectXPosition,
 					m_objectYPosition);

@@ -43,6 +43,7 @@ public abstract class ViewedCollidable
     public boolean m_isTargetable = true;
     public static boolean m_inMenu = false;
     public float m_detectionRange = Float.MAX_VALUE;
+    public float m_detectionRangeReset = 50f;
     
     float m_organicMatter = 0;
     float m_rareMetals = 0;

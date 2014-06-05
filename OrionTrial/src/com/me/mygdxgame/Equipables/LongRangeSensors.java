@@ -19,7 +19,8 @@ import com.me.mygdxgame.Entities.Projectile.Characters;
 
 public class LongRangeSensors extends CounterMeasure implements QueryCallback
 {
-	
+	int m_stealthCounter = 0;
+	int m_stealthDuration = 300;
 	public LongRangeSensors(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
 		super(w, s, aliveThings,  new Image( new Texture(Gdx.files.internal("data/sensors.png") ) ) );
@@ -59,14 +60,14 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_activateSecondaryMode = 120;
+		m_ship.m_detectionRangeReset = 25f;
 	}
 
 	@Override
 	public void DisengageCM()
 	{
 		super.DisengageCM();
-
+		m_ship.m_detectionRangeReset = 25f;
 	}
 	
 	@Override
@@ -74,8 +75,7 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 	{
 		ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
 		if( vc.m_factionCode != 0 && 
-			vc.m_factionCode != m_ship.m_factionCode &&
-			vc.m_detectionRange > vc.m_body.getPosition().dst(m_ship.m_body.getPosition()))
+			vc.m_factionCode != m_ship.m_factionCode )
 		{
 			m_ship.m_trackedTargets.remove( vc );
 			m_ship.m_trackedTargets.add( vc );
