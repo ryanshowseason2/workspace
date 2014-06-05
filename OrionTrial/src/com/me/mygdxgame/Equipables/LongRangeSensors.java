@@ -15,11 +15,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.me.mygdxgame.Entities.Projectile;
 import com.me.mygdxgame.Entities.Ship;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.Projectile.Characters;
 
-public class LongRangeSensors extends CounterMeasure
+public class LongRangeSensors extends CounterMeasure implements QueryCallback
 {
-	ViewedCollidable m_secondaryTarget = null;
-	int m_activateSecondaryMode = 0;
 	
 	public LongRangeSensors(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
@@ -28,6 +27,7 @@ public class LongRangeSensors extends CounterMeasure
 		m_rangeEnablersAndMultipliers[0] = -1f;
 		m_rangeEnablersAndMultipliers[1] = -1f;
 		m_rangeEnablersAndMultipliers[2] = 1f;
+		m_fireFrequency = 30;
 	}
 	
 	@Override
@@ -39,7 +39,20 @@ public class LongRangeSensors extends CounterMeasure
 	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
 	{
-
+		if( m_fireCounter > m_fireFrequency )
+		{
+			float centerX = m_ship.m_body.getPosition().x;
+			float centerY = m_ship.m_body.getPosition().y;
+			m_world.QueryAABB(this, centerX - m_range,
+									centerY - m_range,
+									centerX + m_range,
+									centerY + m_range );
+			m_fireCounter = 0;
+		}
+		else
+		{
+			m_fireCounter++;
+		}
 	}
 
 	@Override
@@ -54,6 +67,21 @@ public class LongRangeSensors extends CounterMeasure
 	{
 		super.DisengageCM();
 
+	}
+	
+	@Override
+	public boolean reportFixture(Fixture fixture)
+	{
+		ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
+		if( vc.m_factionCode != 0 && 
+			vc.m_factionCode != m_ship.m_factionCode &&
+			vc.m_detectionRange > vc.m_body.getPosition().dst(m_ship.m_body.getPosition()))
+		{
+			m_ship.m_trackedTargets.remove( vc );
+			m_ship.m_trackedTargets.add( vc );
+		}
+		
+		return true;
 	}
 
 }
