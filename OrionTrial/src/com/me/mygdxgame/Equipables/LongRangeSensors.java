@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
@@ -21,6 +24,12 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 {
 	int m_stealthCounter = 0;
 	int m_stealthDuration = 300;
+	
+	ParticleEffect m_stealthEffect = new ParticleEffect();
+    ParticleEffectPool m_stealthEffectPool;
+    PooledEffect m_pooledstealthEffect;
+    boolean m_stealthed = false;
+    
 	public LongRangeSensors(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
 		super(w, s, aliveThings,  new Image( new Texture(Gdx.files.internal("data/sensors.png") ) ) );
@@ -29,6 +38,10 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 		m_rangeEnablersAndMultipliers[1] = -1f;
 		m_rangeEnablersAndMultipliers[2] = 1f;
 		m_fireFrequency = 30;
+		
+		m_stealthEffect.load(Gdx.files.internal("data/stealth.p"), Gdx.files.internal("data/"));
+		m_stealthEffectPool = new ParticleEffectPool(m_stealthEffect, 1, 2);
+		m_pooledstealthEffect = m_stealthEffectPool.obtain();
 	}
 	
 	@Override
@@ -54,20 +67,36 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 		{
 			m_fireCounter++;
 		}
+		
+		if( m_stealthed )
+		{
+			if( !m_pooledstealthEffect.isComplete())
+			{
+				m_pooledstealthEffect.setPosition( m_ship.m_objectXPosition, m_ship.m_objectYPosition );
+				m_pooledstealthEffect.draw(renderer, 1/60f );
+			}
+			else
+			{
+				DisengageCM();
+			}
+		}
 	}
 
 	@Override
 	public void EngageCM( Button b )
 	{
 		super.EngageCM(b);
-		m_ship.m_detectionRangeReset = 25f;
+		m_ship.m_detectionRangeReset = 5f;
+		m_stealthed = true;
+		m_pooledstealthEffect.reset();
 	}
 
 	@Override
 	public void DisengageCM()
 	{
 		super.DisengageCM();
-		m_ship.m_detectionRangeReset = 25f;
+		m_stealthed = false;
+		m_ship.m_detectionRangeReset = 50f;
 	}
 	
 	@Override
