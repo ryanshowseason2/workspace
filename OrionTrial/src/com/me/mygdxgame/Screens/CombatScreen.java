@@ -366,8 +366,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		RemoveButtonsForDeadEnemies();
     		
-    		HandleEnemyButtons();
-    		
+    		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    		spriteBatch.begin();
+    		HandleEnemyButtons( spriteBatch );
+    		spriteBatch.end();
     		
     		
     	      Vector2 pos = player.m_body.getPosition();
@@ -395,7 +397,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 
 	}
 
-	private void HandleEnemyButtons()
+	private void HandleEnemyButtons(SpriteBatch spriteBatch)
 	{
 		for( int i = 0; i< player.m_trackedTargets.size(); i++)
 		{
@@ -408,7 +410,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 					EnemyIndicatorButton eib = m_enemyButtons.get(j);
 					if(eib.m_trackedEntity == vc && vc.m_integrity > 0 )
 					{
-						found = UpdateEnemyButton(vc, eib);
+						found = UpdateEnemyButton(vc, eib, spriteBatch );
 					}
 				}
 				
@@ -440,7 +442,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	}
 
 	private boolean UpdateEnemyButton(ViewedCollidable vc,
-			EnemyIndicatorButton eib)
+			EnemyIndicatorButton eib, SpriteBatch spriteBatch)
 	{
 		boolean found;
 		found = true;
@@ -457,6 +459,11 @@ public class CombatScreen extends OrionScreen implements ContactListener
 		yPosition = Math.min(768 - eib.getHeight(), yPosition );
 		
 		eib.setPosition(xPosition, yPosition);
+		
+		float dst = vc.m_body.getPosition().dst(player.m_body.getPosition());
+		int meters = (int) (dst * 29f);
+		font.draw(spriteBatch, meters + "m" , xPosition, yPosition + 20 );
+		
 		return found;
 	}
 
