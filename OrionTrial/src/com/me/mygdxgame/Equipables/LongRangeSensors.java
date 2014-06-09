@@ -108,6 +108,15 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 		{
 			m_ship.m_trackedTargets.remove( vc );
 			m_ship.m_trackedTargets.add( vc );
+			
+			if( m_specialAbilitiesActivated.get(Characters.Noel ) && Ship.class.isInstance(vc) )
+			{
+				Ship s = (Ship)vc;
+				if(s.AttemptHack(1f))
+				{
+					s.m_shieldIntegrityRechargeFactor/=2;
+				}
+			}
 		}
 		
 		return true;

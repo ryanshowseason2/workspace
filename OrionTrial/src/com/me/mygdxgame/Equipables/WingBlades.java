@@ -166,10 +166,11 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 			m_left.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
 			m_right.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
 			
+			m_chainsaw = p.m_chainSaw;
 			
 			if( m_specialAbilitiesActivated.get(Characters.Belice) )
 			{
-				m_chainsaw = p.m_chainSaw;
+				
 				m_chainsaw.m_activated = true;
 				m_chainsaw.m_specialAbilitiesActivated = m_specialAbilitiesActivated;
 			}
@@ -182,6 +183,7 @@ public class WingBlades extends CounterMeasure implements QueryCallback
 		m_left.m_activated = false;
 		m_right.m_activated = false;
 		m_chainsaw.m_activated = false;
+		int i = 0;
 	}
 
 	@Override
