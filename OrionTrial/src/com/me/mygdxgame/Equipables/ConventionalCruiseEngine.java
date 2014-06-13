@@ -47,7 +47,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		m_pooledAirJetEffectUp = m_airJetEffectPoolUp.obtain();
 		
 		m_enginePotency = 2.5f;
-		m_brakePotency = 0.9f;
+		m_brakePotency = 0.25f;
 	}
 	
 	public void ApplyThrust( float forceX, float forceY )
@@ -77,13 +77,13 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		if( m_ship.m_body.getLinearVelocity().x > 0 && forceX < 0 ||
 				  m_ship.m_body.getLinearVelocity().x < 0 && forceX > 0 )
 		  {
-			  forceX = forceX*5;
+			  forceX = forceX*3;
 		  }
 		  
 		  if( m_ship.m_body.getLinearVelocity().y > 0 && forceY < 0 ||
 				  m_ship.m_body.getLinearVelocity().y < 0 && forceY > 0 )
 		  {
-			  forceY = forceY*5;
+			  forceY = forceY*3;
 		  }
 		
 		if( !brakingOrForwardMotion )

@@ -16,6 +16,7 @@ import com.me.mygdxgame.Equipables.ConventionalCruiseEngine;
 import com.me.mygdxgame.Equipables.ConventionalManeuverEngine;
 import com.me.mygdxgame.Equipables.CounterMeasure;
 import com.me.mygdxgame.Equipables.CruiseEngine;
+import com.me.mygdxgame.Equipables.InertialManeuverEngine;
 import com.me.mygdxgame.Equipables.ManeuverEngine;
 
 public class Ship extends ViewedCollidable
@@ -60,7 +61,7 @@ public class Ship extends ViewedCollidable
 				aliveThings, factionCode);
 		// TODO Auto-generated constructor stub
 		m_maxVelocity = maxV;
-		me = new ConventionalManeuverEngine(this, maxV);
+		me = new InertialManeuverEngine(this, maxV);
 		ce = new ConventionalCruiseEngine(this, maxV);
 		m_aliveThings = aliveThings;
 
@@ -181,6 +182,7 @@ public class Ship extends ViewedCollidable
 			{
 				ProcessCounterMeasures(renderer);
 				ce.Draw(renderer);
+				me.Draw(renderer);
 				HandleShieldRecharging();
 			}
 		}

@@ -265,6 +265,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		if( crashVelocity > 1 )
 		{
 			object2.damageIntegrity(crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
+			me.RegisterCollision();
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package com.me.mygdxgame.Equipables;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.me.mygdxgame.Entities.Ship;
 
@@ -65,6 +66,20 @@ public class ConventionalManeuverEngine extends ManeuverEngine
         m_boostJuice -= 20;	
         
 	    m_ship.m_body.applyForceToCenter( xForce, yForce, true);
+	}
+
+	@Override
+	public void Draw(SpriteBatch renderer)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void RegisterCollision()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

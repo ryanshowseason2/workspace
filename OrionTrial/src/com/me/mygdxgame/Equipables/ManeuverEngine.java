@@ -1,5 +1,6 @@
 package com.me.mygdxgame.Equipables;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.me.mygdxgame.Entities.Ship;
 
 public abstract class ManeuverEngine 
@@ -18,4 +19,6 @@ public abstract class ManeuverEngine
 	public abstract void ManeuverBackward();
 	public abstract void ManeuverPort();
 	public abstract void ManeuverStarboard();
+	public abstract void Draw( SpriteBatch renderer );
+	public abstract void RegisterCollision();
 }
