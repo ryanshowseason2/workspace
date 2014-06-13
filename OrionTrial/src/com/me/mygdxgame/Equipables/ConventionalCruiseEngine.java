@@ -46,8 +46,8 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		m_airJetEffectPoolUp = new ParticleEffectPool(m_airJetEffectUp, 1, 2);
 		m_pooledAirJetEffectUp = m_airJetEffectPoolUp.obtain();
 		
-		m_enginePotency = 45f;
-		m_brakePotency = 20f;
+		m_enginePotency = 2.5f;
+		m_brakePotency = 0.9f;
 	}
 	
 	public void ApplyThrust( float forceX, float forceY )
@@ -57,9 +57,9 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	
 	public void ApplyThrust( float forceX, float forceY, boolean brakingOrForwardMotion )
 	{
-		float vel = m_ship.m_body.getLinearVelocity().dst(0, 0);
+		float vel = Math.abs( m_ship.m_body.getLinearVelocity().dst(0, 0) );
 		
-		if( Math.abs(vel) >= m_maxVelocity )
+		if( vel >= m_maxVelocity )
 		{
 			  if( m_ship.m_body.getLinearVelocity().x > 0 && forceX > 0 ||
 					  m_ship.m_body.getLinearVelocity().x < 0 && forceX < 0 )
@@ -72,13 +72,19 @@ public class ConventionalCruiseEngine extends CruiseEngine
 			  {
 				  forceY = 0;
 			  }
-			  
-			  m_ship.m_body.setLinearDamping( 1f );
-		}   
-		else
-		{
-			m_ship.m_body.setLinearDamping(0f);
 		}
+		
+		if( m_ship.m_body.getLinearVelocity().x > 0 && forceX < 0 ||
+				  m_ship.m_body.getLinearVelocity().x < 0 && forceX > 0 )
+		  {
+			  forceX = forceX*5;
+		  }
+		  
+		  if( m_ship.m_body.getLinearVelocity().y > 0 && forceY < 0 ||
+				  m_ship.m_body.getLinearVelocity().y < 0 && forceY > 0 )
+		  {
+			  forceY = forceY*5;
+		  }
 		
 		if( !brakingOrForwardMotion )
 		{
@@ -86,7 +92,7 @@ public class ConventionalCruiseEngine extends CruiseEngine
 			m_lastYForce = forceY;
 		}
 		
-		m_ship.m_body.applyForceToCenter(forceX, forceY, true);
+		m_ship.m_body.applyLinearImpulse(forceX, forceY,0,0, true);
 	}
 
 	@Override
@@ -95,8 +101,8 @@ public class ConventionalCruiseEngine extends CruiseEngine
 		// TODO Auto-generated method stub
 		float xForce = 0;
 	    float yForce = 0;
-	    xForce = (float)(2*m_enginePotency * Math.cos(m_ship.m_angleRadians));
-        yForce = (float)(2*m_enginePotency * Math.sin(m_ship.m_angleRadians));
+	    xForce = (float)(m_enginePotency * Math.cos(m_ship.m_angleRadians));
+        yForce = (float)(m_enginePotency * Math.sin(m_ship.m_angleRadians));
         
         ApplyThrust( xForce, yForce, true );
 	}
@@ -243,10 +249,17 @@ public class ConventionalCruiseEngine extends CruiseEngine
 	@Override
 	public void ProcessVelocity()
 	{
-		// TODO Auto-generated method stub
-		float vel = m_ship.m_body.getLinearVelocity().dst(0, 0);
+float vel = Math.abs( m_ship.m_body.getLinearVelocity().dst(0, 0) );
 		
-		if( vel < m_maxVelocity )
+		if( vel >= m_maxVelocity )
+		{			 
+			m_ship.m_body.setLinearDamping( 1f );
+		}   
+		else if( vel > (m_maxVelocity * .4f) )
+		{
+			m_ship.m_body.setLinearDamping(.1f);
+		}
+		else
 		{
 			m_ship.m_body.setLinearDamping(0f);
 		}

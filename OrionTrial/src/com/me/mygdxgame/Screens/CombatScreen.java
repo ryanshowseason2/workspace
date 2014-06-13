@@ -132,7 +132,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
-        player = new PlayerEntity("shipsized", w, 0, 0, -90, 60f, m_aliveThings, cam, m_stage);
+        player = new PlayerEntity("shipsized", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, w, 0, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, 5, 40, m_aliveThings );
