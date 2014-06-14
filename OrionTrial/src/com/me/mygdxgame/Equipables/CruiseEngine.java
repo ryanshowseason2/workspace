@@ -9,6 +9,7 @@ import com.me.mygdxgame.Entities.Ship;
 public abstract class CruiseEngine 
 {
 	Ship m_ship;
+	float m_jetAngle = 0;
 	float m_maxVelocity;
 	public boolean m_enginesEngaged = false;
 	boolean m_jetsEngaged = false;
@@ -23,22 +24,14 @@ public abstract class CruiseEngine
 	ParticleEffect m_engineEffect = new ParticleEffect();
     ParticleEffectPool m_engineEffectPool;
     PooledEffect m_pooledEngineEffect;
+    
     ParticleEffect m_engineTrailEffect = new ParticleEffect();
     ParticleEffectPool m_engineTrailEffectPool;
     PooledEffect m_pooledEngineTrailEffect;
     
-    ParticleEffect m_airJetEffectRight = new ParticleEffect();
-    ParticleEffect m_airJetEffectDown = new ParticleEffect();
-    ParticleEffect m_airJetEffectLeft = new ParticleEffect();
-    ParticleEffect m_airJetEffectUp = new ParticleEffect();
-    ParticleEffectPool m_airJetEffectPoolRight;
-    PooledEffect m_pooledAirJetEffectRight;
-    ParticleEffectPool m_airJetEffectPoolDown;
-    PooledEffect m_pooledAirJetEffectDown;
-    ParticleEffectPool m_airJetEffectPoolLeft;
-    PooledEffect m_pooledAirJetEffectLeft;
-    ParticleEffectPool m_airJetEffectPoolUp;
-    PooledEffect m_pooledAirJetEffectUp;
+    ParticleEffect m_airJetEffect = new ParticleEffect();
+    ParticleEffectPool m_airJetEffectPool;
+    PooledEffect m_pooledAirJetEffect;
     
 	public CruiseEngine( Ship s, float maxVelocity )
 	{

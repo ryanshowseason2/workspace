@@ -20,30 +20,12 @@ public class InertialCruiseEngine extends CruiseEngine
 		m_engineTrailEffectPool = new ParticleEffectPool(m_engineTrailEffect, 1, 2);
 		m_pooledEngineTrailEffect = m_engineTrailEffectPool.obtain();
 		
-		m_airJetEffectRight.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
-		m_airJetEffectDown.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
-		m_airJetEffectLeft.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
-		m_airJetEffectUp.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
+		m_airJetEffect.load(Gdx.files.internal("data/airstream.p"), Gdx.files.internal("data/"));
 		
-		m_airJetEffectRight.getEmitters().get(0).setAttached(true);
-		m_airJetEffectRight.getEmitters().get(0).getAngle().setHigh(5f, -5f);
-		m_airJetEffectPoolRight = new ParticleEffectPool(m_airJetEffectRight, 1, 2);
-		m_pooledAirJetEffectRight = m_airJetEffectPoolRight.obtain();
-		
-		m_airJetEffectDown.getEmitters().get(0).setAttached(true);
-		m_airJetEffectDown.getEmitters().get(0).getAngle().setHigh(265f, 275f);
-		m_airJetEffectPoolDown = new ParticleEffectPool(m_airJetEffectDown, 1, 2);
-		m_pooledAirJetEffectDown = m_airJetEffectPoolDown.obtain();
-		
-		m_airJetEffectLeft.getEmitters().get(0).setAttached(true);
-		m_airJetEffectLeft.getEmitters().get(0).getAngle().setHigh(175f, 185f);
-		m_airJetEffectPoolLeft = new ParticleEffectPool(m_airJetEffectLeft, 1, 2);
-		m_pooledAirJetEffectLeft = m_airJetEffectPoolLeft.obtain();
-		
-		m_airJetEffectUp.getEmitters().get(0).setAttached(true);
-		m_airJetEffectUp.getEmitters().get(0).getAngle().setHigh(85f, 95f);
-		m_airJetEffectPoolUp = new ParticleEffectPool(m_airJetEffectUp, 1, 2);
-		m_pooledAirJetEffectUp = m_airJetEffectPoolUp.obtain();
+		m_airJetEffect.getEmitters().get(0).setAttached(true);
+		m_airJetEffect.getEmitters().get(0).getAngle().setHigh(5f, -5f);
+		m_airJetEffectPool = new ParticleEffectPool(m_airJetEffect, 1, 2);
+		m_pooledAirJetEffect = m_airJetEffectPool.obtain();
 		
 		m_enginePotency = 3f;
 		m_brakePotency = 1f;
@@ -186,35 +168,13 @@ public class InertialCruiseEngine extends CruiseEngine
 		if( m_jetsEngaged  )
 		{
 			m_ship.IncreaseDetectionRange( 1f );
-			if( m_lastXForce > 0 && (m_ship.m_angleDegrees > 45f || m_ship.m_angleDegrees < -45f) )
-			{
-				m_pooledAirJetEffectLeft.setPosition( m_airJetAttachX, m_airJetAttachY );
-				m_pooledAirJetEffectLeft.draw(renderer, 1f/60f);
-			}
 			
-			if( m_lastXForce < 0 && (m_ship.m_angleDegrees > 225f || m_ship.m_angleDegrees < 135f) )
-			{
-				m_pooledAirJetEffectRight.setPosition( m_airJetAttachX, m_airJetAttachY );
-				m_pooledAirJetEffectRight.draw(renderer, 1f/60f);
-			}
-			
-			if( m_lastYForce > 0 && (m_ship.m_angleDegrees > 135f || m_ship.m_angleDegrees < 45f) )
-			{
-				m_pooledAirJetEffectDown.setPosition( m_airJetAttachX, m_airJetAttachY );
-				m_pooledAirJetEffectDown.draw(renderer, 1f/60f);
-			}
-			
-			if( m_lastYForce < 0 && (m_ship.m_angleDegrees > 315f || m_ship.m_angleDegrees < 225f) )
-			{
-				m_pooledAirJetEffectUp.setPosition( m_airJetAttachX, m_airJetAttachY );
-				m_pooledAirJetEffectUp.draw(renderer, 1f/60f);
-			}
+			m_pooledAirJetEffect.setPosition( m_airJetAttachX, m_airJetAttachY );
+			m_pooledAirJetEffect.getEmitters().get(0).getAngle().setHigh(m_ship.m_angleDegrees-5+ m_jetAngle, m_ship.m_angleDegrees+5+ m_jetAngle);			
+			m_pooledAirJetEffect.draw(renderer, 1f/60f);
 		}
 		
-		if( m_pooledAirJetEffectRight.isComplete()&&
-			m_pooledAirJetEffectDown.isComplete() &&
-			m_pooledAirJetEffectLeft.isComplete() &&
-			m_pooledAirJetEffectUp.isComplete() )
+		if( m_pooledAirJetEffect.isComplete() )
 		{
 			m_jetsEngaged = false;
 		}
@@ -256,10 +216,7 @@ public class InertialCruiseEngine extends CruiseEngine
 	{
 		// TODO Auto-generated method stub
 		m_jetsEngaged = true;
-		m_pooledAirJetEffectRight.reset();
-		m_pooledAirJetEffectDown.reset();
-		m_pooledAirJetEffectLeft.reset();
-		m_pooledAirJetEffectUp.reset();
+		m_pooledAirJetEffect.reset();
 				
 	}
 
@@ -268,10 +225,7 @@ public class InertialCruiseEngine extends CruiseEngine
 	{
 		// TODO Auto-generated method stub
 		
-		m_pooledAirJetEffectRight.allowCompletion();
-		m_pooledAirJetEffectDown.allowCompletion();
-		m_pooledAirJetEffectLeft.allowCompletion();
-		m_pooledAirJetEffectUp.allowCompletion();
+		m_pooledAirJetEffect.allowCompletion();
 	}
 
 	@Override
