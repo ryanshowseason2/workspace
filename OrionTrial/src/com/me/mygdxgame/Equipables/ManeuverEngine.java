@@ -1,6 +1,9 @@
 package com.me.mygdxgame.Equipables;
 
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.me.mygdxgame.Entities.Ship;
 
 public abstract class ManeuverEngine 
@@ -9,6 +12,9 @@ public abstract class ManeuverEngine
 	public float m_maxVelocity;
 	public float m_boostJuice = 100;
 	public float m_boostMagnitude = 15000f;
+	ParticleEffect m_engineEffect = new ParticleEffect();
+    ParticleEffectPool m_engineEffectPool;
+    PooledEffect m_pooledEngineEffect;
 	public ManeuverEngine( Ship s, float maxVelocity )
 	{
 		m_ship = s;
