@@ -15,6 +15,11 @@ public abstract class ManeuverEngine
 	ParticleEffect m_engineEffect = new ParticleEffect();
     ParticleEffectPool m_engineEffectPool;
     PooledEffect m_pooledEngineEffect;
+    
+    ParticleEffect m_engineAfterEffect = new ParticleEffect();
+    ParticleEffectPool m_engineAfterEffectPool;
+    PooledEffect m_pooledEngineAfterEffect;
+    
 	public ManeuverEngine( Ship s, float maxVelocity )
 	{
 		m_ship = s;
