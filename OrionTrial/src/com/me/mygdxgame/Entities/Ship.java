@@ -53,6 +53,7 @@ public class Ship extends ViewedCollidable
 
 	ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList<OverTimeEffect>();
 	boolean m_freezeShip = false;
+	protected int m_weaponsFree = 180;
 
 	public Ship(String appearanceLocation, float collisionScale, World world,
 			float startX, float startY, float maxV,
@@ -181,7 +182,10 @@ public class Ship extends ViewedCollidable
 
 			if (!m_freezeShip)
 			{
-				ProcessCounterMeasures(renderer);
+				if( m_weaponsFree > 0 )
+				{
+					ProcessCounterMeasures(renderer);
+				}
 				ce.Draw(renderer);
 				me.Draw(renderer);
 				HandleShieldRecharging();

@@ -64,6 +64,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		m_targetingEffect.load(Gdx.files.internal("data/targetingradar.p"), Gdx.files.internal("data/"));
 		m_targetingEffectPool = new ParticleEffectPool(m_targetingEffect, 1, 2);
 		m_pooledTargetingEffect = m_targetingEffectPool.obtain();
+		m_weaponsFree = 0;
 	}
 	
 	public void AddToFighterGroup(EnemyShip e )
@@ -98,13 +99,24 @@ public class EnemyShip extends Ship implements QueryCallback
 				NavigateToTarget();
 			}
 			
-			if( m_target != null )
+			HandleTargetingDrawAndWeaponsFree(renderer);
+			
+			UpdateTrackedTargetsList();
+		}
+	}
+
+	private void HandleTargetingDrawAndWeaponsFree(SpriteBatch renderer)
+	{
+		if( m_target != null )
+		{
+			if( m_pooledTargetingEffect.isComplete() )
 			{
-				if( m_pooledTargetingEffect.isComplete() )
-				{
-					m_pooledTargetingEffect.reset();
-				}
-				
+				m_pooledTargetingEffect.reset();
+				m_weaponsFree = 180;
+			}
+			
+			if( m_weaponsFree == 0 )
+			{
 				m_pooledTargetingEffect.setPosition(m_objectXPosition, m_objectYPosition);
 				m_pooledTargetingEffect.getEmitters().get(0).getRotation().setLow( m_angleDegrees );
 				m_pooledTargetingEffect.getEmitters().get(1).getRotation().setLow( m_angleDegrees );
@@ -122,8 +134,10 @@ public class EnemyShip extends Ship implements QueryCallback
 				
 				m_pooledTargetingEffect.draw(renderer, 1f/60f);
 			}
-			
-			UpdateTrackedTargetsList();
+			else
+			{
+				m_weaponsFree--;
+			}
 		}
 	}
 
@@ -241,7 +255,7 @@ public class EnemyShip extends Ship implements QueryCallback
 				|| (m_body.getLinearVelocity().x < -5 && vec.x > pos.x)
 				|| (m_body.getLinearVelocity().y > 5 && vec.y < pos.y)
 				|| (m_body.getLinearVelocity().y < -5 && vec.y > pos.y)
-				|| pos.dst(vec) <= 7f )
+				|| pos.dst(vec) <= 10f )
 		{
 			ce.EngineBrake();
 		} 
