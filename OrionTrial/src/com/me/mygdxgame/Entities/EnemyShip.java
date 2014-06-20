@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -33,6 +35,10 @@ public class EnemyShip extends Ship implements QueryCallback
 	ArrayList<EnemyShip> m_fighterGroup = new ArrayList<EnemyShip>();
 	public int m_soundTheAlarmCounter = 0;
 	
+	ParticleEffect m_targetingEffect = new ParticleEffect();
+	ParticleEffectPool m_targetingEffectPool;
+	PooledEffect m_pooledTargetingEffect;
+	
 
 	public EnemyShip(String appearanceLocation, float collisionScale, World world, float startX,
 			float startY, float initialAngleAdjust, float maxV,
@@ -54,6 +60,10 @@ public class EnemyShip extends Ship implements QueryCallback
 		ce = new InertialCruiseEngine(this, maxV);
 		m_navigatingTo = new Vector2();
 		m_navigatingTo.x = -1;
+		
+		m_targetingEffect.load(Gdx.files.internal("data/targetingradar.p"), Gdx.files.internal("data/"));
+		m_targetingEffectPool = new ParticleEffectPool(m_targetingEffect, 1, 2);
+		m_pooledTargetingEffect = m_targetingEffectPool.obtain();
 	}
 	
 	public void AddToFighterGroup(EnemyShip e )
@@ -86,6 +96,31 @@ public class EnemyShip extends Ship implements QueryCallback
 			if (m_target != null || m_navigatingTo.x != -1 )
 			{				
 				NavigateToTarget();
+			}
+			
+			if( m_target != null )
+			{
+				if( m_pooledTargetingEffect.isComplete() )
+				{
+					m_pooledTargetingEffect.reset();
+				}
+				
+				m_pooledTargetingEffect.setPosition(m_objectXPosition, m_objectYPosition);
+				m_pooledTargetingEffect.getEmitters().get(0).getRotation().setLow( m_angleDegrees );
+				m_pooledTargetingEffect.getEmitters().get(1).getRotation().setLow( m_angleDegrees );
+				m_pooledTargetingEffect.getEmitters().get(2).getRotation().setLow( m_angleDegrees );
+				m_pooledTargetingEffect.getEmitters().get(3).getRotation().setLow( m_angleDegrees );
+				
+				m_pooledTargetingEffect.getEmitters().get(4).getRotation().setLow( m_angleDegrees + 90 );
+				m_pooledTargetingEffect.getEmitters().get(4).getRotation().setHigh( m_angleDegrees - 90 );
+				m_pooledTargetingEffect.getEmitters().get(5).getRotation().setLow( m_angleDegrees + 90 );
+				m_pooledTargetingEffect.getEmitters().get(5).getRotation().setHigh( m_angleDegrees - 90 );
+				m_pooledTargetingEffect.getEmitters().get(6).getRotation().setLow( m_angleDegrees + 90 );
+				m_pooledTargetingEffect.getEmitters().get(6).getRotation().setHigh( m_angleDegrees - 90 );
+				m_pooledTargetingEffect.getEmitters().get(7).getRotation().setLow( m_angleDegrees + 90 );
+				m_pooledTargetingEffect.getEmitters().get(7).getRotation().setHigh( m_angleDegrees - 90 );
+				
+				m_pooledTargetingEffect.draw(renderer, 1f/60f);
 			}
 			
 			UpdateTrackedTargetsList();
@@ -122,7 +157,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		{
 			m_soundTheAlarmCounter++;
 			
-			if( m_soundTheAlarmCounter > 300 )
+			if( m_soundTheAlarmCounter > 400 )
 			{
 				for( int i = 0; i < m_fighterGroup.size(); i++ )
 				{
