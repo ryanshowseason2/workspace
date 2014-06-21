@@ -52,11 +52,14 @@ public class MachineGun extends CounterMeasure
 			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
 			{
 				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
-				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
-				if( distance <= m_range && distance < leastDistance )
+				if( vc != null )
 				{
-					leastDistance = distance;
-					m_target = vc;
+					float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
+					if( distance <= m_range && distance < leastDistance )
+					{
+						leastDistance = distance;
+						m_target = vc;
+					}
 				}
 			}
 		}

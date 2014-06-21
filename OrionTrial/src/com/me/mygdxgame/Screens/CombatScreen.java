@@ -402,7 +402,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
 		for( int i = 0; i< player.m_trackedTargets.size(); i++)
 		{
 			ViewedCollidable vc = player.m_trackedTargets.get(i);
-			if( vc.m_body.getPosition().dst(player.m_body.getPosition()) > 768f/29f )
+			if( vc.m_body.getPosition().dst(player.m_body.getPosition()) > 768f/29f &&
+				vc.m_isTargetable )
 			{
 				boolean found = false;
 				for( int j = 0; j < m_enemyButtons.size() && !found; j++)

@@ -117,12 +117,14 @@ public class TeleportManeuverEngine extends ManeuverEngine
 		
 		if( m_cooling )
 		{
+			m_ship.m_untargetable = true;
 			m_pooledEngineAfterEffect.setPosition(m_ship.m_objectXPosition, m_ship.m_objectYPosition);
 			m_pooledEngineAfterEffect.draw(renderer, 1f/60f);
 			
 			if( m_pooledEngineAfterEffect.isComplete() )
 			{
 				m_cooling = false;
+				m_ship.m_untargetable = false;
 			}
 		}	
 		

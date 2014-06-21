@@ -49,6 +49,7 @@ public abstract class ViewedCollidable
     float m_rareMetals = 0;
     float m_water = 0;
     float m_dogeCoin = 0;
+	public boolean m_untargetable = false;
     
     public enum DamageType 
     {

@@ -38,6 +38,7 @@ public class EnemyShip extends Ship implements QueryCallback
 	ParticleEffect m_targetingEffect = new ParticleEffect();
 	ParticleEffectPool m_targetingEffectPool;
 	PooledEffect m_pooledTargetingEffect;
+	private double m_fieldOfView = Math.PI/2;
 	
 
 	public EnemyShip(String appearanceLocation, float collisionScale, World world, float startX,
@@ -87,11 +88,13 @@ public class EnemyShip extends Ship implements QueryCallback
 						- m_sensorRange / 2, centerX + m_sensorRange / 2,
 						centerY + m_sensorRange / 2);
 			}
-			else if( m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange &&
-					 !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) )
+			
+			if( m_target != null &&
+				( m_target.m_untargetable || m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange && !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) ) )
 			{
 				//Check that target is still in detection range
 				m_target = null;
+				m_trackedTargets.remove(m_target);
 			}
 	
 			if (m_target != null || m_navigatingTo.x != -1 )
@@ -149,12 +152,18 @@ public class EnemyShip extends Ship implements QueryCallback
 		for( int i = 0; i< m_trackedTargets.size(); i++ )
 		{
 			ViewedCollidable vc = m_trackedTargets.get(i);
-			if( (vc.m_body.getPosition().dst(m_body.getPosition()) > vc.m_detectionRange &&
-				!CheckWingAndCenterPaths(0, m_body.getPosition(), vc.m_body.getPosition() ) ) ||
-				vc.m_integrity <=0 )
-			{
-				targetsToRemove.add(vc);
-			}				
+			if( vc != null )
+			{ 
+				boolean outOfRange = vc.m_body.getPosition().dst(m_body.getPosition()) > vc.m_detectionRange;
+				
+				boolean noLineOfSight = !CheckWingAndCenterPaths(0, m_body.getPosition(), vc.m_body.getPosition() );
+				
+				boolean notAlive = vc.m_integrity <=0; 
+				if( (outOfRange && noLineOfSight) || notAlive )
+				{
+					targetsToRemove.add(vc);
+				}				
+			}
 		}
 		
 		for( int i = 0; i< targetsToRemove.size(); i++ )
