@@ -76,7 +76,7 @@ public abstract class ViewedCollidable
 		  m_factionCode = factionCode;
 	      m_objectXPosition = startX*29f;
 	      m_objectYPosition = startY*29f;
-	      m_objectAppearance = new Texture(Gdx.files.internal("data/"+appearanceLocation+ ".png"));
+	      m_objectAppearance = new Texture(Gdx.files.internal("data/"+appearanceLocation+ "/"+appearanceLocation+".png"));
 	      m_objectSprite = new Sprite( m_objectAppearance );
 	      // First we create a body definition
 	      BodyDef bodyDef = new BodyDef();
@@ -108,7 +108,7 @@ public abstract class ViewedCollidable
 	      }
 	      else
 	      {
-	    	  BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("data/"+appearanceLocation+ ".json"));
+	    	  BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("data/"+appearanceLocation+"/"+appearanceLocation+ ".json"));
 	    	  loader.attachFixture(m_body, "Name", fixtureDef, collisionScale);
 	      }
 	      

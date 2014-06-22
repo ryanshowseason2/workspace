@@ -38,7 +38,7 @@ public class Asteroid extends ViewedCollidable {
 	public void damageCalc(ViewedCollidable object2, float crashVelocity) 
 	{
 		// TODO Auto-generated method stub
-		if( crashVelocity > 1 )
+		if( crashVelocity > 3 )
 		{
 			object2.damageIntegrity(crashVelocity * m_body.getMass() / 20, DamageType.Collision );
 		}

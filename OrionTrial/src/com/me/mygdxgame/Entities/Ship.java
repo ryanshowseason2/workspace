@@ -67,8 +67,8 @@ public class Ship extends ViewedCollidable
 		ce = new ConventionalCruiseEngine(this, maxV);
 		m_aliveThings = aliveThings;
 
-		m_shieldEffect.load(Gdx.files.internal("data/newshield.p"),
-				Gdx.files.internal("data/"));
+		m_shieldEffect.load(Gdx.files.internal("data/shield.p"),
+				Gdx.files.internal("data/" + appearanceLocation + "/"));
 		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 		m_detectionRange = 50f;

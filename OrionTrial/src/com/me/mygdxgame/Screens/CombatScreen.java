@@ -132,7 +132,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
-        player = new PlayerEntity("shipsized", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
+        player = new PlayerEntity("playership", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, w, 0, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, 5, 40, m_aliveThings );
@@ -140,9 +140,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
         asty = new Asteroid("asteroid", 4.5f,w, -5, 40, m_aliveThings );
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
-        shippy = new EnemyShip( "stateczek", 0,w, 0, 50, 0, 50, 2, m_aliveThings );
-        shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
-        shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
+        shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
+       // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
+       // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);
