@@ -79,8 +79,11 @@ public class Ship extends ViewedCollidable
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity)
 	{
-		// TODO Auto-generated method stub
-		int i = 0;
+		if( crashVelocity > 3 )
+		{
+			object2.damageIntegrity(crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
+			me.RegisterCollision();
+		}
 	}
 
 	@Override
@@ -188,11 +191,20 @@ public class Ship extends ViewedCollidable
 				}
 				ce.Draw(renderer);
 				me.Draw(renderer);
-				HandleShieldRecharging();
+				HandleShieldRecharging();				
+		    	HandleBoostRecharge();			      
 			}
 		}
 
 		super.Draw(renderer);
+	}
+
+	private void HandleBoostRecharge()
+	{
+		if( me.m_boostJuice < me.m_boostJuiceMax )
+		{
+		    me.m_boostJuice += me.m_boostJuiceMax * .002;
+		}
 	}
 
 	private void DrawHackedIndicator(SpriteBatch renderer)

@@ -127,11 +127,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
     	  ce.EngineBrake();
       }
       
-      if( Math.abs(vel) < me.m_maxVelocity )
-      {
-    	  if( me.m_boostJuice < 100 )
-    		  me.m_boostJuice += .2;
-      }
+      
       
       ce.ProcessVelocity();
       //m_body.applyForce( xForce, yForce, pos.x, pos.y, true);
@@ -144,7 +140,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		Date d = new Date();
 		if( keycode == m_lastKey &&
 			( d.getTime() - m_keyPressedMilliseconds ) < 200 &&
-			me.m_boostJuice > 30 )
+			me.m_boostJuice > 0 )
 		{			
 	      if (keycode == Keys.A ) 
 	      {          

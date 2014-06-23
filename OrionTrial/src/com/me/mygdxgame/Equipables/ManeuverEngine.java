@@ -19,6 +19,7 @@ public abstract class ManeuverEngine
     ParticleEffect m_engineAfterEffect = new ParticleEffect();
     ParticleEffectPool m_engineAfterEffectPool;
     PooledEffect m_pooledEngineAfterEffect;
+	public float m_boostJuiceMax = 100;
     
 	public ManeuverEngine( Ship s, float maxVelocity )
 	{
