@@ -22,7 +22,7 @@ public class EnemyShip extends Ship implements QueryCallback
 {
 	public enum SeekType
 	{
-		RamTarget, EnterFiringRange, TravelingToWaypoint
+		RamTarget, EnterFiringRange, TravelingToWaypoint, Stationary
 	}
 
 	SeekType m_seekType;
@@ -201,8 +201,11 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	protected void NavigateToTarget()
 	{
-		CalculateWaypoint();
-		DriveEnginesToWaypoint();
+		if( m_seekType != SeekType.Stationary )
+		{
+			CalculateWaypoint();
+			DriveEnginesToWaypoint();
+		}
 	}
 
 	private void DriveEnginesToWaypoint()
@@ -232,6 +235,7 @@ public class EnemyShip extends Ship implements QueryCallback
 			//  get within firing range and drift.
 			RammingLogic(pos, vec);
 			break;
+		case Stationary:
 		default:
 			// do nothing
 			break;

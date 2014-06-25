@@ -45,6 +45,7 @@ import com.me.mygdxgame.Entities.CrazedRammer;
 import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
+import com.me.mygdxgame.Entities.PoorStation;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Entities.WingBlade;
 import com.me.mygdxgame.Equipables.Hacking;
@@ -143,6 +144,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
         shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
+        new PoorStation(w, 0, -50, 0, m_aliveThings );
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         

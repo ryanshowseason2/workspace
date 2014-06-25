@@ -7,6 +7,8 @@ import com.me.mygdxgame.Entities.Ship;
 
 public class InertialCruiseEngine extends CruiseEngine
 {
+	
+
 	public InertialCruiseEngine(Ship s, float maxVelocity)
 	{
 		super(s, maxVelocity);
@@ -152,14 +154,14 @@ public class InertialCruiseEngine extends CruiseEngine
 		float ydelta = (float) (Math.sin(m_ship.m_angleRadians) * radius);
 		
 
-		if( m_enginesEngaged )
+		if( m_enginesEngaged && m_hasEngines )
 		{						
 			m_pooledEngineEffect.setPosition( m_ship.m_objectXPosition - xdelta, m_ship.m_objectYPosition - ydelta );
 			m_pooledEngineEffect.draw(renderer, 1f/60f);
 			m_ship.IncreaseDetectionRange( 1f );
 		}
 		
-		if( m_ship.m_integrity > 0 )
+		if( m_ship.m_integrity > 0 && m_hasEngines  )
 		{
 			m_pooledEngineTrailEffect.setPosition( m_ship.m_objectXPosition - xdelta, m_ship.m_objectYPosition - ydelta );
 			m_pooledEngineTrailEffect.draw(renderer, 1f/60f);
