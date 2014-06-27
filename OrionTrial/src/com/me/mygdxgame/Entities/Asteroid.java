@@ -20,7 +20,7 @@ public class Asteroid extends ViewedCollidable {
 		data.I = .2f;
 		m_body.setMassData(data);
 		m_body.setUserData(this);
-		m_body.setLinearDamping(0.2f);
+		//m_body.setLinearDamping(0.2f);
 		m_body.setAngularDamping(0.1f);
 		m_body.setAngularVelocity((float) (2*Math.random()-1));
 		m_deathEffect.load(Gdx.files.internal("data/explosionwhite.p"), Gdx.files.internal("data/"));

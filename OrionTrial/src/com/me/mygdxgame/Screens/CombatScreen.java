@@ -59,6 +59,7 @@ import com.me.mygdxgame.Equipables.Railgun;
 import com.me.mygdxgame.Equipables.WingBlades;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import Utilities.ClutterSpawner;
 import box2dlight.ConeLight;
 import box2dlight.Light;
 import box2dlight.PointLight;
@@ -140,6 +141,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
         asty = new Asteroid("asteroid", 4.5f,w, 5, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, 10, 40, m_aliveThings );
         asty = new Asteroid("asteroid", 4.5f,w, -5, 40, m_aliveThings );
+        
+        ClutterSpawner c = new ClutterSpawner( w, m_aliveThings);
+        c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 10, 5);
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
