@@ -9,8 +9,34 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Entities.ViewedCollidable.DamageType;
 
-public class Asteroid extends ViewedCollidable {
-
+public class Asteroid extends ViewedCollidable 
+{
+	public enum AsteroidSizeClass
+	{
+		None,
+		Chunk,
+		Full,
+		Round,
+		Shard
+	}
+	
+	
+	public enum AsteroidTypes
+	{
+		Normal,
+		Explosive,
+		Rock,
+		Rock2,
+		Hive,
+		Hive2,
+		Lined,
+		Lined2,
+		Lesion,
+		Lesion2,
+		Comet,
+		Comet2
+	}
+	
 	public Asteroid(String appearanceLocation, float collisionScale, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
 		super(appearanceLocation, collisionScale, world, startX, startY, aliveThings, 0);
 		// TODO Auto-generated constructor stub

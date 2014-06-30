@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.me.mygdxgame.Entities.Asteroid;
+import com.me.mygdxgame.Entities.Asteroid.AsteroidSizeClass;
+import com.me.mygdxgame.Entities.Asteroid.AsteroidTypes;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class ClutterSpawner
@@ -43,14 +45,86 @@ public class ClutterSpawner
 			{
 				Color c = new Color( spawnMap.getPixel(i, j));
 				
-				if( c.a == 1 )
+				if( Math.random() > c.a )
 				{
-					SpawnAsteroids( (halfWidth - i)*pixelScale, (halfHeight - j)*pixelScale, radius, amount );
+					float zeroTo255Scale = c.r*255;
+					if( zeroTo255Scale == 1 )
+					{
+						SpawnAsteroids( (halfWidth - i)*pixelScale, (halfHeight - j)*pixelScale, radius, amount );
+					}
 				}
 				
 			}
 		}
 		spawnMap.dispose();
+	}
+	
+	private static String RetrieveAsteroidType(AsteroidTypes t, AsteroidSizeClass s)
+	{
+		String size = null;
+		String type = null;
+		
+		switch( t )
+		{
+			case Normal:
+				type = "asteroid";
+				break;
+			case Explosive:
+				type = "explosive";
+				break;
+			case Rock:
+				type = "rock";
+				break;
+			case Rock2:
+				type = "rock2";
+				break;
+			case Hive:
+				type = "hive";
+				break;
+			case Hive2:
+				type = "hive2";
+				break;
+			case Lined:
+				type = "lined";
+				break;
+			case Lined2:
+				type = "lined2";
+				break;
+			case Lesion:
+				type = "lesion";
+				break;
+			case Lesion2:
+				type = "lesion2";
+				break;
+			case Comet:
+				type = "comet";
+				break;
+			case Comet2:
+				type = "comet2";
+				break;
+		}
+		
+		switch( s )
+		{
+			case None:
+				size = "";
+				break;
+			case Chunk:
+				size = "chunk";
+				break;
+			case Full:
+				size = "full";
+				break;
+			case Round:
+				size = "round";
+				break;
+			case Shard:
+				size = "shard";
+				break;
+		}
+		
+		String combined = size+type;
+		return combined;
 	}
 
 }
