@@ -137,17 +137,17 @@ public class CombatScreen extends OrionScreen implements ContactListener
         Dialog window = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
-        asty = new Asteroid("asteroid", 4.5f, w, 0, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f,w, 5, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f,w, 10, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f,w, -5, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 2.5f, .6f, w, 5, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, .75f, w, 10, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, 1.0f, w, 15, 40, m_aliveThings );
         
         ClutterSpawner c = new ClutterSpawner( w, m_aliveThings);
-        c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 10, 5);
+        c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 10, 2);
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
-        shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
+        //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
         new PoorStation(w, 0, -50, 0, m_aliveThings );
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );

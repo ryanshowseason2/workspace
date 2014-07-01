@@ -13,7 +13,7 @@ public class Asteroid extends ViewedCollidable
 {
 	public enum AsteroidSizeClass
 	{
-		None,
+		PlainSize,
 		Chunk,
 		Full,
 		Round,
@@ -23,7 +23,7 @@ public class Asteroid extends ViewedCollidable
 	
 	public enum AsteroidTypes
 	{
-		Normal,
+		PlainType,
 		Explosive,
 		Rock,
 		Rock2,
@@ -37,7 +37,7 @@ public class Asteroid extends ViewedCollidable
 		Comet2
 	}
 	
-	public Asteroid(String appearanceLocation, float collisionScale, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
+	public Asteroid(String appearanceLocation, float collisionScale, float drawScale, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
 		super(appearanceLocation, collisionScale, world, startX, startY, aliveThings, 0);
 		// TODO Auto-generated constructor stub
 		
@@ -58,6 +58,8 @@ public class Asteroid extends ViewedCollidable
 		
 		m_damageReductions[1] = 30;
 		m_damageReductions[0] = 10;
+		
+		m_objectSprite.scale(drawScale);
 	}
 
 	@Override

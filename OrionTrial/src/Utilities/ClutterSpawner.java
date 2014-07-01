@@ -1,6 +1,10 @@
 package Utilities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -23,13 +27,13 @@ public class ClutterSpawner
 		m_aliveThings = aliveThings;
 	}
 	
-	public void SpawnAsteroids( float x, float y, float radius, int amount )
+	public void SpawnAsteroids( AsteroidTypes t, AsteroidSizeClass s , float x, float y, float radius, int amount )
 	{
 		for( int i = 0; i < amount; i++ )
 		{
 			float xrandom = (float) ((Math.random() - .5) * 2 * radius);
 			float yrandom = (float) ((Math.random() - .5) * 2 * radius);
-			new Asteroid("asteroid", 4.5f, m_world, x+ xrandom, y+yrandom, m_aliveThings );
+			new Asteroid( RetrieveAsteroidString( t, s), RetrieveAsteroidCollisionSize(t, s), RetrieveAsteroidDrawSize( t, s ), m_world, x+ xrandom, y+yrandom, m_aliveThings );
 		}
 	}
 	
@@ -45,12 +49,12 @@ public class ClutterSpawner
 			{
 				Color c = new Color( spawnMap.getPixel(i, j));
 				
-				if( Math.random() > c.a )
+				if( Math.random() < c.a )
 				{
 					float zeroTo255Scale = c.r*255;
-					if( zeroTo255Scale == 1 )
+					//if( zeroTo255Scale == 1 )
 					{
-						SpawnAsteroids( (halfWidth - i)*pixelScale, (halfHeight - j)*pixelScale, radius, amount );
+						SpawnAsteroids( randomType(), randomSize(), (halfWidth - i)*pixelScale, (halfHeight - j)*pixelScale, radius, amount );
 					}
 				}
 				
@@ -59,14 +63,14 @@ public class ClutterSpawner
 		spawnMap.dispose();
 	}
 	
-	private static String RetrieveAsteroidType(AsteroidTypes t, AsteroidSizeClass s)
+	private static String RetrieveAsteroidString(AsteroidTypes t, AsteroidSizeClass s)
 	{
-		String size = null;
-		String type = null;
+		String size = "";
+		String type = "";
 		
 		switch( t )
 		{
-			case Normal:
+			case PlainType:
 				type = "asteroid";
 				break;
 			case Explosive:
@@ -104,27 +108,110 @@ public class ClutterSpawner
 				break;
 		}
 		
-		switch( s )
+		if( t != AsteroidTypes.PlainType )
 		{
-			case None:
-				size = "";
-				break;
-			case Chunk:
-				size = "chunk";
-				break;
-			case Full:
-				size = "full";
-				break;
-			case Round:
-				size = "round";
-				break;
-			case Shard:
-				size = "shard";
-				break;
+			switch( s )
+			{
+				case Chunk:
+					size = "chunk";
+					break;
+				case Full:
+					size = "full";
+					break;
+				case Round:
+					size = "round";
+					break;
+				case Shard:
+					size = "shard";
+					break;
+			}
 		}
 		
 		String combined = size+type;
 		return combined;
 	}
+	
+	private static float RetrieveAsteroidDrawSize( AsteroidTypes t, AsteroidSizeClass s)
+	{
+		float size = 1.0f;
+		
+		if( t == AsteroidTypes.PlainType )
+		{
+			size = .1f;
+		}
+		else
+		{
+			switch( s )
+			{
+				case PlainSize:
+					size = .1f;
+					break;
+				case Chunk:
+					size = .4f;
+					break;
+				case Full:
+					size = .6f;
+					break;
+				case Round:
+					size = .5f;
+					break;
+				case Shard:
+					size = .4f;
+					break;
+			}
+		}
+		
+		return size;
+	}
+	
+	private static float RetrieveAsteroidCollisionSize( AsteroidTypes t, AsteroidSizeClass s)
+	{
+		float size = 1.0f;
+		
+		if( t == AsteroidTypes.PlainType )
+		{
+			// The size is predetermined!
+			size = 4.5f;
+		}
+		else
+		{
+			switch( s )
+			{
+				case PlainSize:
+					size = 4.5f;
+					break;
+				case Chunk:
+					size = 1.4f;
+					break;
+				case Full:
+					size = 2.5f;
+					break;
+				case Round:
+					size = 1.8f;
+					break;
+				case Shard:
+					size = 1.0f;
+					break;
+			}
+		}
+		
+		return size;
+	}
+	
+	private static final List<AsteroidTypes> classVALUES = Collections.unmodifiableList(Arrays.asList(AsteroidTypes.values()));
+	private static final int classSIZE = classVALUES.size();
+	private static final Random RANDOM = new Random();
 
+	public static AsteroidTypes randomType()  
+	{
+	    return classVALUES.get(RANDOM.nextInt(classSIZE));
+	}
+		  
+	private static final List<AsteroidSizeClass> sizeVALUES = Collections.unmodifiableList(Arrays.asList(AsteroidSizeClass.values()));
+	private static final int sizeSIZE = sizeVALUES.size();
+
+	public static AsteroidSizeClass randomSize()  
+	{
+	    return sizeVALUES.get(RANDOM.nextInt(sizeSIZE-1)+1);
+	} 
 }
