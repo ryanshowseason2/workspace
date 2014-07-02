@@ -48,7 +48,7 @@ public class Asteroid extends ViewedCollidable
 		m_body.setUserData(this);
 		//m_body.setLinearDamping(0.2f);
 		m_body.setAngularDamping(0.1f);
-		m_body.setAngularVelocity((float) (2*Math.random()-1));
+		m_body.setAngularVelocity((float) (4*Math.random()-2));
 		m_deathEffect.load(Gdx.files.internal("data/explosionwhite.p"), Gdx.files.internal("data/"));
 		m_deathEffectPool = new ParticleEffectPool(m_deathEffect, 1, 2);
 		m_pooledDeathEffect = m_deathEffectPool.obtain();

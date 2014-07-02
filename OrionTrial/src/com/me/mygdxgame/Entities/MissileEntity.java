@@ -31,6 +31,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		m_shieldIntegrityRechargeFactor = 0;
 		m_shieldIntegrity = 0;
 		m_ignoreForPathing = true;
+		m_showTargeting = false;
 	}
 
 	public void SetSpecials( EnumMap<Characters, Boolean> specialAbilitiesActivated )
@@ -80,6 +81,11 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 			m_missileDamage/=2;
 		}
 		
+		NoelMissileSpecial();
+	}
+
+	private void NoelMissileSpecial()
+	{
 		if( m_specialAbilitiesActivated.get(Characters.Noel) && m_integrity > 0 )
 		{
 			float centerX = m_body.getPosition().x;

@@ -31,7 +31,7 @@ public class Missile extends CounterMeasure
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[1] = 1f;
 		m_fireFrequency = 60;
-		m_fireCounter = 0;		
+		m_fireCounter = 0;				
 	}
 	
 	

@@ -39,6 +39,7 @@ public class EnemyShip extends Ship implements QueryCallback
 	ParticleEffectPool m_targetingEffectPool;
 	PooledEffect m_pooledTargetingEffect;
 	private double m_fieldOfView = Math.PI/2;
+	boolean m_showTargeting = true;
 	
 
 	public EnemyShip(String appearanceLocation, float collisionScale, World world, float startX,
@@ -80,6 +81,11 @@ public class EnemyShip extends Ship implements QueryCallback
 		super.Draw(renderer);
 		if(!m_inMenu && ! m_freezeShip )
 		{
+			if( m_target != null && m_target.m_integrity <= 0)
+			{
+				m_target = null;
+			}
+			
 			if (m_target == null)
 			{
 				float centerX = m_body.getPosition().x;
@@ -110,7 +116,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	private void HandleTargetingDrawAndWeaponsFree(SpriteBatch renderer)
 	{
-		if( m_target != null )
+		if( m_target != null && m_showTargeting )
 		{
 			if( m_pooledTargetingEffect.isComplete() )
 			{

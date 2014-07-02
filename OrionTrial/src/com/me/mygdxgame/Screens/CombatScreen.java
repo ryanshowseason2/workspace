@@ -41,6 +41,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.me.mygdxgame.Entities.Asteroid;
+import com.me.mygdxgame.Entities.CivilianShuttle;
 import com.me.mygdxgame.Entities.CrazedRammer;
 import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
@@ -121,7 +122,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	
 	public CombatScreen()
 	{
-		background = new Texture(Gdx.files.internal("data/background.jpg"));
+		background = new Texture(Gdx.files.internal("data/background1.jpg"));
 		background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 		parralax1 = new Texture(Gdx.files.internal("data/slide.png"));
 		parralax1.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
@@ -143,12 +144,14 @@ public class CombatScreen extends OrionScreen implements ContactListener
         asty = new Asteroid("asteroid", 4.5f, 1.0f, w, 15, 40, m_aliveThings );
         
         ClutterSpawner c = new ClutterSpawner( w, m_aliveThings);
-        c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 10, 2);
+        c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 15, 5);
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
         //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
-        new PoorStation(w, 0, -50, 0, m_aliveThings );
+        PoorStation p = new PoorStation(w, 0, -50, 2, m_aliveThings );
+        CivilianShuttle cvs = new CivilianShuttle(w, 0, -2, 2, m_aliveThings, p );
+        cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
@@ -156,7 +159,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
         rayHandler = new RayHandler(w);
-        rayHandler.setAmbientLight(0.75f, 0.75f, 0.75f, 0.1f);
+        rayHandler.setAmbientLight(0.15f, 0.15f, 0.15f, 0.1f);
         rayHandler.setCulling(true);
         // rayHandler.setBlur(false);
         rayHandler.setBlurNum(1);
@@ -367,7 +370,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		/** BOX2D LIGHT STUFF END */
     		
      		
-    		debugRenderer.render(w, cam.combined);
+    		//debugRenderer.render(w, cam.combined);
     		
     		m_stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
     		m_stage.draw();
@@ -610,7 +613,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) 
 	{
-		// TODO Auto-generated method stub
+		
+		HandleWingBladeContact(contact);
+	}
+
+	private void HandleWingBladeContact(Contact contact)
+	{
 		if( WingBlade.class.isInstance( contact.getFixtureA().getBody().getUserData() ) )
 		{
 			contact.setEnabled(false);
