@@ -20,6 +20,7 @@ public class RadialEntityRetriever implements QueryCallback
 	@Override
 	public boolean reportFixture(Fixture fixture)
 	{
+		m_detectedEntities.remove((ViewedCollidable) fixture.getBody().getUserData());
 		m_detectedEntities.add( (ViewedCollidable) fixture.getBody().getUserData());
 		return true;
 	}

@@ -22,6 +22,7 @@ public class CivilianShuttle extends EnemyShip
 	
 	CivilianBehavior m_behavior;
 	PoorStation m_homeStation;
+	private int m_unloadCounter;
 	
 	public CivilianShuttle( World world, float startX, float startY, int factionCode, ArrayList<ViewedCollidable> aliveThings, PoorStation p)
 	{
@@ -50,22 +51,50 @@ public class CivilianShuttle extends EnemyShip
 	{
 		if( m_behavior == CivilianBehavior.HarvestAsteroids && m_target == null )
 		{
-			RadialEntityRetriever rer = new RadialEntityRetriever( m_world, 500, m_body.getPosition().x, m_body.getPosition().y );
-			for( int i = 0; i < rer.m_detectedEntities.size() && m_target == null; i++ )
-			{
-				ViewedCollidable vc = rer.m_detectedEntities.get(i);
-				
-				if( Asteroid.class.isInstance(vc) )
-				{
-					m_target = vc;
-					m_trackedTargets.add(vc);
-				}
-			}
+			FindAnAsteroidAndTargetIt();
 		}
 		
-		//if( m_behavior == CivilianBehavior.ReturnToStation )
+		ViewedCollidable currentTarget = m_target;
 		
 		super.Draw(renderer);	
+		
+		if( m_behavior == CivilianBehavior.HarvestAsteroids &&
+			(m_target == null || currentTarget != m_target ) )
+		{
+			m_target = null;
+			 m_behavior = CivilianBehavior.ReturnToStation;
+			 m_navigatingTo = m_homeStation.m_body.getPosition();
+			 m_unloadCounter = 60;
+		}
+		
+		if( m_behavior == CivilianBehavior.ReturnToStation && !ce.m_enginesEngaged )
+		{
+			if( m_unloadCounter <= 0 )
+			{
+				m_behavior = CivilianBehavior.HarvestAsteroids;
+			}
+			
+			float distance = m_body.getPosition().dst(m_homeStation.m_body.getPosition());
+			if( distance < 50 )
+			{
+				m_unloadCounter -=1;
+			}
+		}								
+	}
+
+	protected void FindAnAsteroidAndTargetIt()
+	{
+		RadialEntityRetriever rer = new RadialEntityRetriever( m_world, 500, m_body.getPosition().x, m_body.getPosition().y );
+		for( int i = 0; i < rer.m_detectedEntities.size() && m_target == null; i++ )
+		{
+			ViewedCollidable vc = rer.m_detectedEntities.get(i);
+			
+			if( Asteroid.class.isInstance(vc) )
+			{
+				m_target = vc;
+				m_trackedTargets.add(vc);
+			}
+		}
 	}
 	
 	@Override

@@ -87,35 +87,18 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 	private void NoelMissileSpecial()
 	{
 		if( m_specialAbilitiesActivated.get(Characters.Noel) && m_integrity > 0 )
-		{
-			float centerX = m_body.getPosition().x;
-			float centerY = m_body.getPosition().y;
-			RadialEntityRetriever r = new RadialEntityRetriever( m_world, 5f, centerX, centerY );
-			for( int i = 0; i < r.m_detectedEntities.size(); i++ )
+		{			
+			float distance = m_body.getPosition().dst(m_target.m_body.getPosition());
+			if( Ship.class.isInstance(m_target) && distance < 5 )
 			{
-				ViewedCollidable vc = r.m_detectedEntities.get(i);
-				if(vc.m_factionCode != 0 && vc.m_factionCode != m_factionCode )
+				Ship s = (Ship)m_target;
+				if( s.AttemptHack(.1f))
 				{
-					if( MissileEntity.class.isInstance(vc))
-					{
-						Ship s = (Ship)vc;
-						if( s.AttemptHack(.1f))
-						{
-							s.m_integrity = 0;
-							s.m_factionCode = m_factionCode;
-						}
-					}					
-					else if( Ship.class.isInstance(vc))
-					{
-						Ship s = (Ship)vc;
-						if( s.AttemptHack(.1f))
-						{
-							MissileEntity m = new MissileEntity( vc, m_world, vc.m_body.getPosition().x, vc.m_body.getPosition().y, 0,
-									50f, m_factionCode, m_aliveThings );
-							m.m_detonatedInsideShip = true;
-							m.m_integrity = 0;
-						}
-					}
+					MissileEntity m = new MissileEntity( m_target, m_world, m_target.m_body.getPosition().x, m_target.m_body.getPosition().y, 0,
+							50f, m_factionCode, m_aliveThings );
+					m.SetSpecials(m_specialAbilitiesActivated);
+					m.m_detonatedInsideShip = true;
+					//m.m_integrity = 0;
 				}
 			}
 		}

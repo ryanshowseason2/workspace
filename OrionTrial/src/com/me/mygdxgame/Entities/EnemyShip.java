@@ -81,36 +81,57 @@ public class EnemyShip extends Ship implements QueryCallback
 		super.Draw(renderer);
 		if(!m_inMenu && ! m_freezeShip )
 		{
-			if( m_target != null && m_target.m_integrity <= 0)
-			{
-				m_target = null;
-			}
+			IfTargetDeadDisengage();
 			
-			if (m_target == null)
-			{
-				float centerX = m_body.getPosition().x;
-				float centerY = m_body.getPosition().y;
-				m_world.QueryAABB(this, centerX - m_sensorRange / 2, centerY
-						- m_sensorRange / 2, centerX + m_sensorRange / 2,
-						centerY + m_sensorRange / 2);
-			}
+			IfNoTargetAttemptToAcquireOne();
 			
-			if( m_target != null &&
-				( m_target.m_untargetable || m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange && !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) ) )
-			{
-				//Check that target is still in detection range
-				m_target = null;
-				m_trackedTargets.remove(m_target);
-			}
+			IfTargetIsUntargetableOrOutOfSightAndRangeDisengage();
 	
-			if (m_target != null || m_navigatingTo.x != -1 )
-			{				
-				NavigateToTarget();
-			}
+			IfTargetExistsOrWaypointNavigateTowards();
 			
 			HandleTargetingDrawAndWeaponsFree(renderer);
 			
 			UpdateTrackedTargetsList();
+		}
+	}
+
+	protected void IfTargetExistsOrWaypointNavigateTowards()
+	{
+		if (m_target != null || m_navigatingTo.x != -1 )
+		{				
+			NavigateToTarget();
+		}
+	}
+
+	protected void IfTargetIsUntargetableOrOutOfSightAndRangeDisengage()
+	{
+		if( m_target != null &&
+			( m_target.m_untargetable || m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange && !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) ) )
+		{
+			//Check that target is still in detection range
+			m_target = null;
+			m_trackedTargets.remove(m_target);
+		}
+	}
+
+	protected void IfNoTargetAttemptToAcquireOne()
+	{
+		if (m_target == null)
+		{
+			float centerX = m_body.getPosition().x;
+			float centerY = m_body.getPosition().y;
+			m_world.QueryAABB(this, centerX - m_sensorRange / 2, centerY
+					- m_sensorRange / 2, centerX + m_sensorRange / 2,
+					centerY + m_sensorRange / 2);
+		}
+	}
+
+	protected void IfTargetDeadDisengage()
+	{
+		if( m_target != null && m_target.m_integrity <= 0)
+		{
+			m_target = null;
+			m_trackedTargets.remove(m_target);
 		}
 	}
 
@@ -259,7 +280,7 @@ public class EnemyShip extends Ship implements QueryCallback
 				|| (m_body.getLinearVelocity().y > 5 && vec.y < pos.y)
 				|| (m_body.getLinearVelocity().y < -5 && vec.y > pos.y))
 		{
-			ce.EngineBrake();
+			ce.EngineBrake();			
 		} else
 		{
 			ce.ThrottleForward();
@@ -277,6 +298,7 @@ public class EnemyShip extends Ship implements QueryCallback
 				|| pos.dst(vec) <= 10f )
 		{
 			ce.EngineBrake();
+			ce.DisengageEngine();
 		} 
 		else if( distance > 10f )
 		{
