@@ -67,18 +67,12 @@ public class PoorStation extends EnemyShip
 			{
 				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
 				{
-					m_target = p;
-					m_targetBody = p.m_body;
-					m_trackedTargets.remove(p);
-					m_trackedTargets.add(p);
+					SetCurrentTarget( p );
 				}
 			}
 			else
 			{
-				m_target = p;
-				m_targetBody = p.m_body;
-				m_trackedTargets.remove(p);
-				m_trackedTargets.add(p);
+				SetCurrentTarget( p );
 			}
 		}
 		return true;

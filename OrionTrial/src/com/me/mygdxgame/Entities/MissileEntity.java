@@ -23,7 +23,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		super("missile", 1.0f, world, startX, startY,
 				initialAngleAdjust, maxV, factionCode, aliveThings);
 		m_onDeckSeekType = m_seekType = SeekType.RamTarget;
-		m_target = target;
+		SetCurrentTarget( target );
 		MassData data = new MassData();
 		data.mass = 2f;
 		m_body.setMassData(data);
@@ -88,13 +88,14 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 	{
 		if( m_specialAbilitiesActivated.get(Characters.Noel) && m_integrity > 0 )
 		{			
-			float distance = m_body.getPosition().dst(m_target.m_body.getPosition());
-			if( Ship.class.isInstance(m_target) && distance < 5 )
+			ViewedCollidable target = GetTarget();
+			float distance = m_body.getPosition().dst(target.m_body.getPosition());
+			if( Ship.class.isInstance(target) && distance < 5 )
 			{
-				Ship s = (Ship)m_target;
+				Ship s = (Ship)target;
 				if( s.AttemptHack(.1f))
 				{
-					MissileEntity m = new MissileEntity( m_target, m_world, m_target.m_body.getPosition().x, m_target.m_body.getPosition().y, 0,
+					MissileEntity m = new MissileEntity( target, m_world, target.m_body.getPosition().x, target.m_body.getPosition().y, 0,
 							50f, m_factionCode, m_aliveThings );
 					m.SetSpecials(m_specialAbilitiesActivated);
 					m.m_detonatedInsideShip = true;
@@ -110,19 +111,19 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		super.NavigateToTarget();
 		
 		if( m_specialAbilitiesActivated.get(Characters.Belice) &&
-				m_body.getPosition().dst(m_target.m_body.getPosition()) < 20 && 
+				m_body.getPosition().dst(GetTarget().m_body.getPosition()) < 20 && 
 				(m_integrity > 0 ) )
 		{
 			me.ManeuverForward();
 		}
 		
 		if( m_specialAbilitiesActivated.get(Characters.Yashpal) &&
-				m_body.getPosition().dst(m_target.m_body.getPosition()) < 5 && 
+				m_body.getPosition().dst(GetTarget().m_body.getPosition()) < 5 && 
 				(m_integrity > 0 ) )
 		{
-			m_body.setTransform( m_target.m_body.getPosition(), (float) m_angleRadians);
+			m_body.setTransform( GetTarget().m_body.getPosition(), (float) m_angleRadians);
 			m_integrity = 0;
-			m_body.setLinearVelocity( m_target.m_body.getLinearVelocity() );
+			m_body.setLinearVelocity( GetTarget().m_body.getLinearVelocity() );
 		}
 	}
 	
@@ -167,7 +168,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 			vc.m_factionCode != m_factionCode )
 		{			
 			float dst = vc.m_body.getPosition().dst(m_body.getPosition());
-			boolean trueDamage = ( m_specialAbilitiesActivated.get(Characters.Yashpal) && vc == m_target ) || m_detonatedInsideShip;
+			boolean trueDamage = ( m_specialAbilitiesActivated.get(Characters.Yashpal) && vc == GetTarget() ) || m_detonatedInsideShip;
 			vc.damageIntegrity(m_missileDamage/dst, DamageType.Explosion, trueDamage, trueDamage, trueDamage );
 			
 			float centerX = m_body.getPosition().x;

@@ -139,9 +139,11 @@ public class CombatScreen extends OrionScreen implements ContactListener
         player = new PlayerEntity("playership", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 2.5f, .6f, w, 5, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f, .75f, w, 10, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f, 1.0f, w, 15, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, .1f, w, 5, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, .1f, w, 10, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, .1f, w, 15, 40, m_aliveThings );
+        
+        asty = new Asteroid("asteroid", 4.5f, .1f, w, 7, 60, m_aliveThings );
         
         ClutterSpawner c = new ClutterSpawner( w, m_aliveThings);
         c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 15, 5);
@@ -151,6 +153,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
         PoorStation p = new PoorStation(w, 0, -50, 2, m_aliveThings );
         CivilianShuttle cvs = new CivilianShuttle(w, 0, -2, 2, m_aliveThings, p );
+        cvs.SetCurrentTarget( asty );
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );

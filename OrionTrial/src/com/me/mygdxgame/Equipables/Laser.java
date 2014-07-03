@@ -252,8 +252,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 			if( s.AttemptHack( .1f ))
 			{
 				s.m_navigatingTo.x = -1;
-				s.m_target = null;
-				s.m_softwareIntegrity+=1;
+				s.DisengageCurrentTarget();
 			}
 		}
 	}

@@ -49,19 +49,19 @@ public class CivilianShuttle extends EnemyShip
 	@Override
 	public void Draw(SpriteBatch renderer)
 	{
-		if( m_behavior == CivilianBehavior.HarvestAsteroids && m_target == null )
+		if( m_behavior == CivilianBehavior.HarvestAsteroids && GetTarget() == null )
 		{
 			FindAnAsteroidAndTargetIt();
 		}
 		
-		ViewedCollidable currentTarget = m_target;
+		ViewedCollidable currentTarget = GetTarget();
 		
 		super.Draw(renderer);	
 		
 		if( m_behavior == CivilianBehavior.HarvestAsteroids &&
-			(m_target == null || currentTarget != m_target ) )
+			( GetTarget() == null || currentTarget != GetTarget() ) )
 		{
-			m_target = null;
+			DisengageCurrentTarget();
 			 m_behavior = CivilianBehavior.ReturnToStation;
 			 m_navigatingTo = m_homeStation.m_body.getPosition();
 			 m_unloadCounter = 60;
@@ -85,13 +85,13 @@ public class CivilianShuttle extends EnemyShip
 	protected void FindAnAsteroidAndTargetIt()
 	{
 		RadialEntityRetriever rer = new RadialEntityRetriever( m_world, 500, m_body.getPosition().x, m_body.getPosition().y );
-		for( int i = 0; i < rer.m_detectedEntities.size() && m_target == null; i++ )
+		for( int i = 0; i < rer.m_detectedEntities.size() && GetTarget() == null; i++ )
 		{
 			ViewedCollidable vc = rer.m_detectedEntities.get(i);
 			
 			if( Asteroid.class.isInstance(vc) )
 			{
-				m_target = vc;
+				SetCurrentTarget( vc );
 				m_trackedTargets.add(vc);
 			}
 		}
@@ -115,18 +115,12 @@ public class CivilianShuttle extends EnemyShip
 			{
 				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
 				{
-					m_target = p;
-					m_targetBody = p.m_body;
-					m_trackedTargets.remove(p);
-					m_trackedTargets.add(p);
+					SetCurrentTarget( p );
 				}
 			}
 			else
 			{
-				m_target = p;
-				m_targetBody = p.m_body;
-				m_trackedTargets.remove(p);
-				m_trackedTargets.add(p);
+				SetCurrentTarget( p );
 			}
 		}
 		return true;

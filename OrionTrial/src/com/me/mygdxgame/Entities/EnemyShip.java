@@ -27,7 +27,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	SeekType m_seekType;
 	SeekType m_onDeckSeekType;	
-	public ViewedCollidable m_target = null;
+	private ViewedCollidable m_target = null;
 	Body m_targetBody = null;
 	float m_wayPointX;
 	float m_wayPointY;
@@ -545,21 +545,34 @@ public class EnemyShip extends Ship implements QueryCallback
 			{
 				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
 				{
-					m_target = p;
-					m_targetBody = p.m_body;
-					m_trackedTargets.remove(p);
-					m_trackedTargets.add(p);
+					SetCurrentTarget(p);
 				}
 			}
 			else
 			{
-				m_target = p;
-				m_targetBody = p.m_body;
-				m_trackedTargets.remove(p);
-				m_trackedTargets.add(p);
+				SetCurrentTarget(p);
 			}
 		}
 		return true;
+	}
+
+	public void SetCurrentTarget(ViewedCollidable p)
+	{
+		m_target = p;
+		m_targetBody = p.m_body;
+		m_trackedTargets.remove(p);
+		m_trackedTargets.add(p);
+	}
+	
+	public void DisengageCurrentTarget()
+	{
+		m_target = null;
+		m_targetBody = null;
+	}
+	
+	public ViewedCollidable GetTarget()
+	{
+		return m_target;
 	}
 
 }
