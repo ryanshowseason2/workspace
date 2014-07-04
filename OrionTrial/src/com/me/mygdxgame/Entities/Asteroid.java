@@ -41,10 +41,7 @@ public class Asteroid extends ViewedCollidable
 		super(appearanceLocation, collisionScale, world, startX, startY, aliveThings, 0);
 		// TODO Auto-generated constructor stub
 		
-		MassData data = new MassData();
-		data.mass = 300;
-		data.I = .2f;
-		m_body.setMassData(data);
+		
 		m_body.setUserData(this);
 		//m_body.setLinearDamping(0.2f);
 		m_body.setAngularDamping(0.1f);
@@ -60,6 +57,37 @@ public class Asteroid extends ViewedCollidable
 		m_damageReductions[0] = 10;
 		
 		m_objectSprite.scale(drawScale);
+	}
+	
+	public void SetAsteroidTypeAndSize( AsteroidTypes t, AsteroidSizeClass s )
+	{
+		MassData data = new MassData();
+		
+		switch( t )
+		{
+		case PlainType:
+			data.mass = 200;
+			break;
+			default:
+				switch( s )
+				{
+					case Chunk:
+						data.mass = 20;
+						break;
+					case Full:
+						data.mass = 100;
+						break;
+					case Round:
+						data.mass = 10;
+						break;
+					case Shard:
+						data.mass = 3;
+						break;
+				}
+		}
+		
+		data.I = .2f;
+		m_body.setMassData(data);
 	}
 
 	@Override

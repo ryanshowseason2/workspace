@@ -33,7 +33,8 @@ public class ClutterSpawner
 		{
 			float xrandom = (float) ((Math.random() - .5) * 2 * radius);
 			float yrandom = (float) ((Math.random() - .5) * 2 * radius);
-			new Asteroid( RetrieveAsteroidString( t, s), RetrieveAsteroidCollisionSize(t, s), RetrieveAsteroidDrawSize( t, s ), m_world, x+ xrandom, y+yrandom, m_aliveThings );
+			Asteroid a = new Asteroid( RetrieveAsteroidString( t, s), RetrieveAsteroidCollisionSize(t, s), RetrieveAsteroidDrawSize( t, s ), m_world, x+ xrandom, y+yrandom, m_aliveThings );
+			a.SetAsteroidTypeAndSize(t,s);
 		}
 	}
 	

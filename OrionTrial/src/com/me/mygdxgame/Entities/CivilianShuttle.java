@@ -23,6 +23,7 @@ public class CivilianShuttle extends EnemyShip
 	CivilianBehavior m_behavior;
 	PoorStation m_homeStation;
 	private int m_unloadCounter;
+	ViewedCollidable m_detectChangedTarget;
 	
 	public CivilianShuttle( World world, float startX, float startY, int factionCode, ArrayList<ViewedCollidable> aliveThings, PoorStation p)
 	{
@@ -49,24 +50,17 @@ public class CivilianShuttle extends EnemyShip
 	@Override
 	public void Draw(SpriteBatch renderer)
 	{
-		if( m_behavior == CivilianBehavior.HarvestAsteroids && GetTarget() == null )
-		{
-			FindAnAsteroidAndTargetIt();
-		}
-		
-		ViewedCollidable currentTarget = GetTarget();
+		HarvestAsteroidsBeforeDraw();
 		
 		super.Draw(renderer);	
 		
-		if( m_behavior == CivilianBehavior.HarvestAsteroids &&
-			( GetTarget() == null || currentTarget != GetTarget() ) )
-		{
-			DisengageCurrentTarget();
-			 m_behavior = CivilianBehavior.ReturnToStation;
-			 m_navigatingTo = m_homeStation.m_body.getPosition();
-			 m_unloadCounter = 60;
-		}
+		HarvestAsteroidsAfterDraw();
 		
+		ReturnToStationAfterDraw();								
+	}
+
+	protected void ReturnToStationAfterDraw()
+	{
 		if( m_behavior == CivilianBehavior.ReturnToStation && !ce.m_enginesEngaged )
 		{
 			if( m_unloadCounter <= 0 )
@@ -79,7 +73,29 @@ public class CivilianShuttle extends EnemyShip
 			{
 				m_unloadCounter -=1;
 			}
-		}								
+		}
+	}
+
+	protected void HarvestAsteroidsAfterDraw()
+	{
+		if( m_behavior == CivilianBehavior.HarvestAsteroids &&
+			( GetTarget() == null || m_detectChangedTarget != GetTarget() ) )
+		{
+			DisengageCurrentTarget();
+			 m_behavior = CivilianBehavior.ReturnToStation;
+			 m_navigatingTo = m_homeStation.m_body.getPosition();
+			 m_unloadCounter = 60;
+		}
+	}
+
+	protected void HarvestAsteroidsBeforeDraw()
+	{
+		if( m_behavior == CivilianBehavior.HarvestAsteroids && GetTarget() == null )
+		{
+			FindAnAsteroidAndTargetIt();
+		}
+		
+		m_detectChangedTarget = GetTarget();
 	}
 
 	protected void FindAnAsteroidAndTargetIt()
