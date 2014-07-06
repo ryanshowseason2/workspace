@@ -42,6 +42,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.CivilianShuttle;
+import com.me.mygdxgame.Entities.CivilianShuttle.CivilianBehavior;
 import com.me.mygdxgame.Entities.CrazedRammer;
 import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
@@ -103,7 +104,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     public PlayerEntity player;
     World w;
     MydebugRenderer debugRenderer = new MydebugRenderer();
-    Asteroid asty;
+    //Asteroid asty;
     ArrayList<ViewedCollidable> m_deadThings = new ArrayList<ViewedCollidable>();
 	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
 	RayHandler rayHandler;
@@ -138,12 +139,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
         Dialog window = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
-        asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f, .1f, w, 5, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f, .1f, w, 10, 40, m_aliveThings );
-        asty = new Asteroid("asteroid", 4.5f, .1f, w, 15, 40, m_aliveThings );
+        //asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 40, m_aliveThings );
+        //asty = new Asteroid("asteroid", 4.5f, .1f, w, 5, 40, m_aliveThings );
+        //asty = new Asteroid("asteroid", 4.5f, .1f, w, 10, 40, m_aliveThings );
+        //asty = new Asteroid("asteroid", 4.5f, .1f, w, 15, 40, m_aliveThings );
         
-        asty = new Asteroid("asteroid", 4.5f, .1f, w, 7, 60, m_aliveThings );
+        //asty = new Asteroid("asteroid", 4.5f, .1f, w, 7, 60, m_aliveThings );
         
         ClutterSpawner c = new ClutterSpawner( w, m_aliveThings);
         c.SpawnAsteroidsFromImage("data/asteroidspawnmap.png", 20, 15, 5);
@@ -151,10 +152,15 @@ public class CombatScreen extends OrionScreen implements ContactListener
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
         //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
-        PoorStation p = new PoorStation(w, 0, -50, 2, m_aliveThings );
-        CivilianShuttle cvs = new CivilianShuttle(w, 0, -2, 2, m_aliveThings, p );
-        cvs.SetCurrentTarget( asty );
+        PoorStation p = new PoorStation(w, 0, -50, 1, m_aliveThings );
+        PoorStation p1 = new PoorStation(w, 0, 50, 1, m_aliveThings );
+        PoorStation p2 = new PoorStation(w, 50, -50, 1, m_aliveThings );
+        CivilianShuttle cvs = new CivilianShuttle(w, 0, -2, 1, m_aliveThings, p );
+
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
+        cvs.m_shippingTargets.add( p1 );
+        cvs.m_shippingTargets.add( p2 );
+        cvs.SetBehavior( CivilianBehavior.ShipBetweenStations );
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         

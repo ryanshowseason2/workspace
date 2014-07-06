@@ -34,6 +34,7 @@ public class LeastDistantRaycast extends LaserRayCastBase implements RayCastCall
 		float distance = navigator.m_body.getPosition().dst(point);
 		if( fixture.getBody() != m_self &&
 			!inTheWay.m_ignoreForPathing &&
+			inTheWay.m_factionCode != navigator.m_factionCode &&
 			distance < m_minDistance )
 		{
 			m_contactPoint = point;

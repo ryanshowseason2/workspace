@@ -1,6 +1,7 @@
 package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -13,17 +14,20 @@ import com.me.mygdxgame.Equipables.TeleportManeuverEngine;
 
 public class CivilianShuttle extends EnemyShip
 {
-	enum CivilianBehavior
+	public enum CivilianBehavior
 	{
 		HarvestAsteroids,
 		ShipBetweenStations,
-		ReturnToStation
+		ReturnToStation,
+		FleeTostation
 	}
 	
 	CivilianBehavior m_behavior;
 	PoorStation m_homeStation;
 	private int m_unloadCounter;
 	ViewedCollidable m_detectChangedTarget;
+	ViewedCollidable m_currentlyShippingTo = null;
+	public ArrayList<ViewedCollidable> m_shippingTargets = new ArrayList<ViewedCollidable>();
 	
 	public CivilianShuttle( World world, float startX, float startY, int factionCode, ArrayList<ViewedCollidable> aliveThings, PoorStation p)
 	{
@@ -40,6 +44,11 @@ public class CivilianShuttle extends EnemyShip
 		m_homeStation = p;
 	}
 	
+	public void SetBehavior( CivilianBehavior cb )
+	{
+		m_behavior = cb;
+	}
+	
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity)
 	{		
@@ -52,7 +61,39 @@ public class CivilianShuttle extends EnemyShip
 	{
 		HarvestAsteroidsBeforeDraw();
 		
+		if( m_behavior == CivilianBehavior.ShipBetweenStations && m_currentlyShippingTo == null )
+		{
+			m_navigatingTo = m_homeStation.m_body.getPosition();
+			m_currentlyShippingTo = m_homeStation;
+		}
+		
 		super.Draw(renderer);	
+		
+		if( m_behavior == CivilianBehavior.ShipBetweenStations && !ce.m_enginesEngaged )
+		{
+			if( m_unloadCounter <= 0 )
+			{
+				// Go to the home station or a random station
+				if( m_currentlyShippingTo == m_homeStation )
+				{
+					Random RANDOM = new Random();
+					m_currentlyShippingTo = m_shippingTargets.get( RANDOM.nextInt(m_shippingTargets.size() ) );
+					m_navigatingTo = m_currentlyShippingTo.m_body.getPosition();
+				}
+				else
+				{
+					m_currentlyShippingTo = m_homeStation;
+					m_navigatingTo = m_currentlyShippingTo.m_body.getPosition();
+				}
+				m_unloadCounter = 100;
+			}
+			
+			float distance = m_body.getPosition().dst(m_currentlyShippingTo.m_body.getPosition());
+			if( distance < 50 )
+			{
+				m_unloadCounter -=1;
+			}
+		}
 		
 		HarvestAsteroidsAfterDraw();
 		
@@ -84,7 +125,7 @@ public class CivilianShuttle extends EnemyShip
 			DisengageCurrentTarget();
 			 m_behavior = CivilianBehavior.ReturnToStation;
 			 m_navigatingTo = m_homeStation.m_body.getPosition();
-			 m_unloadCounter = 60;
+			 m_unloadCounter = 100;
 		}
 	}
 

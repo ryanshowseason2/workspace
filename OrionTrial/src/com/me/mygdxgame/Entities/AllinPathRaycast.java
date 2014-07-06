@@ -35,7 +35,8 @@ public class AllinPathRaycast extends LaserRayCastBase implements RayCastCallbac
 		ViewedCollidable inTheWay = (ViewedCollidable) fixture.getBody().getUserData();
 		float distance = navigator.m_body.getPosition().dst(point);
 		if( fixture.getBody() != m_self &&
-			!inTheWay.m_ignoreForPathing )
+			!inTheWay.m_ignoreForPathing &&
+			inTheWay.m_factionCode != navigator.m_factionCode )
 		{
 			m_hitEntities.add( inTheWay );
 			m_hitPoints.add( point );
