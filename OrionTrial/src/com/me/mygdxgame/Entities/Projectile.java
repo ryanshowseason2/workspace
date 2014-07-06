@@ -82,7 +82,7 @@ public class Projectile extends ViewedCollidable
 			
 			dType = ShavretsDamageType(object2);
 			
-			object2.damageIntegrity(crashVelocity/5 + m_additionalDamage, dType );	
+			object2.damageIntegrity( m_ship, crashVelocity/5 + m_additionalDamage, dType );	
 			
 			
 			if( m_stopAtFirstShields )
@@ -255,7 +255,7 @@ public class Projectile extends ViewedCollidable
 	}
 	
 	@Override
-	public void damageIntegrity( float damage , DamageType type)
+	public void damageIntegrity( ViewedCollidable damageOrigin, float damage , DamageType type)
 	{
 	}
 	

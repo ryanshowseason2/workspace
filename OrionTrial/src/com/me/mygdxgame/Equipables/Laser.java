@@ -134,7 +134,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 						
 						if( !BobbiLaserMicrowave(hitEntities.get(j)) )
 						{
-							hitEntities.get(j).damageIntegrity(1f, DamageType.Energy);
+							hitEntities.get(j).damageIntegrity( m_ship, 1f, DamageType.Energy);
 						}
 						
 						YashpalLaserSpecial(hitEntities, j, targetShields);
@@ -151,7 +151,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 						
 						for(int k = 0; k< hitEntities.size(); k++ )
 						{
-							hitEntities.get(k).damageIntegrity(5f, DamageType.Energy);
+							hitEntities.get(k).damageIntegrity(m_ship, 5f, DamageType.Energy);
 							
 							GourtLaserSpecial(hitEntities, k);
 							
@@ -234,7 +234,7 @@ public class Laser extends CounterMeasure implements QueryCallback
 			Ship s = (Ship) vc;
 			if( s.m_shieldIntegrity > 0 )
 			{
-				s.damageIntegrity( 1f, DamageType.Energy, true, true, true );
+				s.damageIntegrity( m_ship, 1f, DamageType.Energy, true, true, true );
 				activated = true;
 			}
 		}

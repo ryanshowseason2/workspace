@@ -141,12 +141,12 @@ public abstract class ViewedCollidable
 
 	   public abstract void damageCalc(ViewedCollidable object2, float crashVelocity);
 	   
-	   public void damageIntegrity(float damage, DamageType type )
+	   public void damageIntegrity(ViewedCollidable damageOrigin, float damage, DamageType type )
 	   {
-		   damageIntegrity(damage, type, false, false, false );
+		   damageIntegrity( damageOrigin, damage, type, false, false, false );
 	   }
 	   
-	   public void damageIntegrity(float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
+	   public void damageIntegrity( ViewedCollidable damageOrigin, float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
 	   {
 		   if( !bypassResistances )
 		   {

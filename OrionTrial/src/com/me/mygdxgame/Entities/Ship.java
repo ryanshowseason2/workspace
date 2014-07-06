@@ -81,19 +81,19 @@ public class Ship extends ViewedCollidable
 	{
 		if( crashVelocity > 3 )
 		{
-			object2.damageIntegrity(crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
+			object2.damageIntegrity( this, crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
 			me.RegisterCollision();
 		}
 	}
 
 	@Override
-	public void damageIntegrity(float damage, DamageType type)
+	public void damageIntegrity(ViewedCollidable damageOrigin, float damage, DamageType type)
 	{
-		damageIntegrity(damage, type, false, false, false);
+		damageIntegrity( damageOrigin, damage, type, false, false, false);
 	}
 
 	@Override
-	public void damageIntegrity(float damage, DamageType type,
+	public void damageIntegrity(ViewedCollidable damageOrigin, float damage, DamageType type,
 			boolean bypassShieldResistances, boolean bypassShields,
 			boolean bypassResistances)
 	{

@@ -48,12 +48,12 @@ public class CrazedRammer extends EnemyShip
 	{
 		if( m_weaponsFree > 0 )
 		{
-			object2.damageIntegrity((crashVelocity * m_body.getMass()/ 20), DamageType.Collision );
+			object2.damageIntegrity( this, (crashVelocity * m_body.getMass()/ 20), DamageType.Collision );
 			me.RegisterCollision();
 		}
 		else if( crashVelocity > 3 )
 		{
-			object2.damageIntegrity(crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
+			object2.damageIntegrity( this, crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
 			me.RegisterCollision();
 		}
 	}

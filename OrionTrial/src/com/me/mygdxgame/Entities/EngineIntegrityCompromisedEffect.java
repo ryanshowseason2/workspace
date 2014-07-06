@@ -16,7 +16,7 @@ public class EngineIntegrityCompromisedEffect extends OverTimeEffect
 	{
 		if( m_ship.ce.m_enginesEngaged )
 		{
-			m_ship.damageIntegrity( 1, DamageType.Explosion, true, true, true );
+			m_ship.damageIntegrity( null, 1, DamageType.Explosion, true, true, true );
 		}
 		m_counter--;
 		return m_counter > 0;

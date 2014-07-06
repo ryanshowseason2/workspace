@@ -73,7 +73,7 @@ public class Missile extends CounterMeasure
 			if( distanceToCurrentTarget <= m_range )
 			{
 				MissileEntity m = new MissileEntity( m_target, m_world, m_ship.m_body.getPosition().x, m_ship.m_body.getPosition().y, 0,
-							50f, m_ship.m_factionCode, m_aliveThings );
+							50f, m_ship.m_factionCode, m_aliveThings, m_ship );
 				m.SetSpecials(m_specialAbilitiesActivated);
 				 m_fireCounter = m_fireFrequency;
 				 m_missileCounter++;

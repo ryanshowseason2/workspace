@@ -16,9 +16,10 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 {
 	float m_missileDamage = 40;
 	boolean m_detonatedInsideShip = false;
+	private ViewedCollidable m_ship;
 	
 	public MissileEntity( ViewedCollidable target, World world, float startX, float startY, float initialAngleAdjust,
-			float maxV, int factionCode, ArrayList<ViewedCollidable> aliveThings )
+			float maxV, int factionCode, ArrayList<ViewedCollidable> aliveThings, Ship ship )
 	{
 		super("missile", 1.0f, world, startX, startY,
 				initialAngleAdjust, maxV, factionCode, aliveThings);
@@ -32,6 +33,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		m_shieldIntegrity = 0;
 		m_ignoreForPathing = true;
 		m_showTargeting = false;
+		m_ship = ship;
 	}
 
 	public void SetSpecials( EnumMap<Characters, Boolean> specialAbilitiesActivated )
@@ -85,7 +87,9 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 	}
 
 	private void NoelMissileSpecial()
-	{
+	{ 
+		// TODO Convert this entire function to an over time effect instead of making a new missile
+		/*
 		if( m_specialAbilitiesActivated.get(Characters.Noel) && m_integrity > 0 )
 		{			
 			ViewedCollidable target = GetTarget();
@@ -102,7 +106,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 					//m.m_integrity = 0;
 				}
 			}
-		}
+		}*/
 	}
 	
 	@Override
@@ -169,7 +173,7 @@ public class MissileEntity extends EnemyShip implements QueryCallback
 		{			
 			float dst = vc.m_body.getPosition().dst(m_body.getPosition());
 			boolean trueDamage = ( m_specialAbilitiesActivated.get(Characters.Yashpal) && vc == GetTarget() ) || m_detonatedInsideShip;
-			vc.damageIntegrity(m_missileDamage/dst, DamageType.Explosion, trueDamage, trueDamage, trueDamage );
+			vc.damageIntegrity( m_ship, m_missileDamage/dst, DamageType.Explosion, trueDamage, trueDamage, trueDamage );
 			
 			float centerX = m_body.getPosition().x;
 			float centerY = m_body.getPosition().y;

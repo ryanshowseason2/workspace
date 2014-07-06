@@ -52,7 +52,7 @@ public class CivilianShuttle extends EnemyShip
 	@Override
 	public void damageCalc(ViewedCollidable object2, float crashVelocity)
 	{		
-		object2.damageIntegrity((crashVelocity * 1), DamageType.Collision );
+		object2.damageIntegrity( this, (crashVelocity * 1), DamageType.Collision );
 		me.RegisterCollision();		
 	}
 

@@ -156,7 +156,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 	{
 		if( m_specialAbilitiesActivated.get(Characters.Sandy ) )
 		{
-			vc.damageIntegrity(.5f, DamageType.Collision );
+			vc.damageIntegrity( m_ship, .5f, DamageType.Collision );
 		}
 	}
 
@@ -180,7 +180,7 @@ public class MagneticWave extends CounterMeasure implements QueryCallback
 			m_engaged )
 		{
 			double damage = Math.sqrt( Math.sqrt( vc.m_body.getLinearVelocity().x * vc.m_body.getLinearVelocity().x + vc.m_body.getLinearVelocity().y * vc.m_body.getLinearVelocity().y ) );
-			vc.damageIntegrity( (float) damage, DamageType.Penetration );
+			vc.damageIntegrity( m_ship, (float) damage, DamageType.Penetration );
 			vc.m_body.setLinearVelocity(0, 0);
 		}
 	}

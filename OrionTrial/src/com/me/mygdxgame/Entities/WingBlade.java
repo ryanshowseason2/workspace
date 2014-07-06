@@ -65,7 +65,7 @@ public class WingBlade extends ViewedCollidable
 	}
 
 	@Override
-	public void damageIntegrity(float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
+	public void damageIntegrity( ViewedCollidable damageOrigin, float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
     {
     }
 	
@@ -150,14 +150,14 @@ public class WingBlade extends ViewedCollidable
 		{
 			ViewedCollidable vc = (ViewedCollidable) fixture.getBody().getUserData();
 			boolean directDamage = m_specialAbilitiesActivated.get(Characters.Yashpal);
-			vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
-			vc.damageIntegrity( m_extraDamage, DamageType.Energy );
+			vc.damageIntegrity( m_ship, .25f, DamageType.Energy, true, directDamage, directDamage );
+			vc.damageIntegrity( m_ship, m_extraDamage, DamageType.Energy );
 			
 			if( m_placement == Placement.Front )
 			{
-				vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
-				vc.damageIntegrity( .25f, DamageType.Energy, true, directDamage, directDamage );
-				vc.damageIntegrity( m_extraDamage, DamageType.Energy );
+				vc.damageIntegrity( m_ship, .25f, DamageType.Energy, true, directDamage, directDamage );
+				vc.damageIntegrity( m_ship, .25f, DamageType.Energy, true, directDamage, directDamage );
+				vc.damageIntegrity( m_ship, m_extraDamage, DamageType.Energy );
 			}
 			m_extraDamage*=.6f;
 			
@@ -177,7 +177,7 @@ public class WingBlade extends ViewedCollidable
 					Ship ship = (Ship) vc;
 					if(ship.me.m_boostJuice > 0)
 					{
-						ship.damageIntegrity(ship.me.m_boostJuice, DamageType.Energy);
+						ship.damageIntegrity( m_ship, ship.me.m_boostJuice, DamageType.Energy);
 						ship.me.m_boostJuice-=ship.me.m_boostJuice;
 					}
 					

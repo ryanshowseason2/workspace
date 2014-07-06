@@ -260,7 +260,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	{
 		if( crashVelocity > 1 )
 		{
-			object2.damageIntegrity(crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
+			object2.damageIntegrity( this, crashVelocity * m_body.getMass()/ 30, DamageType.Collision );
 			me.RegisterCollision();
 		}
 	}
@@ -283,9 +283,9 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
     }
 	
 	@Override
-	public void damageIntegrity( float damage , DamageType type)
+	public void damageIntegrity( ViewedCollidable damageOrigin, float damage , DamageType type)
 	{
-		super.damageIntegrity(damage, type);
+		super.damageIntegrity(damageOrigin, damage, type);
 		m_integrity = 1000f;
 	}
 
