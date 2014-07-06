@@ -19,11 +19,11 @@ public class CivilianShuttle extends EnemyShip
 		HarvestAsteroids,
 		ShipBetweenStations,
 		ReturnToStation,
-		FleeTostation
+		FleeTostation,
+		Flee
 	}
 	
 	CivilianBehavior m_behavior;
-	PoorStation m_homeStation;
 	private int m_unloadCounter;
 	ViewedCollidable m_detectChangedTarget;
 	ViewedCollidable m_currentlyShippingTo = null;
@@ -41,7 +41,7 @@ public class CivilianShuttle extends EnemyShip
 		m_pooledShieldEffect.getEmitters().get(0).getScale().setHigh(83);
 		m_pooledShieldEffect.getEmitters().get(0).getScale().setLow(71);
 		m_behavior = CivilianBehavior.HarvestAsteroids;
-		m_homeStation = p;
+		m_shippingTargets.add( p );
 	}
 	
 	public void SetBehavior( CivilianBehavior cb )
@@ -59,30 +59,33 @@ public class CivilianShuttle extends EnemyShip
 	@Override
 	public void Draw(SpriteBatch renderer)
 	{
-		HarvestAsteroidsBeforeDraw();
+		RemoveDeadShippingTargets();
+		RunAwayIfNoStations();
 		
-		if( m_behavior == CivilianBehavior.ShipBetweenStations && m_currentlyShippingTo == null )
-		{
-			m_navigatingTo = m_homeStation.m_body.getPosition();
-			m_currentlyShippingTo = m_homeStation;
-		}
+		//////BEFORE DRAW BEHAVIOR ROUTINES//////
+		ShipBetweenStationsBeforeDraw();	   //
+		HarvestAsteroidsBeforeDraw();		   //
+		/////////////////////////////////////////
 		
 		super.Draw(renderer);	
 		
+		//////AFTER DRAW BEHAVIOR ROUTINES///////
+		ShipBetweenStationsAfterDraw();		   //
+		HarvestAsteroidsAfterDraw();		   //
+		ReturnToStationAfterDraw();			   //
+		/////////////////////////////////////////
+	}
+
+	protected void ShipBetweenStationsAfterDraw()
+	{
 		if( m_behavior == CivilianBehavior.ShipBetweenStations && !ce.m_enginesEngaged )
 		{
 			if( m_unloadCounter <= 0 )
 			{
 				// Go to the home station or a random station
-				if( m_currentlyShippingTo == m_homeStation )
 				{
 					Random RANDOM = new Random();
 					m_currentlyShippingTo = m_shippingTargets.get( RANDOM.nextInt(m_shippingTargets.size() ) );
-					m_navigatingTo = m_currentlyShippingTo.m_body.getPosition();
-				}
-				else
-				{
-					m_currentlyShippingTo = m_homeStation;
 					m_navigatingTo = m_currentlyShippingTo.m_body.getPosition();
 				}
 				m_unloadCounter = 100;
@@ -94,10 +97,53 @@ public class CivilianShuttle extends EnemyShip
 				m_unloadCounter -=1;
 			}
 		}
+	}
+
+	protected void ShipBetweenStationsBeforeDraw()
+	{
+		if( m_behavior == CivilianBehavior.ShipBetweenStations && m_currentlyShippingTo == null && m_shippingTargets.size() > 0 )
+		{
+			if( m_shippingTargets.size() > 1 )
+			{
+				m_navigatingTo = m_shippingTargets.get(0).m_body.getPosition();
+				m_currentlyShippingTo = m_shippingTargets.get(0);
+			}
+			else
+			{
+				m_behavior = CivilianBehavior.HarvestAsteroids;
+			}
+		}
+	}
+
+	protected void RunAwayIfNoStations()
+	{
+		if( m_shippingTargets.size() == 0 )
+		{
+			//OH SHI-
+			m_behavior = CivilianBehavior.Flee;
+		}
+	}
+
+	protected void RemoveDeadShippingTargets()
+	{
+		ArrayList<ViewedCollidable> deadShippingTargets = new ArrayList<ViewedCollidable>();
+		for(int i = 0; i < m_shippingTargets.size(); i++ )
+		{
+			ViewedCollidable vc = m_shippingTargets.get(i);
+			if( vc.m_integrity <= 0 )
+			{
+				deadShippingTargets.add(vc);
+			}
+		}
 		
-		HarvestAsteroidsAfterDraw();
-		
-		ReturnToStationAfterDraw();								
+		for(int i = 0; i < deadShippingTargets.size(); i++ )
+		{
+			m_shippingTargets.remove(deadShippingTargets.get(i));
+			if( m_currentlyShippingTo == deadShippingTargets.get(i) )
+			{
+				m_currentlyShippingTo = null;
+			}
+		}
 	}
 
 	protected void ReturnToStationAfterDraw()
@@ -109,7 +155,7 @@ public class CivilianShuttle extends EnemyShip
 				m_behavior = CivilianBehavior.HarvestAsteroids;
 			}
 			
-			float distance = m_body.getPosition().dst(m_homeStation.m_body.getPosition());
+			float distance = m_body.getPosition().dst(m_shippingTargets.get(0).m_body.getPosition());
 			if( distance < 50 )
 			{
 				m_unloadCounter -=1;
@@ -124,7 +170,7 @@ public class CivilianShuttle extends EnemyShip
 		{
 			DisengageCurrentTarget();
 			 m_behavior = CivilianBehavior.ReturnToStation;
-			 m_navigatingTo = m_homeStation.m_body.getPosition();
+			 m_navigatingTo = m_shippingTargets.get(0).m_body.getPosition();
 			 m_unloadCounter = 100;
 		}
 	}
