@@ -28,6 +28,8 @@ public class CivilianShuttle extends EnemyShip
 	ViewedCollidable m_detectChangedTarget;
 	ViewedCollidable m_currentlyShippingTo = null;
 	public ArrayList<ViewedCollidable> m_shippingTargets = new ArrayList<ViewedCollidable>();
+	ViewedCollidable m_aggressor = null;
+	CivilianBehavior m_previousBehavior;	
 	
 	public CivilianShuttle( World world, float startX, float startY, int factionCode, ArrayList<ViewedCollidable> aliveThings, PoorStation p)
 	{
@@ -55,6 +57,26 @@ public class CivilianShuttle extends EnemyShip
 		object2.damageIntegrity( this, (crashVelocity * 1), DamageType.Collision );
 		me.RegisterCollision();		
 	}
+	
+	@Override
+	public void damageIntegrity( ViewedCollidable damageOrigin, float damage, DamageType type, boolean bypassShieldResistances, boolean bypassShields, boolean bypassResistances )
+    {
+		super.damageIntegrity(damageOrigin, damage, type, bypassShieldResistances, bypassShields, bypassResistances);
+		
+		if( damageOrigin.m_factionCode != 0 )
+		{
+			if( m_shippingTargets.size() > 0 )
+			{
+				m_previousBehavior = m_behavior;
+				m_behavior = CivilianBehavior.FleeTostation;
+				m_aggressor = damageOrigin;
+			}
+			else
+			{
+				m_behavior = CivilianBehavior.Flee;
+			}
+		}
+    }
 
 	@Override
 	public void Draw(SpriteBatch renderer)
@@ -67,7 +89,27 @@ public class CivilianShuttle extends EnemyShip
 		HarvestAsteroidsBeforeDraw();		   //
 		/////////////////////////////////////////
 		
+		if( m_behavior == CivilianBehavior.FleeTostation )
+		{
+			if( m_shippingTargets.size() > 0 )
+			{
+				m_navigatingTo = m_shippingTargets.get(0).m_body.getPosition();
+			}
+		}
+		
 		super.Draw(renderer);	
+		
+		if( m_behavior == CivilianBehavior.FleeTostation )
+		{
+			if( m_aggressor.m_integrity <= 0 )
+			{
+				//We are safe now
+				m_behavior = m_previousBehavior;
+				//Cleanup so we'll target again for harvest asteroids
+				SetCurrentTarget( null );
+				m_currentlyShippingTo = null;
+			}
+		}
 		
 		//////AFTER DRAW BEHAVIOR ROUTINES///////
 		ShipBetweenStationsAfterDraw();		   //
