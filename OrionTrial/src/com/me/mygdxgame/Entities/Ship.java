@@ -63,7 +63,7 @@ public class Ship extends ViewedCollidable
 				aliveThings, factionCode);
 		// TODO Auto-generated constructor stub
 		m_maxVelocity = maxV;
-		me = new TeleportManeuverEngine(this, maxV);
+		me = new InertialManeuverEngine(this, maxV);
 		ce = new ConventionalCruiseEngine(this, maxV);
 		m_aliveThings = aliveThings;
 
