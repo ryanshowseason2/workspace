@@ -149,7 +149,7 @@ public class Projectile extends ViewedCollidable
 				if( s.AttemptHack( 15.0f ) )
 				{
 					ViewedCollidable vc = s.m_fighterGroup.get(0);
-					m_ship.m_trackedTargets.add( vc );
+					m_ship.m_trackedHostileTargets.add( vc );
 					s.m_fighterGroup.remove(vc);
 					s.m_soundTheAlarmCounter = 0;
 				}

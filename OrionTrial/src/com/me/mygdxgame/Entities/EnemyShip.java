@@ -27,8 +27,8 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	SeekType m_seekType;
 	SeekType m_onDeckSeekType;	
-	private ViewedCollidable m_target = null;
-	Body m_targetBody = null;
+	private ViewedCollidable m_navigationTarget = null;
+	Body m_navigationTargetBody = null;
 	float m_wayPointX;
 	float m_wayPointY;
 	public Vector2 m_navigatingTo;
@@ -97,7 +97,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	protected void IfTargetExistsOrWaypointNavigateTowards()
 	{
-		if (m_target != null || m_navigatingTo.x != -1 )
+		if (m_navigationTarget != null || m_navigatingTo.x != -1 )
 		{				
 			NavigateToTarget();
 		}
@@ -105,39 +105,41 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	protected void IfTargetIsUntargetableOrOutOfSightAndRangeDisengage()
 	{
-		if( m_target != null &&
-			( m_target.m_untargetable || m_target.m_body.getPosition().dst(m_body.getPosition()) > m_target.m_detectionRange && !CheckWingAndCenterPaths(0, m_body.getPosition(), m_target.m_body.getPosition() ) ) )
+		if( m_navigationTarget != null &&
+			( m_navigationTarget.m_untargetable || m_navigationTarget.m_body.getPosition().dst(m_body.getPosition()) > m_navigationTarget.m_detectionRange && !CheckWingAndCenterPaths(0, m_body.getPosition(), m_navigationTarget.m_body.getPosition() ) ) )
 		{
 			//Check that target is still in detection range
-			m_target = null;
-			m_trackedTargets.remove(m_target);
+			m_navigationTarget = null;
+			m_trackedHostileTargets.remove(m_navigationTarget);
 		}
 	}
 
 	protected void IfNoTargetAttemptToAcquireOne()
 	{
-		if (m_target == null)
+		float centerX = m_body.getPosition().x;
+		float centerY = m_body.getPosition().y;
+		m_world.QueryAABB(this, centerX - m_sensorRange / 2, centerY
+				- m_sensorRange / 2, centerX + m_sensorRange / 2,
+				centerY + m_sensorRange / 2);
+		
+		if (m_navigationTarget == null && m_trackedHostileTargets.size() > 0)
 		{
-			float centerX = m_body.getPosition().x;
-			float centerY = m_body.getPosition().y;
-			m_world.QueryAABB(this, centerX - m_sensorRange / 2, centerY
-					- m_sensorRange / 2, centerX + m_sensorRange / 2,
-					centerY + m_sensorRange / 2);
+			m_navigationTarget = m_trackedHostileTargets.get(0);
 		}
 	}
 
 	protected void IfTargetDeadDisengage()
 	{
-		if( m_target != null && m_target.m_integrity <= 0)
+		if( m_navigationTarget != null && m_navigationTarget.m_integrity <= 0)
 		{
-			m_target = null;
-			m_trackedTargets.remove(m_target);
+			m_navigationTarget = null;
+			m_trackedHostileTargets.remove(m_navigationTarget);
 		}
 	}
 
 	private void HandleTargetingDrawAndWeaponsFree(SpriteBatch renderer)
 	{
-		if( m_target != null && m_showTargeting )
+		if( m_navigationTarget != null && m_showTargeting )
 		{
 			if( m_pooledTargetingEffect.isComplete() )
 			{
@@ -176,9 +178,9 @@ public class EnemyShip extends Ship implements QueryCallback
 		//update tracked targets
 		ArrayList<ViewedCollidable> targetsToRemove = new ArrayList<ViewedCollidable>();
 		
-		for( int i = 0; i< m_trackedTargets.size(); i++ )
+		for( int i = 0; i< m_trackedHostileTargets.size(); i++ )
 		{
-			ViewedCollidable vc = m_trackedTargets.get(i);
+			ViewedCollidable vc = m_trackedHostileTargets.get(i);
 			if( vc != null )
 			{ 
 				boolean outOfRange = vc.m_body.getPosition().dst(m_body.getPosition()) > vc.m_detectionRange;
@@ -195,7 +197,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		
 		for( int i = 0; i< targetsToRemove.size(); i++ )
 		{
-			m_trackedTargets.remove(targetsToRemove.get(i) );
+			m_trackedHostileTargets.remove(targetsToRemove.get(i) );
 		}
 		
 		AlertAllies();
@@ -203,7 +205,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	private void AlertAllies()
 	{
-		if( m_trackedTargets.size() > 0)
+		if( m_trackedHostileTargets.size() > 0)
 		{
 			m_soundTheAlarmCounter++;
 			
@@ -211,11 +213,11 @@ public class EnemyShip extends Ship implements QueryCallback
 			{
 				for( int i = 0; i < m_fighterGroup.size(); i++ )
 				{
-					if( m_fighterGroup.get(i).m_target == null )
+					if( m_fighterGroup.get(i).m_navigationTarget == null )
 					{
-						m_fighterGroup.get(i).m_target = m_target;
-						m_fighterGroup.get(i).m_trackedTargets.remove(m_target);
-						m_fighterGroup.get(i).m_trackedTargets.add(m_target);
+						m_fighterGroup.get(i).m_navigationTarget = m_navigationTarget;
+						m_fighterGroup.get(i).m_trackedHostileTargets.remove(m_navigationTarget);
+						m_fighterGroup.get(i).m_trackedHostileTargets.add(m_navigationTarget);
 					}
 				}
 			}
@@ -312,12 +314,12 @@ public class EnemyShip extends Ship implements QueryCallback
 		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
 		Vector2 source = new Vector2();
 		Vector2 destination = new Vector2();
-		if( m_target != null )
+		if( m_navigationTarget != null )
 		{
-			destination.x = m_target.m_body.getPosition().x;
-			destination.y = m_target.m_body.getPosition().y;	
-			m_navigatingTo.x = m_target.m_body.getPosition().x;
-			m_navigatingTo.y = m_target.m_body.getPosition().y;
+			destination.x = m_navigationTarget.m_body.getPosition().x;
+			destination.y = m_navigationTarget.m_body.getPosition().y;	
+			m_navigatingTo.x = m_navigationTarget.m_body.getPosition().x;
+			m_navigatingTo.y = m_navigationTarget.m_body.getPosition().y;
 		}
 		else
 		{
@@ -522,7 +524,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	private boolean CheckPath(Vector2 source, Vector2 destination)
 	{
-		LineOfSightChecker check = new LineOfSightChecker( m_targetBody, m_body );
+		LineOfSightChecker check = new LineOfSightChecker( m_navigationTargetBody, m_body );
 		m_world.rayCast(check, source, destination);
 		
 		return check.m_hasLineOfSight;
@@ -545,12 +547,14 @@ public class EnemyShip extends Ship implements QueryCallback
 			{
 				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
 				{
-					SetCurrentTarget(p);
+					m_trackedHostileTargets.remove(p);
+					m_trackedHostileTargets.add(p);
 				}
 			}
 			else
 			{
-				SetCurrentTarget(p);
+				m_trackedHostileTargets.remove(p);
+				m_trackedHostileTargets.add(p);
 			}
 		}
 		return true;
@@ -558,21 +562,30 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	public void SetCurrentTarget(ViewedCollidable p)
 	{
-		m_target = p;
-		m_targetBody = p.m_body;
-		m_trackedTargets.remove(p);
-		m_trackedTargets.add(p);
+		SetCurrentTarget(p, true );
+	}
+	
+	public void SetCurrentTarget(ViewedCollidable p, boolean addToTrackedTargets )
+	{
+		m_navigationTarget = p;
+		m_navigationTargetBody = p.m_body;
+		
+		if( addToTrackedTargets )
+		{
+			m_trackedHostileTargets.remove(p);
+			m_trackedHostileTargets.add(p);
+		}
 	}
 	
 	public void DisengageCurrentTarget()
 	{
-		m_target = null;
-		m_targetBody = null;
+		m_navigationTarget = null;
+		m_navigationTargetBody = null;
 	}
 	
 	public ViewedCollidable GetTarget()
 	{
-		return m_target;
+		return m_navigationTarget;
 	}
 
 }

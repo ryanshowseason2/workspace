@@ -134,7 +134,16 @@ public class Laser extends CounterMeasure implements QueryCallback
 						
 						if( !BobbiLaserMicrowave(hitEntities.get(j)) )
 						{
-							hitEntities.get(j).damageIntegrity( m_ship, 1f, DamageType.Energy);
+							ViewedCollidable vc = hitEntities.get(j);
+									
+							if( vc != null )
+							{
+								vc.damageIntegrity( m_ship, 1f, DamageType.Energy);
+							}
+							else
+							{
+								int iv = 9;
+							}
 						}
 						
 						YashpalLaserSpecial(hitEntities, j, targetShields);
@@ -151,11 +160,16 @@ public class Laser extends CounterMeasure implements QueryCallback
 						
 						for(int k = 0; k< hitEntities.size(); k++ )
 						{
-							hitEntities.get(k).damageIntegrity(m_ship, 5f, DamageType.Energy);
+							ViewedCollidable vc = hitEntities.get(k);
 							
-							GourtLaserSpecial(hitEntities, k);
+							if( vc != null )
+							{
+								vc.damageIntegrity(m_ship, 5f, DamageType.Energy);
+														
+								GourtLaserSpecial(hitEntities, k);
 							
-							BeliceLaserSpecial(hitEntities, k);
+								BeliceLaserSpecial(hitEntities, k);
+							}
 						}					
 						
 						if( m_chargeUpCounter > ( m_chargeUpCriticalMass + m_chargedDuration ) )
@@ -279,9 +293,9 @@ public class Laser extends CounterMeasure implements QueryCallback
 		m_targets.clear();
 		if( m_superAbilityActivated && m_specialAbilitiesActivated.get(Characters.Shavret) )
 		{
-			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			for( int i = 0; i < m_ship.m_trackedHostileTargets.size(); i++ )
 			{
-				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				ViewedCollidable vc = m_ship.m_trackedHostileTargets.get(i);
 				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
 				if( distance <= m_range )
 				{
@@ -293,9 +307,9 @@ public class Laser extends CounterMeasure implements QueryCallback
 		{			
 			// Pull the closest tracked target from the ship computer! 			
 			float leastDistance = Float.MAX_VALUE;
-			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			for( int i = 0; i < m_ship.m_trackedHostileTargets.size(); i++ )
 			{
-				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				ViewedCollidable vc = m_ship.m_trackedHostileTargets.get(i);
 				float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
 				if( distance <= m_range && 
 				    ( distance < leastDistance ) )

@@ -17,7 +17,7 @@ public class CrazedRammer extends EnemyShip
 		super("crazedrammer", 3.5f, world, startX, startY, 0, 40, factionCode, aliveThings);
 		me = new ConventionalManeuverEngine(this, 40);
 		m_onDeckSeekType = m_seekType = SeekType.EnterFiringRange;
-		me.m_boostJuiceMax = 1000;
+		me.m_boostJuiceMax = 100;
 	}
 
 	@Override

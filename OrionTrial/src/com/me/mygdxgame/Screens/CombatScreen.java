@@ -104,7 +104,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     public PlayerEntity player;
     World w;
     MydebugRenderer debugRenderer = new MydebugRenderer();
-    //Asteroid asty;
+    Asteroid asty;
     ArrayList<ViewedCollidable> m_deadThings = new ArrayList<ViewedCollidable>();
 	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
 	RayHandler rayHandler;
@@ -139,7 +139,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         Dialog window = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
-        //asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 40, m_aliveThings );
+        asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 70, m_aliveThings );
         //asty = new Asteroid("asteroid", 4.5f, .1f, w, 5, 40, m_aliveThings );
         //asty = new Asteroid("asteroid", 4.5f, .1f, w, 10, 40, m_aliveThings );
         //asty = new Asteroid("asteroid", 4.5f, .1f, w, 15, 40, m_aliveThings );
@@ -151,12 +151,12 @@ public class CombatScreen extends OrionScreen implements ContactListener
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
-        //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
+        shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
         PoorStation p = new PoorStation(w, 0, -50, 1, m_aliveThings );
-        PoorStation p1 = new PoorStation(w, 0, 50, 1, m_aliveThings );
+        PoorStation p1 = new PoorStation(w, -50, 0, 1, m_aliveThings );
         PoorStation p2 = new PoorStation(w, 50, -50, 1, m_aliveThings );
         CivilianShuttle cvs = new CivilianShuttle(w, 0, -2, 1, m_aliveThings, p );
-
+        cvs.SetCurrentTarget( asty );
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
         cvs.m_shippingTargets.add( p1 );
         cvs.m_shippingTargets.add( p2 );
@@ -393,17 +393,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		
     	      Vector2 pos = player.m_body.getPosition();
-    	      Vector2 pos2 =  player.m_leftWing.m_body.getPosition();
     		
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-     		font.draw(spriteBatch, "X: " + Gdx.input.getX(0) + " Y: " + Gdx.input.getY(0) , 0, 150);
-     		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 120);
-     		font.draw(spriteBatch, "wing x:  " + pos2.x*29f + " y: " + pos2.y*29f , 0, 90);
-     		font.draw(spriteBatch, "wing x:  " + player.m_leftWing.m_objectXPosition + " y: " + player.m_leftWing.m_objectYPosition , 0, 60);
-     		font.draw(spriteBatch, "x: " + player.m_body.getPosition().x , 0, 90);
-     		font.draw(spriteBatch, "Y: " + player.m_body.getPosition().y , 0, 60);
+     		font.draw(spriteBatch, " shippy X: " + shippy.m_body.getPosition().x*29f + " Y: " + shippy.m_body.getPosition().y*29f , 0, 90);
+     		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 60);
+
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
     		spriteBatch.end();
     		
@@ -419,9 +415,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
 
 	private void HandleEnemyButtons(SpriteBatch spriteBatch)
 	{
-		for( int i = 0; i< player.m_trackedTargets.size(); i++)
+		for( int i = 0; i< player.m_trackedHostileTargets.size(); i++)
 		{
-			ViewedCollidable vc = player.m_trackedTargets.get(i);
+			ViewedCollidable vc = player.m_trackedHostileTargets.get(i);
 			if( vc.m_body.getPosition().dst(player.m_body.getPosition()) > 768f/29f &&
 				vc.m_isTargetable )
 			{

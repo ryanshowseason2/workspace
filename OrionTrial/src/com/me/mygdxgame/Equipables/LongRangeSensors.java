@@ -106,8 +106,8 @@ public class LongRangeSensors extends CounterMeasure implements QueryCallback
 		if( vc.m_factionCode != 0 && 
 			vc.m_factionCode != m_ship.m_factionCode )
 		{
-			m_ship.m_trackedTargets.remove( vc );
-			m_ship.m_trackedTargets.add( vc );
+			m_ship.m_trackedHostileTargets.remove( vc );
+			m_ship.m_trackedHostileTargets.add( vc );
 			
 			if( m_specialAbilitiesActivated.get(Characters.Noel ) && Ship.class.isInstance(vc) )
 			{

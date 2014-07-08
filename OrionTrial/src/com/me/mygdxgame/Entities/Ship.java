@@ -42,7 +42,7 @@ public class Ship extends ViewedCollidable
 	int m_shieldRechargeCounter = 0;
 	public float m_shieldIntegrityRechargeFactor = 1;
 	float m_sensorRange = 30;
-	public ArrayList<ViewedCollidable> m_trackedTargets = new ArrayList<ViewedCollidable>();
+	public ArrayList<ViewedCollidable> m_trackedHostileTargets = new ArrayList<ViewedCollidable>();
 	public float m_softwareIntegrity = 1000f;
 	public float m_softwareIntegrityMax = 1000f;
 	int m_hackedDrawCounter = 0;

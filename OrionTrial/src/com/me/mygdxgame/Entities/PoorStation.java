@@ -49,33 +49,4 @@ public class PoorStation extends EnemyShip
 		}
 	}
 	
-	@Override
-	public boolean reportFixture(Fixture fixture)
-	{
-		ViewedCollidable p = (ViewedCollidable) fixture.getBody().getUserData();
-		
-		if (p != null && 
-			p.m_factionCode != m_factionCode &&
-			p.m_isTargetable &&
-			p.m_factionCode != 0 &&
-			p.m_factionCode != 1 &&
-			Ship.class.isInstance(p) )
-		{			
-			Ship s = (Ship) fixture.getBody().getUserData();
-			
-			if( s != null )
-			{
-				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
-				{
-					SetCurrentTarget( p );
-				}
-			}
-			else
-			{
-				SetCurrentTarget( p );
-			}
-		}
-		return true;
-	}
-	
 }

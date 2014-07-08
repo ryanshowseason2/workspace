@@ -322,8 +322,8 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 			m_longRangeCMS.get(i).SetTarget( target );
 		}
 		
-		m_trackedTargets.remove( target );
-		m_trackedTargets.add( target );
+		m_trackedHostileTargets.remove( target );
+		m_trackedHostileTargets.add( target );
 	}
 	
 	@Override
@@ -419,14 +419,14 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 				if( s.m_body.getPosition().dst(m_body.getPosition()) <= s.m_detectionRange )
 				{
 
-					m_trackedTargets.remove(p);
-					m_trackedTargets.add(p);
+					m_trackedHostileTargets.remove(p);
+					m_trackedHostileTargets.add(p);
 				}
 			}
 			else
 			{
-				m_trackedTargets.remove(p);
-				m_trackedTargets.add(p);
+				m_trackedHostileTargets.remove(p);
+				m_trackedHostileTargets.add(p);
 			}
 		}
 		return true;
@@ -437,9 +437,9 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		//update tracked targets
 		ArrayList<ViewedCollidable> targetsToRemove = new ArrayList<ViewedCollidable>();
 		
-		for( int i = 0; i< m_trackedTargets.size(); i++ )
+		for( int i = 0; i< m_trackedHostileTargets.size(); i++ )
 		{
-			ViewedCollidable vc = m_trackedTargets.get(i);
+			ViewedCollidable vc = m_trackedHostileTargets.get(i);
 			if(	vc.m_integrity <=0 )
 			{
 				targetsToRemove.add(vc);
@@ -448,7 +448,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		
 		for( int i = 0; i< targetsToRemove.size(); i++ )
 		{
-			m_trackedTargets.remove(targetsToRemove.get(i) );
+			m_trackedHostileTargets.remove(targetsToRemove.get(i) );
 		}
 	}
 

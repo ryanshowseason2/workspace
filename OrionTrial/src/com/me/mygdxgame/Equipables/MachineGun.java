@@ -49,9 +49,9 @@ public class MachineGun extends CounterMeasure
 		{
 			// Pull the closest tracked target from the ship computer! 
 			float leastDistance = Float.MAX_VALUE;
-			for( int i = 0; i < m_ship.m_trackedTargets.size(); i++ )
+			for( int i = 0; i < m_ship.m_trackedHostileTargets.size(); i++ )
 			{
-				ViewedCollidable vc = m_ship.m_trackedTargets.get(i);
+				ViewedCollidable vc = m_ship.m_trackedHostileTargets.get(i);
 				if( vc != null )
 				{
 					float distance = vc.m_body.getPosition().dst(m_ship.m_body.getPosition());
