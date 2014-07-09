@@ -54,6 +54,10 @@ public class Ship extends ViewedCollidable
 	ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList<OverTimeEffect>();
 	boolean m_freezeShip = false;
 	protected int m_weaponsFree = 180;
+	
+	ParticleEffect m_starSlingEffect = new ParticleEffect();
+    ParticleEffectPool m_starSlingEffectPool;
+    PooledEffect m_pooledStarSlingEffect;
 
 	public Ship(String appearanceLocation, float collisionScale, World world,
 			float startX, float startY, float maxV,
@@ -71,6 +75,12 @@ public class Ship extends ViewedCollidable
 				Gdx.files.internal("data/" + appearanceLocation + "/"));
 		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
+		
+		m_starSlingEffect.load(Gdx.files.internal("data/starsling.p"),
+				Gdx.files.internal("data/"));
+		m_starSlingEffectPool = new ParticleEffectPool(m_starSlingEffect, 1, 2);
+		m_pooledStarSlingEffect = m_starSlingEffectPool.obtain();
+		
 		m_detectionRange = 50f;
 		m_font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
 		m_shieldDamageReductions[DamageType.Energy.value] = 1f;
@@ -173,6 +183,18 @@ public class Ship extends ViewedCollidable
 			m_pooledShieldEffect.getEmitters().get(0).getRotation()
 					.setLow((float) m_angleDegrees);
 			m_pooledShieldEffect.draw(renderer, 1f / 60f);
+			
+			m_pooledStarSlingEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			m_pooledStarSlingEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.draw(renderer, 1f / 60f);
+			if( m_pooledStarSlingEffect.isComplete() )
+			{
+				m_pooledStarSlingEffect.reset();
+			}
+			
 			DrawHackedIndicator(renderer);
 			for (int i = 0; i < m_overTimeEffects.size(); i++)
 			{
