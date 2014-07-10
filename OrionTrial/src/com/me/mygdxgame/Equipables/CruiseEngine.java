@@ -24,11 +24,11 @@ public abstract class CruiseEngine
 	
 	ParticleEffect m_engineEffect = new ParticleEffect();
     ParticleEffectPool m_engineEffectPool;
-    PooledEffect m_pooledEngineEffect;
+    public PooledEffect m_pooledEngineEffect;
     
     ParticleEffect m_engineTrailEffect = new ParticleEffect();
     ParticleEffectPool m_engineTrailEffectPool;
-    PooledEffect m_pooledEngineTrailEffect;
+    public PooledEffect m_pooledEngineTrailEffect;
     
     ParticleEffect m_airJetEffect = new ParticleEffect();
     ParticleEffectPool m_airJetEffectPool;

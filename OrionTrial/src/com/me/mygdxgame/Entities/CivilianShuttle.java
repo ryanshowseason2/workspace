@@ -87,8 +87,66 @@ public class CivilianShuttle extends EnemyShip
 		//////BEFORE DRAW BEHAVIOR ROUTINES//////
 		ShipBetweenStationsBeforeDraw();	   //
 		HarvestAsteroidsBeforeDraw();		   //
-		/////////////////////////////////////////
+		FleeToStationBeforeDraw();			   //
+		/////////////////////////////////////////		
 		
+		if( m_behavior == CivilianBehavior.Flee )
+		{
+			m_trackedHostileTargets.clear();
+			DisengageCurrentTarget();
+			double angle = Math.toRadians(m_body.getPosition().angle() );
+			m_navigatingTo.x = (float) (Math.cos( angle ) * 2000);
+			m_navigatingTo.y = (float) (Math.sin( angle ) * 2000);
+		}
+		
+		super.Draw(renderer);
+		
+		if( m_behavior == CivilianBehavior.Flee && m_body.getPosition().len() > 400 )
+		{
+			m_pooledShieldEffect.allowCompletion();
+			ce.m_pooledEngineEffect.allowCompletion();
+			ce.m_pooledEngineTrailEffect.allowCompletion();
+			m_objectSprite.setAlpha( Math.max(0, (.5f-m_pooledStarSlingEffect.getEmitters().get(1).getPercentComplete())) );
+			m_pooledStarSlingEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			m_pooledStarSlingEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEffect.draw(renderer, 1f / 60f);
+			if( m_pooledStarSlingEffect.isComplete() )
+			{
+				m_pooledStarSlingEffect.reset();
+				m_pooledDeathEffect.free();
+				m_pooledDeathEffect = null;
+				m_integrity = 0;
+			}
+		}
+					
+		//////AFTER DRAW BEHAVIOR ROUTINES///////
+		ShipBetweenStationsAfterDraw();		   //
+		HarvestAsteroidsAfterDraw();		   //
+		ReturnToStationAfterDraw();			   //
+		FleeToStationAfterDraw();			   //
+		/////////////////////////////////////////
+	}
+
+	protected void FleeToStationAfterDraw()
+	{
+		if( m_behavior == CivilianBehavior.FleeTostation )
+		{
+			if( m_aggressor.m_integrity <= 0 )
+			{
+				//We are safe now
+				m_behavior = m_previousBehavior;
+				//Cleanup so we'll target again for harvest asteroids
+				DisengageCurrentTarget();
+				m_currentlyShippingTo = null;
+			}
+		}
+	}
+
+	protected void FleeToStationBeforeDraw()
+	{
 		if( m_behavior == CivilianBehavior.FleeTostation )
 		{
 			if( m_shippingTargets.size() > 0 )
@@ -97,26 +155,6 @@ public class CivilianShuttle extends EnemyShip
 				m_navigatingTo = m_shippingTargets.get(0).m_body.getPosition();
 			}
 		}
-		
-		super.Draw(renderer);	
-		
-		if( m_behavior == CivilianBehavior.FleeTostation )
-		{
-			if( m_aggressor.m_integrity <= 0 )
-			{
-				//We are safe now
-				m_behavior = m_previousBehavior;
-				//Cleanup so we'll target again for harvest asteroids
-				SetCurrentTarget( null );
-				m_currentlyShippingTo = null;
-			}
-		}
-		
-		//////AFTER DRAW BEHAVIOR ROUTINES///////
-		ShipBetweenStationsAfterDraw();		   //
-		HarvestAsteroidsAfterDraw();		   //
-		ReturnToStationAfterDraw();			   //
-		/////////////////////////////////////////
 	}
 
 	protected void ShipBetweenStationsAfterDraw()

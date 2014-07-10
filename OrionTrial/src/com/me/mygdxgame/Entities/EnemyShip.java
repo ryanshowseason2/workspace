@@ -578,7 +578,7 @@ public class EnemyShip extends Ship implements QueryCallback
 	}
 	
 	public void DisengageCurrentTarget()
-	{
+	{		
 		m_navigationTarget = null;
 		m_navigationTargetBody = null;
 	}

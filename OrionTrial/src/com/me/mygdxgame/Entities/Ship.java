@@ -81,6 +81,13 @@ public class Ship extends ViewedCollidable
 		m_starSlingEffectPool = new ParticleEffectPool(m_starSlingEffect, 1, 2);
 		m_pooledStarSlingEffect = m_starSlingEffectPool.obtain();
 		
+		float radius = Math.max(m_objectAppearance.getWidth(), m_objectAppearance.getHeight() ) ;
+		m_pooledStarSlingEffect.getEmitters().get(0).getSpawnHeight().setHigh(radius);
+		m_pooledStarSlingEffect.getEmitters().get(0).getSpawnWidth().setHigh(radius);
+		m_pooledStarSlingEffect.getEmitters().get(1).getScale().setHigh(radius*2);
+		m_pooledStarSlingEffect.getEmitters().get(1).getScale().setLow(radius);
+		m_pooledStarSlingEffect.reset();
+		
 		m_detectionRange = 50f;
 		m_font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);
 		m_shieldDamageReductions[DamageType.Energy.value] = 1f;
@@ -184,16 +191,7 @@ public class Ship extends ViewedCollidable
 					.setLow((float) m_angleDegrees);
 			m_pooledShieldEffect.draw(renderer, 1f / 60f);
 			
-			m_pooledStarSlingEffect.setPosition(m_objectXPosition, m_objectYPosition);
-			m_pooledStarSlingEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.draw(renderer, 1f / 60f);
-			if( m_pooledStarSlingEffect.isComplete() )
-			{
-				m_pooledStarSlingEffect.reset();
-			}
+			
 			
 			DrawHackedIndicator(renderer);
 			for (int i = 0; i < m_overTimeEffects.size(); i++)

@@ -151,7 +151,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
-        shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
+        //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
         PoorStation p = new PoorStation(w, 0, -50, 1, m_aliveThings );
         PoorStation p1 = new PoorStation(w, -50, 0, 1, m_aliveThings );
         PoorStation p2 = new PoorStation(w, 50, -50, 1, m_aliveThings );
@@ -160,7 +160,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
         cvs.m_shippingTargets.add( p1 );
         cvs.m_shippingTargets.add( p2 );
-        cvs.SetBehavior( CivilianBehavior.HarvestAsteroids );
+        cvs.SetBehavior( CivilianBehavior.Flee );
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
@@ -397,7 +397,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
      	// draw fps
      		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
      		spriteBatch.begin();
-     		font.draw(spriteBatch, " shippy X: " + shippy.m_body.getPosition().x*29f + " Y: " + shippy.m_body.getPosition().y*29f , 0, 90);
+     		//font.draw(spriteBatch, " shippy X: " + shippy.m_body.getPosition().x*29f + " Y: " + shippy.m_body.getPosition().y*29f , 0, 90);
      		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 60);
 
      		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
