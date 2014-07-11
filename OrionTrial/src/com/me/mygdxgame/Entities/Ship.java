@@ -50,14 +50,19 @@ public class Ship extends ViewedCollidable
 	EnumMap<Characters, Boolean> m_specialAbilitiesActivated = new EnumMap<Characters, Boolean>(
 			Characters.class);
 	public boolean m_isEthereal = false;
+	boolean m_enteringFromSidelines = false;
 
 	ArrayList<OverTimeEffect> m_overTimeEffects = new ArrayList<OverTimeEffect>();
 	boolean m_freezeShip = false;
 	protected int m_weaponsFree = 180;
 	
-	ParticleEffect m_starSlingEffect = new ParticleEffect();
-    ParticleEffectPool m_starSlingEffectPool;
-    PooledEffect m_pooledStarSlingEffect;
+	ParticleEffect m_starSlingEnterEffect = new ParticleEffect();
+    ParticleEffectPool m_starSlingEnterEffectPool;
+    PooledEffect m_pooledStarSlingEnterEffect;
+    
+    ParticleEffect m_starSlingExitEffect = new ParticleEffect();
+    ParticleEffectPool m_starSlingExitEffectPool;
+    PooledEffect m_pooledStarSlingExitEffect;
 
 	public Ship(String appearanceLocation, float collisionScale, World world,
 			float startX, float startY, float maxV,
@@ -76,17 +81,28 @@ public class Ship extends ViewedCollidable
 		m_shieldEffectPool = new ParticleEffectPool(m_shieldEffect, 1, 2);
 		m_pooledShieldEffect = m_shieldEffectPool.obtain();
 		
-		m_starSlingEffect.load(Gdx.files.internal("data/starsling.p"),
+		m_starSlingEnterEffect.load(Gdx.files.internal("data/starsling.p"),
 				Gdx.files.internal("data/"));
-		m_starSlingEffectPool = new ParticleEffectPool(m_starSlingEffect, 1, 2);
-		m_pooledStarSlingEffect = m_starSlingEffectPool.obtain();
+		m_starSlingEnterEffectPool = new ParticleEffectPool(m_starSlingEnterEffect, 1, 2);
+		m_pooledStarSlingEnterEffect = m_starSlingEnterEffectPool.obtain();
+		
+		m_starSlingExitEffect.load(Gdx.files.internal("data/starslingexit.p"),
+				Gdx.files.internal("data/"));
+		m_starSlingExitEffectPool = new ParticleEffectPool(m_starSlingExitEffect, 1, 2);
+		m_pooledStarSlingExitEffect = m_starSlingExitEffectPool.obtain();
 		
 		float radius = Math.max(m_objectAppearance.getWidth(), m_objectAppearance.getHeight() ) ;
-		m_pooledStarSlingEffect.getEmitters().get(0).getSpawnHeight().setHigh(radius);
-		m_pooledStarSlingEffect.getEmitters().get(0).getSpawnWidth().setHigh(radius);
-		m_pooledStarSlingEffect.getEmitters().get(1).getScale().setHigh(radius*2);
-		m_pooledStarSlingEffect.getEmitters().get(1).getScale().setLow(radius);
-		m_pooledStarSlingEffect.reset();
+		m_pooledStarSlingEnterEffect.getEmitters().get(0).getSpawnHeight().setHigh(radius);
+		m_pooledStarSlingEnterEffect.getEmitters().get(0).getSpawnWidth().setHigh(radius);
+		m_pooledStarSlingEnterEffect.getEmitters().get(1).getScale().setHigh(radius*2);
+		m_pooledStarSlingEnterEffect.getEmitters().get(1).getScale().setLow(radius);
+		m_pooledStarSlingEnterEffect.reset();
+		
+		m_pooledStarSlingExitEffect.getEmitters().get(0).getSpawnHeight().setHigh(radius);
+		m_pooledStarSlingExitEffect.getEmitters().get(0).getSpawnWidth().setHigh(radius);
+		m_pooledStarSlingExitEffect.getEmitters().get(1).getScale().setHigh(radius*2);
+		m_pooledStarSlingExitEffect.getEmitters().get(1).getScale().setLow(radius);
+		m_pooledStarSlingExitEffect.reset();
 		
 		m_detectionRange = 50f;
 		m_font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), false);

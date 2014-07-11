@@ -90,6 +90,69 @@ public class CivilianShuttle extends EnemyShip
 		FleeToStationBeforeDraw();			   //
 		/////////////////////////////////////////		
 		
+		FleeBeforeDraw();
+		
+		if( m_enteringFromSidelines )
+		{
+			m_objectSprite.setAlpha( (float) Math.max(0, m_pooledStarSlingExitEffect.getEmitters().get(0).getPercentComplete() - .55 ) );
+			m_pooledStarSlingExitEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			m_pooledStarSlingExitEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingExitEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingExitEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingExitEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingExitEffect.draw(renderer, 1f / 60f);
+			if( m_pooledStarSlingExitEffect.isComplete() )
+			{
+				m_enteringFromSidelines = false;
+				m_objectSprite.setAlpha( 1);
+			}
+		}
+		
+		super.Draw(renderer);
+		
+		FleeAfterDraw(renderer);
+					
+		//////AFTER DRAW BEHAVIOR ROUTINES///////
+		ShipBetweenStationsAfterDraw();		   //
+		HarvestAsteroidsAfterDraw();		   //
+		ReturnToStationAfterDraw();			   //
+		FleeToStationAfterDraw();			   //
+		/////////////////////////////////////////
+	}
+	
+	public void EnterFromSidelines( float x, float y )
+	{
+		m_body.setTransform(x, y, m_body.getAngle());
+		m_enteringFromSidelines = true;
+		m_pooledStarSlingExitEffect.reset();
+	}
+
+	private void FleeAfterDraw(SpriteBatch renderer)
+	{
+		if( m_behavior == CivilianBehavior.Flee && m_body.getPosition().len() > 400 )
+		{
+			m_pooledShieldEffect.allowCompletion();
+			ce.m_pooledEngineEffect.allowCompletion();
+			ce.m_pooledEngineTrailEffect.allowCompletion();
+			m_objectSprite.setAlpha( Math.max(0, (.5f-m_pooledStarSlingEnterEffect.getEmitters().get(1).getPercentComplete())) );
+			m_pooledStarSlingEnterEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			m_pooledStarSlingEnterEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.draw(renderer, 1f / 60f);
+			if( m_pooledStarSlingEnterEffect.isComplete() )
+			{
+				m_pooledStarSlingEnterEffect.reset();
+				m_pooledDeathEffect.free();
+				m_pooledDeathEffect = null;
+				m_integrity = 0;
+			}
+		}
+	}
+
+	private void FleeBeforeDraw()
+	{
 		if( m_behavior == CivilianBehavior.Flee )
 		{
 			m_trackedHostileTargets.clear();
@@ -98,36 +161,6 @@ public class CivilianShuttle extends EnemyShip
 			m_navigatingTo.x = (float) (Math.cos( angle ) * 2000);
 			m_navigatingTo.y = (float) (Math.sin( angle ) * 2000);
 		}
-		
-		super.Draw(renderer);
-		
-		if( m_behavior == CivilianBehavior.Flee && m_body.getPosition().len() > 400 )
-		{
-			m_pooledShieldEffect.allowCompletion();
-			ce.m_pooledEngineEffect.allowCompletion();
-			ce.m_pooledEngineTrailEffect.allowCompletion();
-			m_objectSprite.setAlpha( Math.max(0, (.5f-m_pooledStarSlingEffect.getEmitters().get(1).getPercentComplete())) );
-			m_pooledStarSlingEffect.setPosition(m_objectXPosition, m_objectYPosition);
-			m_pooledStarSlingEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
-			m_pooledStarSlingEffect.draw(renderer, 1f / 60f);
-			if( m_pooledStarSlingEffect.isComplete() )
-			{
-				m_pooledStarSlingEffect.reset();
-				m_pooledDeathEffect.free();
-				m_pooledDeathEffect = null;
-				m_integrity = 0;
-			}
-		}
-					
-		//////AFTER DRAW BEHAVIOR ROUTINES///////
-		ShipBetweenStationsAfterDraw();		   //
-		HarvestAsteroidsAfterDraw();		   //
-		ReturnToStationAfterDraw();			   //
-		FleeToStationAfterDraw();			   //
-		/////////////////////////////////////////
 	}
 
 	protected void FleeToStationAfterDraw()

@@ -43,6 +43,7 @@ public class ClutterSpawner
 		Pixmap spawnMap = new Pixmap(Gdx.files.internal(imageLocation));
 		float halfWidth = spawnMap.getWidth() /2;
 		float halfHeight = spawnMap.getHeight() /2;
+		Random rand = new Random();
 		
 		for( int i = spawnMap.getWidth()-1; i > 0; i--)
 		{
@@ -55,7 +56,7 @@ public class ClutterSpawner
 					float zeroTo255Scale = c.r*255;
 					//if( zeroTo255Scale == 1 )
 					{
-						SpawnAsteroids( randomType(), randomSize(), (halfWidth - i)*pixelScale, (halfHeight - j)*pixelScale, radius, amount );
+						SpawnAsteroids( randomType(), randomSize(), (halfWidth - i)*pixelScale, (halfHeight - j)*pixelScale, radius, rand.nextInt(amount)+1 );
 					}
 				}
 				

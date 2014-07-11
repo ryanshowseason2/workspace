@@ -26,7 +26,8 @@ public class InertialManeuverEngine extends ManeuverEngine
 		m_engineEffect.load(Gdx.files.internal("data/starslingwave.p"), Gdx.files.internal("data/"));
 		m_engineEffectPool = new ParticleEffectPool(m_engineEffect, 1, 2);
 		m_pooledEngineEffect = m_engineEffectPool.obtain();
-		m_pooledEngineEffect.allowCompletion();
+		m_pooledEngineEffect.getEmitters().get(0).getTransparency().setHigh(0);
+		//m_pooledEngineEffect.allowCompletion();
 	}
 	
 	public void ApplyVelocity()
@@ -48,12 +49,10 @@ public class InertialManeuverEngine extends ManeuverEngine
 			m_yVelocity = (float)(m_boostMagnitude * Math.sin(m_ship.m_angleRadians));
 	        
 	        ApplyVelocity();	
-	        m_pooledEngineEffect.reset();
-	        
-	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setLow(m_ship.m_angleDegrees);
-	        m_pooledEngineEffect.getEmitters().get(1).getAngle().setLow(m_ship.m_angleDegrees);
-	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setLow(m_ship.m_angleDegrees);	   
-	        m_pooledEngineEffect.getEmitters().get(1).getRotation().setLow(m_ship.m_angleDegrees);
+	        //m_pooledEngineEffect.reset();
+	        m_pooledEngineEffect.getEmitters().get(0).getTransparency().setHigh(1);
+	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setHigh(m_ship.m_angleDegrees);
+	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setHigh(m_ship.m_angleDegrees);
 	        m_angleToEmitAt = m_ship.m_angleDegrees;
 	        float radius = 150;
 	        m_xdelta =  (float)(radius * Math.cos(m_ship.m_angleRadians));
@@ -70,11 +69,10 @@ public class InertialManeuverEngine extends ManeuverEngine
 			m_yVelocity = (float)(-m_boostMagnitude * Math.sin(m_ship.m_angleRadians));
 	        	        
 	        ApplyVelocity();
-	        m_pooledEngineEffect.reset();
-	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setLow(m_ship.m_angleDegrees - 180);
-	        m_pooledEngineEffect.getEmitters().get(1).getAngle().setLow(m_ship.m_angleDegrees - 180);
-	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setLow(m_ship.m_angleDegrees - 180);
-	        m_pooledEngineEffect.getEmitters().get(1).getRotation().setLow(m_ship.m_angleDegrees - 180);
+	        m_pooledEngineEffect.getEmitters().get(0).getTransparency().setHigh(1);
+	        //m_pooledEngineEffect.reset();
+	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setHigh(m_ship.m_angleDegrees - 180);
+	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setHigh(m_ship.m_angleDegrees - 180);
 
 	        float radius = 150;
 	        m_xdelta = -(float)(radius * Math.cos(m_ship.m_angleRadians));
@@ -92,12 +90,10 @@ public class InertialManeuverEngine extends ManeuverEngine
 	        
 	        
 	        ApplyVelocity();	
-	        m_pooledEngineEffect.reset();
-	        
-	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setLow(m_ship.m_angleDegrees + 90);
-	        m_pooledEngineEffect.getEmitters().get(1).getAngle().setLow(m_ship.m_angleDegrees + 90);
-	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setLow(m_ship.m_angleDegrees + 90);
-	        m_pooledEngineEffect.getEmitters().get(1).getRotation().setLow(m_ship.m_angleDegrees + 90);
+	        //m_pooledEngineEffect.reset();
+	        m_pooledEngineEffect.getEmitters().get(0).getTransparency().setHigh(1);
+	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setHigh(m_ship.m_angleDegrees + 90);
+	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setHigh(m_ship.m_angleDegrees + 90);
 	        float radius = 150;
 	        m_xdelta = (float)(radius * Math.cos(m_ship.m_angleRadians+Math.PI/2));
 	        m_ydelta = (float)(radius * Math.sin(m_ship.m_angleRadians+Math.PI/2));
@@ -113,12 +109,10 @@ public class InertialManeuverEngine extends ManeuverEngine
 			m_yVelocity = (float)(-m_boostMagnitude * Math.cos(m_ship.m_angleRadians));
 	        
 	        ApplyVelocity();
-	        m_pooledEngineEffect.reset();
-	        
-	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setLow(m_ship.m_angleDegrees - 90);
-	        m_pooledEngineEffect.getEmitters().get(1).getAngle().setLow(m_ship.m_angleDegrees - 90);
-	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setLow(m_ship.m_angleDegrees - 90);
-	        m_pooledEngineEffect.getEmitters().get(1).getRotation().setLow(m_ship.m_angleDegrees - 90);
+	        //m_pooledEngineEffect.reset();
+	        m_pooledEngineEffect.getEmitters().get(0).getTransparency().setHigh(1);
+	        m_pooledEngineEffect.getEmitters().get(0).getAngle().setHigh(m_ship.m_angleDegrees - 90);
+	        m_pooledEngineEffect.getEmitters().get(0).getRotation().setHigh(m_ship.m_angleDegrees - 90);
 	        float radius = 150;
 	        m_xdelta = -(float)(radius * Math.cos(m_ship.m_angleRadians+Math.PI/2));
 	        m_ydelta = -(float)(radius * Math.sin(m_ship.m_angleRadians+Math.PI/2));
@@ -146,12 +140,13 @@ public class InertialManeuverEngine extends ManeuverEngine
 		{
 			m_ship.m_body.setLinearVelocity(m_origxVelocity, m_origyVelocity );
 			m_dodging = false;
-			m_pooledEngineEffect.allowCompletion();
+			//m_pooledEngineEffect.allowCompletion();
+			m_pooledEngineEffect.getEmitters().get(0).getTransparency().setHigh(0);
 		}		
 
 		{
-			m_pooledEngineEffect.setPosition(m_ship.m_objectXPosition+ m_xdelta, m_ship.m_objectYPosition + m_ydelta);
-			m_pooledEngineEffect.draw(renderer, 10f/60f);
+			m_pooledEngineEffect.setPosition(m_ship.m_objectXPosition, m_ship.m_objectYPosition);
+			m_pooledEngineEffect.draw(renderer, 1f/60f);
 		}		
 		
 	}

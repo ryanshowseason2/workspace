@@ -2,6 +2,8 @@ package com.me.mygdxgame.Entities;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import BodyLoaderPackage.BodyEditorLoader;
 
@@ -50,6 +52,8 @@ public abstract class ViewedCollidable
     float m_water = 0;
     float m_dogeCoin = 0;
 	public boolean m_untargetable = false;
+	
+	static Map m_textures = new HashMap();
     
     public enum DamageType 
     {
@@ -76,7 +80,16 @@ public abstract class ViewedCollidable
 		  m_factionCode = factionCode;
 	      m_objectXPosition = startX*29f;
 	      m_objectYPosition = startY*29f;
-	      m_objectAppearance = new Texture(Gdx.files.internal("data/"+appearanceLocation+ "/"+appearanceLocation+".png"));
+	      if( m_textures.containsKey(appearanceLocation) )
+	      {
+	    	  m_objectAppearance = (Texture) m_textures.get(appearanceLocation);
+	      }
+	      else
+	      {
+	    	  m_objectAppearance = new Texture(Gdx.files.internal("data/"+appearanceLocation+ "/"+appearanceLocation+".png"));
+	    	  m_textures.put(appearanceLocation, m_objectAppearance);
+	      }
+	      //m_objectAppearance = new Texture(Gdx.files.internal("data/"+appearanceLocation+ "/"+appearanceLocation+".png"));
 	      m_objectSprite = new Sprite( m_objectAppearance );
 	      // First we create a body definition
 	      BodyDef bodyDef = new BodyDef();
