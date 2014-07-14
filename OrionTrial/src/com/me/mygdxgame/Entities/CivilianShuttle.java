@@ -18,13 +18,15 @@ public class CivilianShuttle extends EnemyShip
 	{
 		HarvestAsteroids,
 		ShipBetweenStations,
+		ShipAndLeaveBeforeShipped,
+		ShipAndLeaveAfterShipped,
 		ReturnToStation,
 		FleeTostation,
 		Flee
 	}
 	
 	CivilianBehavior m_behavior;
-	private int m_unloadCounter;
+	private int m_unloadCounter = 200;
 	ViewedCollidable m_detectChangedTarget;
 	ViewedCollidable m_currentlyShippingTo = null;
 	public ArrayList<ViewedCollidable> m_shippingTargets = new ArrayList<ViewedCollidable>();
@@ -88,12 +90,106 @@ public class CivilianShuttle extends EnemyShip
 		ShipBetweenStationsBeforeDraw();	   //
 		HarvestAsteroidsBeforeDraw();		   //
 		FleeToStationBeforeDraw();			   //
+		FleeBeforeDraw();
 		/////////////////////////////////////////		
 		
-		FleeBeforeDraw();
+		ShipAndLeaveBeforeBeforeDraw();		
+		ShipAndLeaveAfterBeforeDraw();
 		
+		DrawWarpingInWhenAppropriate(renderer);		
+		super.Draw(renderer);
+		
+		ShipAndLeaveBeforeAfterDraw();		
+		ShipAndLeaveAfterAfterDraw(renderer);
+					
+		//////AFTER DRAW BEHAVIOR ROUTINES///////
+		ShipBetweenStationsAfterDraw();		   //
+		HarvestAsteroidsAfterDraw();		   //
+		ReturnToStationAfterDraw();			   //
+		FleeToStationAfterDraw();			   //
+		FleeAfterDraw(renderer);
+		/////////////////////////////////////////
+	}
+
+	private void ShipAndLeaveAfterAfterDraw(SpriteBatch renderer)
+	{
+		if( m_behavior == CivilianBehavior.ShipAndLeaveAfterShipped && m_body.getPosition().len() > 400 )
+		{
+			m_pooledShieldEffect.allowCompletion();
+			ce.m_pooledEngineEffect.allowCompletion();
+			ce.m_pooledEngineTrailEffect.allowCompletion();
+			m_objectSprite.setAlpha( Math.max(0, (.5f-m_pooledStarSlingEnterEffect.getEmitters().get(1).getPercentComplete())) );
+			m_pooledStarSlingEnterEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			m_pooledStarSlingEnterEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.draw(renderer, 1f / 60f);
+			if( m_pooledStarSlingEnterEffect.isComplete() )
+			{
+				m_pooledStarSlingEnterEffect.reset();
+
+				double angle = Math.random() * Math.PI * 2;
+				float x = (float) (Math.cos( angle ) * 600);
+				float y = (float) (Math.sin( angle ) * 600);
+				m_behavior = CivilianBehavior.ShipAndLeaveBeforeShipped;
+				EnterFromSidelines(x,y);
+			}
+		}
+	}
+
+	private void ShipAndLeaveAfterBeforeDraw()
+	{
+		if( m_behavior == CivilianBehavior.ShipAndLeaveAfterShipped )
+		{
+			m_trackedHostileTargets.clear();
+			DisengageCurrentTarget();
+			double angle = Math.toRadians(m_body.getPosition().angle() );
+			m_navigatingTo.x = (float) (Math.cos( angle ) * 2000);
+			m_navigatingTo.y = (float) (Math.sin( angle ) * 2000);
+		}
+	}
+
+	private void ShipAndLeaveBeforeAfterDraw()
+	{
+		if( m_behavior == CivilianBehavior.ShipAndLeaveBeforeShipped && HasReachedWaypoint() )
+		{
+			//we've arrived
+			if( m_unloadCounter <= 0 )
+			{
+				// fully unloaded
+				m_behavior = CivilianBehavior.ShipAndLeaveAfterShipped;
+				m_unloadCounter = 200;
+			}
+			else
+			{
+				m_unloadCounter--;
+			}
+			
+		}
+	}
+
+	private void ShipAndLeaveBeforeBeforeDraw()
+	{
+		if( m_behavior == CivilianBehavior.ShipAndLeaveBeforeShipped )
+		{
+			if( m_shippingTargets.size() > 0 )
+			{
+				SetCurrentTarget( m_shippingTargets.get(0), false );
+				m_navigatingTo = m_shippingTargets.get(0).m_body.getPosition();
+			}
+			else
+			{
+				m_behavior = CivilianBehavior.Flee;
+			}
+		}
+	}
+
+	private void DrawWarpingInWhenAppropriate(SpriteBatch renderer)
+	{
 		if( m_enteringFromSidelines )
 		{
+			this.m_freezeShip = true;
 			m_objectSprite.setAlpha( (float) Math.max(0, m_pooledStarSlingExitEffect.getEmitters().get(0).getPercentComplete() - .55 ) );
 			m_pooledStarSlingExitEffect.setPosition(m_objectXPosition, m_objectYPosition);
 			m_pooledStarSlingExitEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
@@ -105,19 +201,9 @@ public class CivilianShuttle extends EnemyShip
 			{
 				m_enteringFromSidelines = false;
 				m_objectSprite.setAlpha( 1);
+				this.m_freezeShip = false;
 			}
 		}
-		
-		super.Draw(renderer);
-		
-		FleeAfterDraw(renderer);
-					
-		//////AFTER DRAW BEHAVIOR ROUTINES///////
-		ShipBetweenStationsAfterDraw();		   //
-		HarvestAsteroidsAfterDraw();		   //
-		ReturnToStationAfterDraw();			   //
-		FleeToStationAfterDraw();			   //
-		/////////////////////////////////////////
 	}
 	
 	public void EnterFromSidelines( float x, float y )
@@ -192,7 +278,7 @@ public class CivilianShuttle extends EnemyShip
 
 	protected void ShipBetweenStationsAfterDraw()
 	{
-		if( m_behavior == CivilianBehavior.ShipBetweenStations && !ce.m_enginesEngaged )
+		if( m_behavior == CivilianBehavior.ShipBetweenStations && HasReachedWaypoint() )
 		{
 			if( m_unloadCounter <= 0 )
 			{
@@ -202,7 +288,7 @@ public class CivilianShuttle extends EnemyShip
 					m_currentlyShippingTo = m_shippingTargets.get( RANDOM.nextInt(m_shippingTargets.size() ) );
 					m_navigatingTo = m_currentlyShippingTo.m_body.getPosition();
 				}
-				m_unloadCounter = 100;
+				m_unloadCounter = 200;
 			}
 			
 			float distance = m_body.getPosition().dst(m_currentlyShippingTo.m_body.getPosition());
@@ -262,7 +348,7 @@ public class CivilianShuttle extends EnemyShip
 
 	protected void ReturnToStationAfterDraw()
 	{
-		if( m_behavior == CivilianBehavior.ReturnToStation && !ce.m_enginesEngaged )
+		if( m_behavior == CivilianBehavior.ReturnToStation && HasReachedWaypoint() )
 		{
 			if( m_unloadCounter <= 0 )
 			{
@@ -285,7 +371,7 @@ public class CivilianShuttle extends EnemyShip
 			DisengageCurrentTarget();
 			 m_behavior = CivilianBehavior.ReturnToStation;
 			 m_navigatingTo = m_shippingTargets.get(0).m_body.getPosition();
-			 m_unloadCounter = 100;
+			 m_unloadCounter = 200;
 		}
 	}
 

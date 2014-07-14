@@ -109,6 +109,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	ArrayList<ViewedCollidable> m_aliveThings = new ArrayList<ViewedCollidable>();
 	RayHandler rayHandler;
 	EnemyShip shippy;
+	CivilianShuttle cvs;
 	
 	Skin skin;
 	Stage m_stage;
@@ -137,7 +138,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
-        player = new PlayerEntity("playership", w, 0, 0, -90, 40f, m_aliveThings, cam, m_stage);
+        player = new PlayerEntity("playership", w, 0, -205, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 70, m_aliveThings );
         //asty = new Asteroid("asteroid", 4.5f, .1f, w, 5, 40, m_aliveThings );
@@ -155,13 +156,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
         PoorStation p = new PoorStation(w, 0, -50, 1, m_aliveThings );
         PoorStation p1 = new PoorStation(w, -50, 0, 1, m_aliveThings );
         PoorStation p2 = new PoorStation(w, 50, -50, 1, m_aliveThings );
-        CivilianShuttle cvs = new CivilianShuttle(w, 0, -2, 1, m_aliveThings, p );
+        cvs = new CivilianShuttle(w, 0, -2, 1, m_aliveThings, p );
         cvs.SetCurrentTarget( asty );
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
-        cvs.m_shippingTargets.add( p1 );
-        cvs.m_shippingTargets.add( p2 );
-        cvs.SetBehavior( CivilianBehavior.Flee );
-        cvs.EnterFromSidelines(0, -2);
+        //cvs.m_shippingTargets.add( p1 );
+        //cvs.m_shippingTargets.add( p2 );
+        cvs.SetBehavior( CivilianBehavior.ShipAndLeaveBeforeShipped );
+        cvs.EnterFromSidelines(0, -200);
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
@@ -393,16 +394,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		spriteBatch.end();
     		
     		
-    	      Vector2 pos = player.m_body.getPosition();
-    		
-     	// draw fps
-     		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-     		spriteBatch.begin();
-     		//font.draw(spriteBatch, " shippy X: " + shippy.m_body.getPosition().x*29f + " Y: " + shippy.m_body.getPosition().y*29f , 0, 90);
-     		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 60);
-
-     		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
-    		spriteBatch.end();
+    	      DebugDraw();
     		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{
@@ -412,6 +404,20 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		}
     		m_deadThings.clear();
 
+	}
+
+	private void DebugDraw()
+	{
+		Vector2 pos = player.m_body.getPosition();
+		
+   	// draw fps
+		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		spriteBatch.begin();
+		font.draw(spriteBatch, " shippy X: " + cvs.m_body.getPosition().x*29f + " Y: " + cvs.m_body.getPosition().y*29f , 0, 90);
+		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 60);
+
+		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
+		spriteBatch.end();
 	}
 
 	private void HandleEnemyButtons(SpriteBatch spriteBatch)

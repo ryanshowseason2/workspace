@@ -69,6 +69,11 @@ public class EnemyShip extends Ship implements QueryCallback
 		m_weaponsFree = 0;
 	}
 	
+	public boolean HasReachedWaypoint()
+	{
+		return !ce.EnginesEngaged() && !m_freezeShip;
+	}
+	
 	public void AddToFighterGroup(EnemyShip e )
 	{
 		m_fighterGroup.add(e);
@@ -139,7 +144,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	private void HandleTargetingDrawAndWeaponsFree(SpriteBatch renderer)
 	{
-		if( m_navigationTarget != null && m_showTargeting )
+		if( m_trackedHostileTargets.size() > 0 && m_navigationTarget != null && m_showTargeting )
 		{
 			if( m_pooledTargetingEffect.isComplete() )
 			{

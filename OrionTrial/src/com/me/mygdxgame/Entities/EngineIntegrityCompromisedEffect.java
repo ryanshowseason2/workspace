@@ -14,7 +14,7 @@ public class EngineIntegrityCompromisedEffect extends OverTimeEffect
 	@Override
 	public boolean Action()
 	{
-		if( m_ship.ce.m_enginesEngaged )
+		if( m_ship.ce.EnginesEngaged() )
 		{
 			m_ship.damageIntegrity( null, 1, DamageType.Explosion, true, true, true );
 		}

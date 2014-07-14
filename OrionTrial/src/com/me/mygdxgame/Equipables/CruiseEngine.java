@@ -11,7 +11,7 @@ public abstract class CruiseEngine
 	Ship m_ship;
 	float m_jetAngle = 0;
 	float m_maxVelocity;
-	public boolean m_enginesEngaged = false;
+	boolean m_enginesEngaged = false;
 	boolean m_jetsEngaged = false;
 	boolean m_brakesEngaged = false;
 	float m_airJetAttachX;
@@ -39,6 +39,8 @@ public abstract class CruiseEngine
 		m_ship = s;
 		m_maxVelocity = maxVelocity;
 	}
+	
+	public boolean EnginesEngaged(){ return m_enginesEngaged; }
 	
 	public abstract void ThrottleForward();
 	public abstract void ThrottleBackward();
