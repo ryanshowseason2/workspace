@@ -161,7 +161,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
         //cvs.m_shippingTargets.add( p1 );
         //cvs.m_shippingTargets.add( p2 );
-        cvs.SetBehavior( CivilianBehavior.ShipAndLeaveBeforeShipped );
+        cvs.SetBehavior( CivilianBehavior.MoseyOnThrough );
         cvs.EnterFromSidelines(0, -200);
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );

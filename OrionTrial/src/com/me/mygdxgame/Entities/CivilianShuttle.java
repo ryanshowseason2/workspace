@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
@@ -20,6 +21,7 @@ public class CivilianShuttle extends EnemyShip
 		ShipBetweenStations,
 		ShipAndLeaveBeforeShipped,
 		ShipAndLeaveAfterShipped,
+		MoseyOnThrough,
 		ReturnToStation,
 		FleeTostation,
 		Flee
@@ -31,7 +33,9 @@ public class CivilianShuttle extends EnemyShip
 	ViewedCollidable m_currentlyShippingTo = null;
 	public ArrayList<ViewedCollidable> m_shippingTargets = new ArrayList<ViewedCollidable>();
 	ViewedCollidable m_aggressor = null;
-	CivilianBehavior m_previousBehavior;	
+	CivilianBehavior m_previousBehavior;
+	private Vector2 m_randomExitPoint = new Vector2();
+	private boolean m_randomExitPointSet = false;	
 	
 	public CivilianShuttle( World world, float startX, float startY, int factionCode, ArrayList<ViewedCollidable> aliveThings, PoorStation p)
 	{
@@ -96,24 +100,24 @@ public class CivilianShuttle extends EnemyShip
 		ShipAndLeaveBeforeBeforeDraw();		
 		ShipAndLeaveAfterBeforeDraw();
 		
+		if( m_behavior == CivilianBehavior.MoseyOnThrough )
+		{
+			if( m_randomExitPointSet == false )
+			{
+				m_trackedHostileTargets.clear();
+				DisengageCurrentTarget();
+				double angle = Math.toRadians(Math.random()* Math.PI*2 );
+				m_navigatingTo.x = (float) (Math.cos( angle ) * 2000);
+				m_navigatingTo.y = (float) (Math.sin( angle ) * 2000);
+				m_randomExitPointSet = true;
+			}
+		}
+		
 		DrawWarpingInWhenAppropriate(renderer);		
 		super.Draw(renderer);
 		
-		ShipAndLeaveBeforeAfterDraw();		
-		ShipAndLeaveAfterAfterDraw(renderer);
-					
-		//////AFTER DRAW BEHAVIOR ROUTINES///////
-		ShipBetweenStationsAfterDraw();		   //
-		HarvestAsteroidsAfterDraw();		   //
-		ReturnToStationAfterDraw();			   //
-		FleeToStationAfterDraw();			   //
-		FleeAfterDraw(renderer);
-		/////////////////////////////////////////
-	}
-
-	private void ShipAndLeaveAfterAfterDraw(SpriteBatch renderer)
-	{
-		if( m_behavior == CivilianBehavior.ShipAndLeaveAfterShipped && m_body.getPosition().len() > 400 )
+		
+		if( m_behavior == CivilianBehavior.MoseyOnThrough && m_body.getPosition().len() > 500 )
 		{
 			m_pooledShieldEffect.allowCompletion();
 			ce.m_pooledEngineEffect.allowCompletion();
@@ -130,8 +134,46 @@ public class CivilianShuttle extends EnemyShip
 				m_pooledStarSlingEnterEffect.reset();
 
 				double angle = Math.random() * Math.PI * 2;
-				float x = (float) (Math.cos( angle ) * 600);
-				float y = (float) (Math.sin( angle ) * 600);
+				float x = (float) (Math.cos( angle ) * 400);
+				float y = (float) (Math.sin( angle ) * 400);
+				m_randomExitPointSet = false;
+				EnterFromSidelines(x,y);
+			}
+		}
+		
+		ShipAndLeaveBeforeAfterDraw();		
+		ShipAndLeaveAfterAfterDraw(renderer);
+					
+		//////AFTER DRAW BEHAVIOR ROUTINES///////
+		ShipBetweenStationsAfterDraw();		   //
+		HarvestAsteroidsAfterDraw();		   //
+		ReturnToStationAfterDraw();			   //
+		FleeToStationAfterDraw();			   //
+		FleeAfterDraw(renderer);
+		/////////////////////////////////////////
+	}
+
+	private void ShipAndLeaveAfterAfterDraw(SpriteBatch renderer)
+	{
+		if( m_behavior == CivilianBehavior.ShipAndLeaveAfterShipped && m_body.getPosition().len() > 500 )
+		{
+			m_pooledShieldEffect.allowCompletion();
+			ce.m_pooledEngineEffect.allowCompletion();
+			ce.m_pooledEngineTrailEffect.allowCompletion();
+			m_objectSprite.setAlpha( Math.max(0, (.5f-m_pooledStarSlingEnterEffect.getEmitters().get(1).getPercentComplete())) );
+			m_pooledStarSlingEnterEffect.setPosition(m_objectXPosition, m_objectYPosition);
+			m_pooledStarSlingEnterEffect.getEmitters().get(0).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(1).getAngle().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(0).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.getEmitters().get(1).getRotation().setHigh((float) m_angleDegrees);
+			m_pooledStarSlingEnterEffect.draw(renderer, 1f / 60f);
+			if( m_pooledStarSlingEnterEffect.isComplete() )
+			{
+				m_pooledStarSlingEnterEffect.reset();
+
+				double angle = Math.random() * Math.PI * 2;
+				float x = (float) (Math.cos( angle ) * 400);
+				float y = (float) (Math.sin( angle ) * 400);
 				m_behavior = CivilianBehavior.ShipAndLeaveBeforeShipped;
 				EnterFromSidelines(x,y);
 			}
@@ -211,6 +253,9 @@ public class CivilianShuttle extends EnemyShip
 		m_body.setTransform(x, y, m_body.getAngle());
 		m_enteringFromSidelines = true;
 		m_pooledStarSlingExitEffect.reset();
+		m_pooledShieldEffect.reset();
+		ce.m_pooledEngineEffect.reset();
+		ce.m_pooledEngineTrailEffect.reset();
 	}
 
 	private void FleeAfterDraw(SpriteBatch renderer)
