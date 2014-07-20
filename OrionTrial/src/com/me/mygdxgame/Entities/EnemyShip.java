@@ -40,6 +40,7 @@ public class EnemyShip extends Ship implements QueryCallback
 	PooledEffect m_pooledTargetingEffect;
 	private double m_fieldOfView = Math.PI/2;
 	boolean m_showTargeting = true;
+	protected float m_proximityAllowed = 10f;
 	
 
 	public EnemyShip(String appearanceLocation, float collisionScale, World world, float startX,
@@ -302,12 +303,12 @@ public class EnemyShip extends Ship implements QueryCallback
 				|| (m_body.getLinearVelocity().x < -5 && vec.x > pos.x)
 				|| (m_body.getLinearVelocity().y > 5 && vec.y < pos.y)
 				|| (m_body.getLinearVelocity().y < -5 && vec.y > pos.y)
-				|| pos.dst(vec) <= 10f )
+				|| pos.dst(vec) <= m_proximityAllowed  )
 		{
 			ce.EngineBrake();
 			ce.DisengageEngine();
 		} 
-		else if( distance > 10f )
+		else if( distance > m_proximityAllowed )
 		{
 			ce.ThrottleForward();
 			ce.EngageEngine();

@@ -22,9 +22,17 @@ public class CivilianShuttle extends EnemyShip
 		ShipAndLeaveBeforeShipped,
 		ShipAndLeaveAfterShipped,
 		MoseyOnThrough,
+		PatrolWaypoints,
 		ReturnToStation,
 		FleeTostation,
 		Flee
+	}
+	
+	public enum WaypointUpdateType
+	{
+		AbsoluteCoordinates,
+		AbsoluteRadialCoordinates,
+		RadialCoordinates
 	}
 	
 	CivilianBehavior m_behavior;
@@ -36,6 +44,11 @@ public class CivilianShuttle extends EnemyShip
 	CivilianBehavior m_previousBehavior;
 	private Vector2 m_randomExitPoint = new Vector2();
 	private boolean m_randomExitPointSet = false;	
+	public ArrayList<Vector2> m_patrolWaypoints  = new ArrayList<Vector2>();
+	int m_currentWaypointIndex = 0;
+	WaypointUpdateType m_patrolWaypointsType = WaypointUpdateType.RadialCoordinates;
+	ViewedCollidable m_patrolWaypointTarget = null;
+	Vector2 m_patrolWaypointTargetAbsolute = null;
 	
 	public CivilianShuttle( World world, float startX, float startY, int factionCode, ArrayList<ViewedCollidable> aliveThings, PoorStation p)
 	{
@@ -55,6 +68,32 @@ public class CivilianShuttle extends EnemyShip
 	public void SetBehavior( CivilianBehavior cb )
 	{
 		m_behavior = cb;
+	}
+	
+	public void SetWaypoints( WaypointUpdateType wut, ArrayList<Vector2> patrolWaypoints, ViewedCollidable patrolWaypointTarget, Vector2 patrolWaypointTargetAbsolute )
+	{
+		m_patrolWaypointsType = wut;
+		m_patrolWaypointTarget = patrolWaypointTarget;
+		m_patrolWaypointTargetAbsolute = patrolWaypointTargetAbsolute;
+		m_patrolWaypoints.addAll( patrolWaypoints );
+		m_proximityAllowed = 1f;
+		m_onDeckSeekType = m_seekType = SeekType.EnterFiringRange;
+	}
+	
+	public ArrayList<Vector2> GenerateRadialWaypoints( float angleAddition, float radius )
+	{
+		float runningAngle = 0;
+		ArrayList<Vector2> newList = new ArrayList<Vector2>();
+		
+		for( ; runningAngle <= 360; runningAngle+=angleAddition)
+		{
+			Vector2 newWaypoint = new Vector2();
+			newWaypoint.x = runningAngle;
+			newWaypoint.y = radius;
+			newList.add(newWaypoint);
+		}
+		
+		return newList;
 	}
 	
 	@Override
@@ -100,23 +139,62 @@ public class CivilianShuttle extends EnemyShip
 		ShipAndLeaveBeforeBeforeDraw();		
 		ShipAndLeaveAfterBeforeDraw();
 		
-		if( m_behavior == CivilianBehavior.MoseyOnThrough )
+		MoseyOnThroughBeforeDraw();
+		
+		if( m_behavior == CivilianBehavior.PatrolWaypoints && GetTarget() == null )
 		{
-			if( m_randomExitPointSet == false )
+			double angle = 0;
+			double radius = 0;
+			switch( m_patrolWaypointsType )
 			{
-				m_trackedHostileTargets.clear();
-				DisengageCurrentTarget();
-				double angle = Math.toRadians(Math.random()* Math.PI*2 );
-				m_navigatingTo.x = (float) (Math.cos( angle ) * 2000);
-				m_navigatingTo.y = (float) (Math.sin( angle ) * 2000);
-				m_randomExitPointSet = true;
+				case AbsoluteCoordinates:
+					m_navigatingTo = m_patrolWaypoints.get(m_currentWaypointIndex);
+					break;
+				case AbsoluteRadialCoordinates:
+					angle =  Math.toRadians(((Vector2)m_patrolWaypoints.get(m_currentWaypointIndex)).x);
+					radius = ((Vector2)m_patrolWaypoints.get(m_currentWaypointIndex)).y;
+					m_navigatingTo.x = (float) (Math.cos( angle ) * radius) + m_patrolWaypointTargetAbsolute.x;
+					m_navigatingTo.y = (float) (Math.sin( angle ) * radius) + m_patrolWaypointTargetAbsolute.y;
+					break;
+					
+				case RadialCoordinates:
+					angle =  Math.toRadians(((Vector2)m_patrolWaypoints.get(m_currentWaypointIndex)).x);
+					radius = ((Vector2)m_patrolWaypoints.get(m_currentWaypointIndex)).y;
+					m_navigatingTo.x = (float) (Math.cos( angle ) * radius) + m_patrolWaypointTarget.m_body.getPosition().x;
+					m_navigatingTo.y = (float) (Math.sin( angle ) * radius) + m_patrolWaypointTarget.m_body.getPosition().y;
+					break;
 			}
+			
 		}
 		
 		DrawWarpingInWhenAppropriate(renderer);		
 		super.Draw(renderer);
 		
-		float i = m_body.getPosition().len();
+		if( m_behavior == CivilianBehavior.PatrolWaypoints && GetTarget() == null && HasReachedWaypoint() )
+		{
+			m_currentWaypointIndex++;
+			if( m_currentWaypointIndex == m_patrolWaypoints.size() )
+			{
+				m_currentWaypointIndex = 0;
+			}
+		}
+		
+		MoseyOnThroughAfterDraw(renderer);
+		
+		ShipAndLeaveBeforeAfterDraw();		
+		ShipAndLeaveAfterAfterDraw(renderer);
+					
+		//////AFTER DRAW BEHAVIOR ROUTINES///////
+		ShipBetweenStationsAfterDraw();		   //
+		HarvestAsteroidsAfterDraw();		   //
+		ReturnToStationAfterDraw();			   //
+		FleeToStationAfterDraw();			   //
+		FleeAfterDraw(renderer);
+		/////////////////////////////////////////
+	}
+
+	private void MoseyOnThroughAfterDraw(SpriteBatch renderer)
+	{
 		if( m_behavior == CivilianBehavior.MoseyOnThrough && m_body.getPosition().len() > 500 )
 		{
 			m_pooledShieldEffect.allowCompletion();
@@ -140,17 +218,22 @@ public class CivilianShuttle extends EnemyShip
 				EnterFromSidelines(x,y);
 			}
 		}
-		
-		ShipAndLeaveBeforeAfterDraw();		
-		ShipAndLeaveAfterAfterDraw(renderer);
-					
-		//////AFTER DRAW BEHAVIOR ROUTINES///////
-		ShipBetweenStationsAfterDraw();		   //
-		HarvestAsteroidsAfterDraw();		   //
-		ReturnToStationAfterDraw();			   //
-		FleeToStationAfterDraw();			   //
-		FleeAfterDraw(renderer);
-		/////////////////////////////////////////
+	}
+
+	private void MoseyOnThroughBeforeDraw()
+	{
+		if( m_behavior == CivilianBehavior.MoseyOnThrough )
+		{
+			if( m_randomExitPointSet == false )
+			{
+				m_trackedHostileTargets.clear();
+				DisengageCurrentTarget();
+				double angle = Math.toRadians(Math.random()* Math.PI*2 );
+				m_navigatingTo.x = (float) (Math.cos( angle ) * 2000);
+				m_navigatingTo.y = (float) (Math.sin( angle ) * 2000);
+				m_randomExitPointSet = true;
+			}
+		}
 	}
 
 	private void ShipAndLeaveAfterAfterDraw(SpriteBatch renderer)

@@ -43,6 +43,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.CivilianShuttle;
 import com.me.mygdxgame.Entities.CivilianShuttle.CivilianBehavior;
+import com.me.mygdxgame.Entities.CivilianShuttle.WaypointUpdateType;
 import com.me.mygdxgame.Entities.CrazedRammer;
 import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.MydebugRenderer;
@@ -160,7 +161,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
         //cvs.m_shippingTargets.add( p1 );
         //cvs.m_shippingTargets.add( p2 );
-        cvs.SetBehavior( CivilianBehavior.MoseyOnThrough );
+        cvs.SetBehavior( CivilianBehavior.PatrolWaypoints );
+        cvs.SetWaypoints(WaypointUpdateType.RadialCoordinates, cvs.GenerateRadialWaypoints(10, 5), player, null);
         cvs.EnterFromSidelines(0, -200);
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
        // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
@@ -412,8 +414,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
    	// draw fps
 		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		spriteBatch.begin();
-		font.draw(spriteBatch, " shippy X: " + cvs.m_body.getPosition().x*29f + " Y: " + cvs.m_body.getPosition().y*29f , 0, 90);
-		font.draw(spriteBatch, "body x:  " + pos.x*29f + " y: " + pos.y*29f , 0, 60);
+		font.draw(spriteBatch, " shippy X: " + cvs.m_body.getPosition().x + " Y: " + cvs.m_body.getPosition().y , 0, 90);
+		font.draw(spriteBatch, "body x:  " + pos.x + " y: " + pos.y , 0, 60);
 
 		font.draw(spriteBatch, "vel: " + player.m_body.getLinearVelocity().dst(0, 0), 0, 30);
 		spriteBatch.end();
