@@ -116,7 +116,7 @@ public class CivilianShuttle extends EnemyShip
 		DrawWarpingInWhenAppropriate(renderer);		
 		super.Draw(renderer);
 		
-		
+		float i = m_body.getPosition().len();
 		if( m_behavior == CivilianBehavior.MoseyOnThrough && m_body.getPosition().len() > 500 )
 		{
 			m_pooledShieldEffect.allowCompletion();

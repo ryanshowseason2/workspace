@@ -157,7 +157,6 @@ public class CombatScreen extends OrionScreen implements ContactListener
         PoorStation p1 = new PoorStation(w, -50, 0, 1, m_aliveThings );
         PoorStation p2 = new PoorStation(w, 50, -50, 1, m_aliveThings );
         cvs = new CivilianShuttle(w, 0, -2, 1, m_aliveThings, p );
-        cvs.SetCurrentTarget( asty );
         cvs.AddMidRangeCounterMeasure( new Laser( w, cvs, m_aliveThings ) );
         //cvs.m_shippingTargets.add( p1 );
         //cvs.m_shippingTargets.add( p2 );

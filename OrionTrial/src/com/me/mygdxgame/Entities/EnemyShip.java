@@ -61,7 +61,7 @@ public class EnemyShip extends Ship implements QueryCallback
 		m_onDeckSeekType = m_seekType = SeekType.EnterFiringRange;
 		ce = new InertialCruiseEngine(this, maxV);
 		m_navigatingTo = new Vector2();
-		m_navigatingTo.x = -1;
+		m_navigatingTo.x = (float)Math.PI;
 		
 		m_targetingEffect.load(Gdx.files.internal("data/targetingradar.p"), Gdx.files.internal("data/"));
 		m_targetingEffectPool = new ParticleEffectPool(m_targetingEffect, 1, 2);
@@ -102,7 +102,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	protected void IfTargetExistsOrWaypointNavigateTowards()
 	{
-		if (m_navigationTarget != null || m_navigatingTo.x != -1 )
+		if (m_navigationTarget != null || m_navigatingTo.x != Math.PI )
 		{				
 			NavigateToTarget();
 		}
@@ -316,6 +316,7 @@ public class EnemyShip extends Ship implements QueryCallback
 
 	private void CalculateWaypoint()
 	{
+		/*
 		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
 		Vector2 source = new Vector2();
 		Vector2 destination = new Vector2();
@@ -346,7 +347,52 @@ public class EnemyShip extends Ship implements QueryCallback
 		 else
 		 {
 			 RegularPathFinding(radius);			 
-		 }
+		 }*/
+		Vector2 destination = new Vector2();
+		float radius = Math.max(m_objectAppearance.getWidth() / 2, m_objectAppearance.getHeight() / 2) / 29f;
+		Vector2 source = new Vector2();
+		source.x = m_body.getPosition().x;
+		source.y = m_body.getPosition().y;	
+		
+		if( m_navigationTarget != null )
+		{
+			destination.x = m_navigationTarget.m_body.getPosition().x;
+			destination.y = m_navigationTarget.m_body.getPosition().y;
+			if( CheckWingAndCenterPaths(radius, source, destination) )
+			{
+				 // We're good to go
+				m_wayPointX = destination.x;
+				m_wayPointY = destination.y;
+				m_seekType = m_onDeckSeekType;
+				m_navigatingTo.x = destination.x;
+				m_navigatingTo.y = destination.y;
+			}
+			else
+			{
+				if( m_navigatingTo.x == Math.PI ||
+					HasReachedWaypoint() )
+				{
+					RegularPathFinding(radius);
+				}
+			}
+		}
+		else if( m_navigatingTo.x != Math.PI )
+		{
+			destination.x = m_navigatingTo.x;
+			destination.y = m_navigatingTo.y;	
+			if( !CheckWingAndCenterPaths(radius, source, destination) )
+			{
+				RegularPathFinding(radius);
+			}
+			else
+			{
+				 // We're good to go
+				m_wayPointX = destination.x;
+				m_wayPointY = destination.y;
+				m_seekType = m_onDeckSeekType;
+			}
+		}
+		
 	}
 
 	protected void RegularPathFinding(float radius)
