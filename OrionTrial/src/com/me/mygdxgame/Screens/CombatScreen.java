@@ -23,7 +23,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
@@ -35,6 +37,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.Gdx;
@@ -122,6 +125,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Button m_changeEquipment;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
 	ArrayList<EnemyIndicatorButton> m_enemyButtons = new ArrayList<EnemyIndicatorButton>();
+	Table nonBlockMessages;
 	
 	public CombatScreen()
 	{
@@ -139,6 +143,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
+        nonBlockMessages = new Dialog("", skin);
+        Dialog visualNovelDialog = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, -205, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 70, m_aliveThings );
@@ -194,7 +200,58 @@ public class CombatScreen extends OrionScreen implements ContactListener
         /** BOX2D LIGHT STUFF END */
         
         
-        m_defaultButtonTexture = new Texture(Gdx.files.internal("data/unselected.png"));
+        SetupWeaponSwitcherDialog(window);
+        
+        //nonBlockMessages.setModal(false);
+        //nonBlockMessages.setMovable(false);
+        nonBlockMessages.setPosition(0, 0);
+        nonBlockMessages.setVisible(true);
+        nonBlockMessages.setWidth(WIDTH/2);
+        nonBlockMessages.debug();
+        //m_messageSenderButton = new Button();
+        HorizontalGroup items = new HorizontalGroup();
+        
+        Container imageContainer = new Container( new Image(m_defaultButtonTexture) );
+        items.addActor( imageContainer );
+        Label messageText = new Label("I'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really long", skin);
+        messageText.setWrap(true);
+        messageText.setAlignment(Align.top | Align.left);
+        
+        items.addActor( messageText );
+        items.space(5);
+        items.align(Align.left);
+        items.setHeight( items.getPrefHeight()*2);
+
+        nonBlockMessages.align(Align.left);
+        nonBlockMessages.clearChildren();
+        nonBlockMessages.add(imageContainer);
+        nonBlockMessages.add( messageText ).minWidth(WIDTH/2 - imageContainer.getPrefWidth()-30);
+        nonBlockMessages.setHeight( nonBlockMessages.getPrefHeight()*2 );
+        nonBlockMessages.left().top();
+        
+        
+        //nonBlockMessages.row();
+        //nonBlockMessages.pack();
+       // nonBlockMessages.setWidth(WIDTH/2);
+        //nonBlockMessages.left();
+        //nonBlockMessages.align(Align.left);
+        nonBlockMessages.setPosition(0, HEIGHT - nonBlockMessages.getHeight() );
+        m_stage.addActor(nonBlockMessages);
+
+        player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new Missile( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new Laser( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new MagneticWave( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new Hacking( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new WingBlades( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new MachineGun( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new LongRangeSensors( w, player, m_aliveThings ) );
+        player.AddLongRangeCounterMeasure( new NoWeapon( w, player, m_aliveThings ) );
+	}
+
+	private void SetupWeaponSwitcherDialog(Dialog window)
+	{
+		m_defaultButtonTexture = new Texture(Gdx.files.internal("data/unselected.png"));
         m_changeEquipmentTexture = new Texture(Gdx.files.internal("data/changeweapon.png"));
         TextureRegion defaultImg = new TextureRegion(m_defaultButtonTexture);
         TextureRegion changeImg = new TextureRegion(m_changeEquipmentTexture);
@@ -245,35 +302,6 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_mediumRange.addListener( player.m_buttonListener );
         m_shortRange.addListener( player.m_buttonListener );
         m_changeEquipment.addListener( player.m_buttonListener );
-        
-        
-        /*m_shortRange.addListener(new 
-        		ChangeListener() 
-        		{
-        			public void changed (ChangeEvent event, Actor actor) 
-        			{
-    					new Dialog("Some Dialog", skin, "dialog") 
-    					{
-							protected void result (Object object) 
-							{
-								System.out.println("Chosen: " + object);
-							}
-    					}.text("Are you enjoying this demo?").button("Yes", true).button("No", false).key(Keys.ENTER, true)
-						.key(Keys.ESCAPE, false).show(stage);
-        			}
-        		});*/
-        
-       // player.AddShortRangeCounterMeasure( new MachineGun( w, player, m_aliveThings, 20 ) );
-       // player.AddMidRangeCounterMeasure( new Laser( w, player, m_aliveThings, 40 ) );
-        player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new Missile( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new Laser( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new MagneticWave( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new Hacking( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new WingBlades( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new MachineGun( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new LongRangeSensors( w, player, m_aliveThings ) );
-        player.AddLongRangeCounterMeasure( new NoWeapon( w, player, m_aliveThings ) );
 	}
 		
 	@Override
@@ -386,6 +414,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		m_stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
     		m_stage.draw();
+    		nonBlockMessages.drawDebug(m_stage);
     		
     		RemoveButtonsForDeadEnemies();
     		
