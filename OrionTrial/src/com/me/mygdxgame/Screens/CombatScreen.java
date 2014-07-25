@@ -222,9 +222,9 @@ public class CombatScreen extends OrionScreen implements ContactListener
 
         m_nonBlockMessages.align(Align.left);
         m_nonBlockMessages.clearChildren();
-        m_nonBlockMessages.add(imageContainer);
+        m_nonBlockMessages.add(imageContainer).size(100, 100);
         m_nonBlockMessages.add( m_timedMessageText ).minWidth(WIDTH/2 - imageContainer.getPrefWidth()-30);
-        m_nonBlockMessages.setHeight( m_nonBlockMessages.getPrefHeight()*2 );
+        m_nonBlockMessages.setHeight( (float) (m_nonBlockMessages.getPrefHeight()*1.0) );
         m_nonBlockMessages.left().top();
         
       

@@ -53,7 +53,7 @@ public class GameCharacter
 			i = (Image) m_characterImages.get( charImageString );
 		}
 		
-		return new Image();
+		return i;
 	}
 
 }

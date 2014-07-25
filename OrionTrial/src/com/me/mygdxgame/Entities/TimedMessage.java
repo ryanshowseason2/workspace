@@ -34,7 +34,6 @@ public class TimedMessage
 			//set the static members to stuff decrement the time to display. 
 			m_textArea.setText(m_message);
 			m_image.setDrawable(m_char.GetImage(m_state).getDrawable());
-			m_messageDialog.invalidate();
 		}
 		
 		m_timeToDisplay--;
