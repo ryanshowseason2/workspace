@@ -49,9 +49,11 @@ import com.me.mygdxgame.Entities.CivilianShuttle.CivilianBehavior;
 import com.me.mygdxgame.Entities.CivilianShuttle.WaypointUpdateType;
 import com.me.mygdxgame.Entities.CrazedRammer;
 import com.me.mygdxgame.Entities.EnemyShip;
+import com.me.mygdxgame.Entities.GameCharacter;
 import com.me.mygdxgame.Entities.MydebugRenderer;
 import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.PoorStation;
+import com.me.mygdxgame.Entities.TimedMessage;
 import com.me.mygdxgame.Entities.ViewedCollidable;
 import com.me.mygdxgame.Entities.WingBlade;
 import com.me.mygdxgame.Equipables.Hacking;
@@ -125,7 +127,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Button m_changeEquipment;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
 	ArrayList<EnemyIndicatorButton> m_enemyButtons = new ArrayList<EnemyIndicatorButton>();
-	Table nonBlockMessages;
+	Dialog m_nonBlockMessages;
+	Label m_timedMessageText;
+	Image m_timedImage;
+	ArrayList< TimedMessage > m_timedMessages = new ArrayList< TimedMessage >();
 	
 	public CombatScreen()
 	{
@@ -143,7 +148,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_stage = new Stage();
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
-        nonBlockMessages = new Dialog("", skin);
+        m_nonBlockMessages = new Dialog("", skin);
         Dialog visualNovelDialog = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, -205, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
@@ -201,42 +206,42 @@ public class CombatScreen extends OrionScreen implements ContactListener
         
         
         SetupWeaponSwitcherDialog(window);
-        
-        //nonBlockMessages.setModal(false);
-        //nonBlockMessages.setMovable(false);
-        nonBlockMessages.setPosition(0, 0);
-        nonBlockMessages.setVisible(true);
-        nonBlockMessages.setWidth(WIDTH/2);
-        nonBlockMessages.debug();
-        //m_messageSenderButton = new Button();
-        HorizontalGroup items = new HorizontalGroup();
-        
-        Container imageContainer = new Container( new Image(m_defaultButtonTexture) );
-        items.addActor( imageContainer );
-        Label messageText = new Label("I'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really long", skin);
-        messageText.setWrap(true);
-        messageText.setAlignment(Align.top | Align.left);
-        
-        items.addActor( messageText );
-        items.space(5);
-        items.align(Align.left);
-        items.setHeight( items.getPrefHeight()*2);
 
-        nonBlockMessages.align(Align.left);
-        nonBlockMessages.clearChildren();
-        nonBlockMessages.add(imageContainer);
-        nonBlockMessages.add( messageText ).minWidth(WIDTH/2 - imageContainer.getPrefWidth()-30);
-        nonBlockMessages.setHeight( nonBlockMessages.getPrefHeight()*2 );
-        nonBlockMessages.left().top();
+        m_nonBlockMessages.setModal(false);
+        m_nonBlockMessages.setMovable(false);
+        m_nonBlockMessages.setPosition(0, 0);
+        m_nonBlockMessages.setVisible(true);
+        m_nonBlockMessages.setWidth(WIDTH/2);
+        m_nonBlockMessages.debug();        
+    	
+    	m_timedImage = new Image(m_defaultButtonTexture);
+        Container imageContainer = new Container( m_timedImage );
+        m_timedMessageText = new Label("I'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really long", skin);
+        m_timedMessageText.setWrap(true);
+        m_timedMessageText.setAlignment(Align.top | Align.left);
+
+        m_nonBlockMessages.align(Align.left);
+        m_nonBlockMessages.clearChildren();
+        m_nonBlockMessages.add(imageContainer);
+        m_nonBlockMessages.add( m_timedMessageText ).minWidth(WIDTH/2 - imageContainer.getPrefWidth()-30);
+        m_nonBlockMessages.setHeight( m_nonBlockMessages.getPrefHeight()*2 );
+        m_nonBlockMessages.left().top();
+        
+      
+        m_nonBlockMessages.setPosition(0, HEIGHT - m_nonBlockMessages.getHeight() );
+        m_stage.addActor(m_nonBlockMessages);
+        m_nonBlockMessages.setVisible(false);
         
         
-        //nonBlockMessages.row();
-        //nonBlockMessages.pack();
-       // nonBlockMessages.setWidth(WIDTH/2);
-        //nonBlockMessages.left();
-        //nonBlockMessages.align(Align.left);
-        nonBlockMessages.setPosition(0, HEIGHT - nonBlockMessages.getHeight() );
-        m_stage.addActor(nonBlockMessages);
+        
+        GameCharacter MC = new GameCharacter("MC");
+        
+        TimedMessage m_timedMassage = new TimedMessage(MC, "lol", "BODY MASSAGE!", 600);
+        m_timedMessages.add( m_timedMassage );
+        
+        TimedMessage.m_image = m_timedImage;
+        TimedMessage.m_messageDialog = m_nonBlockMessages;
+        TimedMessage.m_textArea = m_timedMessageText;
 
         player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings ) );
         player.AddLongRangeCounterMeasure( new Missile( w, player, m_aliveThings ) );
@@ -414,7 +419,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		
     		m_stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
     		m_stage.draw();
-    		nonBlockMessages.drawDebug(m_stage);
+    		m_nonBlockMessages.drawDebug(m_stage);
     		
     		RemoveButtonsForDeadEnemies();
     		
@@ -423,6 +428,22 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		HandleEnemyButtons( spriteBatch );
     		spriteBatch.end();
     		
+    		// in the main loop
+    		if( m_timedMessages.size() > 0 )
+    		{
+    			// set the dialog to be visible
+    			m_nonBlockMessages.setVisible(true);
+    			TimedMessage tm = m_timedMessages.get(0);
+    			if( !tm.Display() )
+    			{
+    				m_timedMessages.remove(0);
+    			}
+    		}
+    		else
+    		{
+    			//set the dialog as invisible
+    			m_nonBlockMessages.setVisible(false);
+    		}
     		
     	      DebugDraw();
     		
