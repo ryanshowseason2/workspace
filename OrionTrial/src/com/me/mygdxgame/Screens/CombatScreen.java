@@ -127,10 +127,13 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Button m_changeEquipment;
 	InputMultiplexer m_inputSplitter = new InputMultiplexer();
 	ArrayList<EnemyIndicatorButton> m_enemyButtons = new ArrayList<EnemyIndicatorButton>();
-	Dialog m_nonBlockMessages;
+	Dialog m_nonBlockMessages;	
 	Label m_timedMessageText;
 	Image m_timedImage;
 	ArrayList< TimedMessage > m_timedMessages = new ArrayList< TimedMessage >();
+	
+	Dialog m_visualNovelStyleMessages;
+	Label m_visualNovelStyleMessageText;
 	
 	public CombatScreen()
 	{
@@ -149,7 +152,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
         m_nonBlockMessages = new Dialog("", skin);
-        Dialog visualNovelDialog = new Dialog("", skin);
+        m_visualNovelStyleMessages = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, -205, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 70, m_aliveThings );
@@ -206,6 +209,30 @@ public class CombatScreen extends OrionScreen implements ContactListener
         
         
         SetupWeaponSwitcherDialog(window);
+        
+        m_visualNovelStyleMessages.setModal(false);
+        m_visualNovelStyleMessages.setMovable(false);
+        m_visualNovelStyleMessages.setPosition(0 + WIDTH/40, 5);
+        m_visualNovelStyleMessages.setVisible(true);
+        m_visualNovelStyleMessages.setWidth(19*WIDTH/20);
+        m_visualNovelStyleMessages.setHeight(HEIGHT/3);
+        m_visualNovelStyleMessages.debug();  
+        m_visualNovelStyleMessages.clearChildren();
+        
+        m_visualNovelStyleMessageText = new Label("I'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really long", skin);
+        m_visualNovelStyleMessageText.setWrap(true);
+        m_visualNovelStyleMessageText.setAlignment(Align.top | Align.left);
+        Button b = new Button( skin );
+        b.add(m_visualNovelStyleMessageText).expand().fill();
+       // b.setFillParent(true);
+        b.top();
+        b.left();
+        m_visualNovelStyleMessages.add( b ).expand().fill();
+        //m_visualNovelStyleMessages.bottom();
+       // m_visualNovelStyleMessages.left();
+        
+        m_stage.addActor(m_visualNovelStyleMessages);
+        
 
         m_nonBlockMessages.setModal(false);
         m_nonBlockMessages.setMovable(false);
@@ -213,6 +240,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_nonBlockMessages.setVisible(true);
         m_nonBlockMessages.setWidth(WIDTH/2);
         m_nonBlockMessages.debug();        
+        
+        
     	
     	m_timedImage = new Image(m_defaultButtonTexture);
         Container imageContainer = new Container( m_timedImage );
@@ -223,7 +252,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         m_nonBlockMessages.align(Align.left);
         m_nonBlockMessages.clearChildren();
         m_nonBlockMessages.add(imageContainer).size(100, 100);
-        m_nonBlockMessages.add( m_timedMessageText ).minWidth(WIDTH/2 - imageContainer.getPrefWidth()-30);
+        m_nonBlockMessages.add( m_timedMessageText ).expand().fill();
         m_nonBlockMessages.setHeight( (float) (m_nonBlockMessages.getPrefHeight()*1.0) );
         m_nonBlockMessages.left().top();
         
@@ -236,7 +265,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         
         GameCharacter MC = new GameCharacter("MC");
         
-        TimedMessage m_timedMassage = new TimedMessage(MC, "lol", "BODY MASSAGE!", 600);
+        TimedMessage m_timedMassage = new TimedMessage(MC, "lol", "Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO! .expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill()", 600);
         m_timedMessages.add( m_timedMassage );
         
         TimedMessage.m_image = m_timedImage;
