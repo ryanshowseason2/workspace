@@ -47,6 +47,7 @@ import com.me.mygdxgame.Entities.Asteroid;
 import com.me.mygdxgame.Entities.CivilianShuttle;
 import com.me.mygdxgame.Entities.CivilianShuttle.CivilianBehavior;
 import com.me.mygdxgame.Entities.CivilianShuttle.WaypointUpdateType;
+import com.me.mygdxgame.Entities.VisualNovelImageState.ImageJustification;
 import com.me.mygdxgame.Entities.CrazedRammer;
 import com.me.mygdxgame.Entities.EnemyShip;
 import com.me.mygdxgame.Entities.GameCharacter;
@@ -55,6 +56,8 @@ import com.me.mygdxgame.Entities.PlayerEntity;
 import com.me.mygdxgame.Entities.PoorStation;
 import com.me.mygdxgame.Entities.TimedMessage;
 import com.me.mygdxgame.Entities.ViewedCollidable;
+import com.me.mygdxgame.Entities.VisualNovelImageState;
+import com.me.mygdxgame.Entities.VisualNovelStyleMessage;
 import com.me.mygdxgame.Entities.WingBlade;
 import com.me.mygdxgame.Equipables.Hacking;
 import com.me.mygdxgame.Equipables.Laser;
@@ -132,8 +135,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Image m_timedImage;
 	ArrayList< TimedMessage > m_timedMessages = new ArrayList< TimedMessage >();
 	
-	Dialog m_visualNovelStyleMessages;
+	Dialog m_visualNovelStyleMessage;
 	Label m_visualNovelStyleMessageText;
+	Button m_VisualNovelStyleMessageButton;
+	ArrayList< VisualNovelStyleMessage > m_visualNovelStyleMessageList = new ArrayList< VisualNovelStyleMessage >();
 	
 	public CombatScreen()
 	{
@@ -152,7 +157,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         Dialog window = new Dialog("", skin);
         m_nonBlockMessages = new Dialog("", skin);
-        m_visualNovelStyleMessages = new Dialog("", skin);
+        m_visualNovelStyleMessage = new Dialog("", skin);
         player = new PlayerEntity("playership", w, 0, -205, -90, 40f, m_aliveThings, cam, m_stage);
         m_aliveThings.remove( player );
         asty = new Asteroid("asteroid", 4.5f, .1f, w, 0, 70, m_aliveThings );
@@ -210,28 +215,28 @@ public class CombatScreen extends OrionScreen implements ContactListener
         
         SetupWeaponSwitcherDialog(window);
         
-        m_visualNovelStyleMessages.setModal(false);
-        m_visualNovelStyleMessages.setMovable(false);
-        m_visualNovelStyleMessages.setPosition(0 + WIDTH/40, 5);
-        m_visualNovelStyleMessages.setVisible(true);
-        m_visualNovelStyleMessages.setWidth(19*WIDTH/20);
-        m_visualNovelStyleMessages.setHeight(HEIGHT/3);
-        m_visualNovelStyleMessages.debug();  
-        m_visualNovelStyleMessages.clearChildren();
+        m_visualNovelStyleMessage.setModal(false);
+        m_visualNovelStyleMessage.setMovable(false);
+        m_visualNovelStyleMessage.setPosition(0 + WIDTH/40, 5);
+        m_visualNovelStyleMessage.setVisible(false);
+        m_visualNovelStyleMessage.setWidth(19*WIDTH/20);
+        m_visualNovelStyleMessage.setHeight(HEIGHT/3);
+        m_visualNovelStyleMessage.debug();  
+        m_visualNovelStyleMessage.clearChildren();
         
         m_visualNovelStyleMessageText = new Label("I'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really longI'm a message from somebody and I'm really long", skin);
         m_visualNovelStyleMessageText.setWrap(true);
         m_visualNovelStyleMessageText.setAlignment(Align.top | Align.left);
-        Button b = new Button( skin );
-        b.add(m_visualNovelStyleMessageText).expand().fill();
+        m_VisualNovelStyleMessageButton = new Button( skin );
+        m_VisualNovelStyleMessageButton.add(m_visualNovelStyleMessageText).expand().fill();
        // b.setFillParent(true);
-        b.top();
-        b.left();
-        m_visualNovelStyleMessages.add( b ).expand().fill();
+        m_VisualNovelStyleMessageButton.top();
+        m_VisualNovelStyleMessageButton.left();
+        m_visualNovelStyleMessage.add( m_VisualNovelStyleMessageButton ).expand().fill();
         //m_visualNovelStyleMessages.bottom();
        // m_visualNovelStyleMessages.left();
         
-        m_stage.addActor(m_visualNovelStyleMessages);
+        m_stage.addActor(m_visualNovelStyleMessage);
         
 
         m_nonBlockMessages.setModal(false);
@@ -268,9 +273,17 @@ public class CombatScreen extends OrionScreen implements ContactListener
         TimedMessage m_timedMassage = new TimedMessage(MC, "lol", "Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO! .expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill().expand().fill()", 600);
         m_timedMessages.add( m_timedMassage );
         
+        VisualNovelImageState state = new VisualNovelImageState( false, "maincbefore", ImageJustification.Left, 0 );
+        VisualNovelStyleMessage vnMassage = new VisualNovelStyleMessage(MC, state, "Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO! Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO!Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO!Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO!Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO!Would somebody like a body BODY MASSAGE! Because I'm a body massage machine!!! GO!");
+        m_visualNovelStyleMessageList.add( vnMassage );
+        
         TimedMessage.m_image = m_timedImage;
         TimedMessage.m_messageDialog = m_nonBlockMessages;
         TimedMessage.m_textArea = m_timedMessageText;
+        
+        VisualNovelStyleMessage.m_messageDialog = m_visualNovelStyleMessage;
+        VisualNovelStyleMessage.m_textArea = m_visualNovelStyleMessageText;
+        VisualNovelStyleMessage.m_button = m_VisualNovelStyleMessageButton;
 
         player.AddLongRangeCounterMeasure( new Railgun( w, player, m_aliveThings ) );
         player.AddLongRangeCounterMeasure( new Missile( w, player, m_aliveThings ) );
@@ -457,24 +470,10 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		HandleEnemyButtons( spriteBatch );
     		spriteBatch.end();
     		
-    		// in the main loop
-    		if( m_timedMessages.size() > 0 )
-    		{
-    			// set the dialog to be visible
-    			m_nonBlockMessages.setVisible(true);
-    			TimedMessage tm = m_timedMessages.get(0);
-    			if( !tm.Display() )
-    			{
-    				m_timedMessages.remove(0);
-    			}
-    		}
-    		else
-    		{
-    			//set the dialog as invisible
-    			m_nonBlockMessages.setVisible(false);
-    		}
+    		DrawAndHandleCombatMessages();
+    		DrawAndHandleVisualNovelMessages();
     		
-    	      DebugDraw();
+    	    DebugDraw();
     		
     		for(int i = 0; i < m_deadThings.size(); i++)
     		{
@@ -482,8 +481,49 @@ public class CombatScreen extends OrionScreen implements ContactListener
     			w.destroyBody(tmp.m_body);
     			tmp.destroy();
     		}
-    		m_deadThings.clear();
+    		m_deadThings.clear();    		
+	}
 
+	private void DrawAndHandleVisualNovelMessages()
+	{
+		// in the main loop
+		if( m_visualNovelStyleMessageList.size() > 0 )
+		{
+			// set the dialog to be visible
+			m_visualNovelStyleMessage.setVisible(true);
+			player.m_inMenu = true;
+			VisualNovelStyleMessage vnm = m_visualNovelStyleMessageList.get(0);
+			if( vnm.Display() )
+			{
+				m_visualNovelStyleMessageList.remove(0);				
+			}
+		}
+		else
+		{
+			//set the dialog as invisible
+			m_visualNovelStyleMessage.setVisible(false);
+			player.m_inMenu = false;
+		}
+	}
+	
+	private void DrawAndHandleCombatMessages()
+	{
+		// in the main loop
+		if( m_timedMessages.size() > 0 )
+		{
+			// set the dialog to be visible
+			m_nonBlockMessages.setVisible(true);
+			TimedMessage tm = m_timedMessages.get(0);
+			if( !tm.Display() )
+			{
+				m_timedMessages.remove(0);
+			}
+		}
+		else
+		{
+			//set the dialog as invisible
+			m_nonBlockMessages.setVisible(false);
+		}
 	}
 
 	private void DebugDraw()
