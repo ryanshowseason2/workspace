@@ -3,6 +3,9 @@ package com.me.mygdxgame.Entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -11,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.me.mygdxgame.Entities.VisualNovelImageState.ImageJustification;
+import com.me.mygdxgame.Screens.CombatScreen;
 
 public class VisualNovelStyleMessage extends ChangeListener
 {
@@ -35,7 +41,7 @@ public class VisualNovelStyleMessage extends ChangeListener
 	}
 	
 	
-	public boolean Display()
+	public boolean Display( SpriteBatch renderer )
 	{
 		if( !m_started )
 		{
@@ -50,16 +56,45 @@ public class VisualNovelStyleMessage extends ChangeListener
 			else if( !m_state.m_characterImage.equals("None"))
 			{
 				m_characterImages.put( m_char, m_state);
-			}
-			
-			for (Map.Entry<GameCharacter, VisualNovelImageState> entry : m_characterImages.entrySet())
-			{
-			    // Draw the damn things
-			}
-
-
-			
+			}								
 		}
+		
+		renderer.begin();
+		for (Map.Entry<GameCharacter, VisualNovelImageState> entry : m_characterImages.entrySet())
+		{
+		    // Draw the damn things
+			VisualNovelImageState vnis = entry.getValue();
+			GameCharacter gc = entry.getKey();
+			Sprite image = gc.GetSprite(vnis.m_characterImage );
+			
+			if( vnis.m_flipped )
+			{
+				image.flip(true, false);
+			}
+			
+			float x = 0;
+			float y = m_messageDialog.getHeight();
+			
+			if(vnis.m_positioning == ImageJustification.Right )
+			{
+				x = CombatScreen.WIDTH - image.getWidth();
+			}
+			else if( vnis.m_positioning == ImageJustification.Center )
+			{
+				x = CombatScreen.WIDTH/2 - image.getWidth()/2;
+			}
+			
+			x += vnis.m_positionOffset;
+			
+			image.setPosition(x, y);
+			image.draw( renderer );		
+			
+			if( vnis.m_flipped )
+			{
+				image.flip(true, false);
+			}
+		}
+		renderer.end();
 		
 		if(m_message != null)
 		{

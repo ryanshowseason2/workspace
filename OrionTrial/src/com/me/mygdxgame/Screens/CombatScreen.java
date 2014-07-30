@@ -106,8 +106,8 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	private Texture parralax1;
 	private Texture parralax2;
 	private SpriteBatch spriteBatch;
-	static int WIDTH  = 1024;
-    static int HEIGHT = 768;
+	public static int WIDTH  = 1024;
+    public static int HEIGHT = 768;
     private Rectangle glViewport;
     BitmapFont font;
     public PlayerEntity player;
@@ -471,7 +471,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		spriteBatch.end();
     		
     		DrawAndHandleCombatMessages();
-    		DrawAndHandleVisualNovelMessages();
+    		DrawAndHandleVisualNovelMessages( spriteBatch );
     		
     	    DebugDraw();
     		
@@ -484,7 +484,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		m_deadThings.clear();    		
 	}
 
-	private void DrawAndHandleVisualNovelMessages()
+	private void DrawAndHandleVisualNovelMessages( SpriteBatch renderer )
 	{
 		// in the main loop
 		if( m_visualNovelStyleMessageList.size() > 0 )
@@ -493,7 +493,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
 			m_visualNovelStyleMessage.setVisible(true);
 			player.m_inMenu = true;
 			VisualNovelStyleMessage vnm = m_visualNovelStyleMessageList.get(0);
-			if( vnm.Display() )
+			if( vnm.Display( renderer ) )
 			{
 				m_visualNovelStyleMessageList.remove(0);				
 			}

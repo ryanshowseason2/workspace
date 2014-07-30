@@ -7,6 +7,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class GameCharacter
@@ -14,6 +15,7 @@ public class GameCharacter
 
 	String m_characterName;
 	Map  m_characterImages = new HashMap();
+	Map  m_characterTextures = new HashMap();
 	
 	
 	public GameCharacter( String name )
@@ -38,8 +40,11 @@ public class GameCharacter
 		
 		for (FileHandle entry: dirHandle.list(".png")) 
 		{
-			Image i = new Image( new Texture( entry ) );
+			Texture t = new Texture( entry );
+			Sprite s =  new Sprite( t );
+			Image i = new Image( t );
 			m_characterImages.put( entry.nameWithoutExtension(), i );
+			m_characterTextures.put( entry.nameWithoutExtension(), s);
 		}
 	}
 
@@ -54,6 +59,19 @@ public class GameCharacter
 		}
 		
 		return i;
+	}
+	
+	public Sprite GetSprite( String charImageString )
+	{
+	    //try to find it
+		Sprite t = (Sprite) m_characterTextures.values().toArray()[0];
+		// if you can't use the default image
+		if(m_characterTextures.containsKey( charImageString ) )
+		{
+			t = (Sprite) m_characterTextures.get( charImageString );
+		}
+		
+		return t;
 	}
 
 }
