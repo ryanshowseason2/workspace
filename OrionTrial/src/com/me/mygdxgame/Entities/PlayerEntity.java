@@ -286,7 +286,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public void damageIntegrity( ViewedCollidable damageOrigin, float damage , DamageType type)
 	{
 		super.damageIntegrity(damageOrigin, damage, type);
-		m_integrity = 1000f;
+		m_integrity = m_integrity > 0 ? m_integrity : 1;
 	}
 
 	@Override

@@ -7,8 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -139,6 +142,14 @@ public class CombatScreen extends OrionScreen implements ContactListener
 	Label m_visualNovelStyleMessageText;
 	Button m_VisualNovelStyleMessageButton;
 	ArrayList< VisualNovelStyleMessage > m_visualNovelStyleMessageList = new ArrayList< VisualNovelStyleMessage >();
+	
+	ParticleEffect m_energyIndicator = new ParticleEffect();
+	ParticleEffectPool m_energyIndicatorPool;
+	PooledEffect m_pooledEnergyIndicator;
+	
+	ParticleEffect m_integrityIndicator = new ParticleEffect();
+	ParticleEffectPool m_integrityIndicatorPool;
+	PooledEffect m_pooledIntegrityIndicator;
 	
 	public CombatScreen()
 	{
@@ -294,6 +305,14 @@ public class CombatScreen extends OrionScreen implements ContactListener
         player.AddLongRangeCounterMeasure( new MachineGun( w, player, m_aliveThings ) );
         player.AddLongRangeCounterMeasure( new LongRangeSensors( w, player, m_aliveThings ) );
         player.AddLongRangeCounterMeasure( new NoWeapon( w, player, m_aliveThings ) );
+        
+        m_energyIndicator.load(Gdx.files.internal("data/energyhud.p"), Gdx.files.internal("data/"));
+        m_energyIndicatorPool = new ParticleEffectPool(m_energyIndicator, 1, 2);
+        m_pooledEnergyIndicator = m_energyIndicatorPool.obtain();
+        
+        m_integrityIndicator.load(Gdx.files.internal("data/integrityhud.p"), Gdx.files.internal("data/"));
+        m_integrityIndicatorPool = new ParticleEffectPool(m_integrityIndicator, 1, 2);
+        m_pooledIntegrityIndicator = m_integrityIndicatorPool.obtain();
 	}
 
 	private void SetupWeaponSwitcherDialog(Dialog window)
@@ -473,6 +492,20 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		DrawAndHandleCombatMessages();
     		DrawAndHandleVisualNovelMessages( spriteBatch );
     		
+    		spriteBatch.begin();
+    		m_pooledEnergyIndicator.setPosition( 19f/20f* WIDTH, 19f/20f * HEIGHT );
+    		float percentage = player.me.m_boostJuice / player.me.m_boostJuiceMax * 68;
+    		m_pooledEnergyIndicator.getEmitters().get(0).getVelocity().setHigh( percentage > 0 ? percentage : 0 );
+    		m_pooledEnergyIndicator.draw(spriteBatch, 1f/60f);
+    		    
+    		m_pooledIntegrityIndicator.setPosition( 18f/20f* WIDTH, 19f/20f * HEIGHT );
+    		percentage = player.m_integrity / 1000f;
+    		float[] r = { 1, 1, 1, 1 };
+    		r[0] = 1 - percentage;
+    		r[1] = percentage;
+    		m_pooledIntegrityIndicator.getEmitters().get(0).getTint().setColors(r);
+    		m_pooledIntegrityIndicator.draw(spriteBatch, 1f/60f);
+    		spriteBatch.end();
     	    DebugDraw();
     		
     		for(int i = 0; i < m_deadThings.size(); i++)

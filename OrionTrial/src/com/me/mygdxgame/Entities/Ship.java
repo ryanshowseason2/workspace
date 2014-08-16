@@ -150,8 +150,8 @@ public class Ship extends ViewedCollidable
 			m_shieldRechargeCounter = m_shieldRechargeDelay;
 		}
 
-		// super.damageIntegrity(damageToIntegrity, type,
-		// bypassShieldResistances, bypassShields, bypassResistances );
+		 super.damageIntegrity(damageOrigin, damageToIntegrity, type,
+		 bypassShieldResistances, bypassShields, bypassResistances );
 	}
 
 	public void AddShortRangeCounterMeasure(CounterMeasure c)
