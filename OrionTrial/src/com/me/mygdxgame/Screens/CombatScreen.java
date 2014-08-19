@@ -500,7 +500,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
     		    
     		m_pooledIntegrityIndicator.setPosition( 18f/20f* WIDTH, 19f/20f * HEIGHT );
     		percentage = player.m_integrity / 1000f;
-    		float[] r = { 1, 1, 1, 1 };
+    		float[] r = { 0, 0, 0, 1 };
     		r[0] = 1 - percentage;
     		r[1] = percentage;
     		m_pooledIntegrityIndicator.getEmitters().get(0).getTint().setColors(r);
