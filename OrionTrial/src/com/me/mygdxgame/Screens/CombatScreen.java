@@ -226,7 +226,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         
         SetupWeaponSwitcherDialog(window);
         
-        m_visualNovelStyleMessage.setModal(false);
+        m_visualNovelStyleMessage.setModal(true);
         m_visualNovelStyleMessage.setMovable(false);
         m_visualNovelStyleMessage.setPosition(0 + WIDTH/40, 5);
         m_visualNovelStyleMessage.setVisible(false);
