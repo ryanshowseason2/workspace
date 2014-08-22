@@ -2,6 +2,8 @@ package com.me.mygdxgame.Equipables;
 
 import java.util.ArrayList;
 
+import Utilities.AudioManager;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,10 +25,13 @@ public class MachineGun extends CounterMeasure
 	int m_activateSecondaryMode = 0;
 	int m_secondaryFireFrequency = 6;
 	int m_secondaryFireCounter = 0;
+	int m_gunSoundIndex = 0;
+	long m_gunInstanceID = -1;
 	
 	public MachineGun(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
 		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/machinegun.png") ) ) );
+		m_gunSoundIndex = AudioManager.AddToLibrary("data/machinegun.ogg");
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[0] = 1f;
 	}
@@ -76,10 +81,20 @@ public class MachineGun extends CounterMeasure
 				p.Fire(m_ship, m_target, (float) Math.random()/2 - .25f);
 				m_fireCounter = m_fireFrequency;
 				m_ship.IncreaseDetectionRange( 5f );
+				
+				if (m_gunInstanceID == -1 )
+				{
+					m_gunInstanceID = AudioManager.PlaySound(m_gunSoundIndex, true );
+				}
 			}
 			else
 			{
 				m_target = null;
+				if (m_gunInstanceID != -1 )
+				{
+					AudioManager.StopSound(m_gunSoundIndex, m_gunInstanceID);
+					m_gunInstanceID = -1;
+				}
 			}
 		}
 		else

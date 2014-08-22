@@ -1,39 +1,102 @@
 package Utilities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
+
 public class AudioManager
 {
-	static Map m_soundInstances = new HashMap();
+	static ArrayList<Sound> m_soundEffects = new ArrayList<Sound>();
+	static ArrayList<String> m_soundEffectLocations = new ArrayList<String>();
 	
 	public AudioManager()
 	{
 		
 	}
 	
-	public static void CullInstanceList()
+
+	
+	public static int AddToLibrary( String fileHandle )
 	{
-		//Any instances older than 5 seconds can be forgotten
-		long current = System.currentTimeMillis();
+		int index = -1;
 		
-		Iterator<Map.Entry<Long, Integer>> entries = m_soundInstances.entrySet().iterator();
-		while (entries.hasNext()) 
+		if( !m_soundEffectLocations.contains( fileHandle ) )
 		{
-		  Map.Entry<Long, Integer> entry = entries.next();
-		  long key = entry.getKey();
-		  int value = entry.getValue();
-		  if( (current - key) > 5000 )
-		  {
-			  m_soundInstances.remove( key );
-		  }		  
+			Sound sound = Gdx.audio.newSound(Gdx.files.internal(fileHandle));
+			m_soundEffectLocations.add(fileHandle);
+			m_soundEffects.add( sound );
+			index = m_soundEffects.size() - 1;
+		}
+		else
+		{
+			index = m_soundEffectLocations.indexOf(fileHandle);
+		}
+				
+		return index;
+	}
+	
+	public static long PlaySound( int index, boolean looping )
+	{
+		Sound sound = (Sound)m_soundEffects.get(index);
+		long instanceID = 0;
+		if( looping )
+		{
+			instanceID = sound.loop();
+		}
+		else
+		{
+			instanceID = sound.play();
+		}		
+		
+		return instanceID;
+	}
+	
+	public static void StopSound( int index, long instanceID )
+	{		
+		Sound sound = (Sound)m_soundEffects.get(index);
+		sound.stop( instanceID );
+	}
+	
+	public static void StopAllSound()
+	{		
+		for( int i = 0; i < m_soundEffects.size(); i++ )
+		{
+			Sound s = (Sound)m_soundEffects.get( i );
+			s.stop();
 		}
 	}
 	
-	public static void disposeAll()
+	public static void PauseAll()
 	{
-		
+		for( int i = 0; i < m_soundEffects.size(); i++ )
+		{
+			Sound s = (Sound)m_soundEffects.get( i );
+			s.pause();
+		}
+	}
+	
+	public static void ResumeAll()
+	{
+		for( int i = 0; i < m_soundEffects.size(); i++ )
+		{
+			Sound s = (Sound)m_soundEffects.get( i );
+			s.resume();
+		}
+	}
+	
+	public static void ReleaseAllResources()
+	{
+		for( int i = 0; i < m_soundEffects.size(); i++ )
+		{
+			Sound s = (Sound)m_soundEffects.get( i );
+			s.dispose();
+		}
+		m_soundEffects.clear();
 	}
 
 }
