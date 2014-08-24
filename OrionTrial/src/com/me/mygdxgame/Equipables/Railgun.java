@@ -2,6 +2,8 @@ package com.me.mygdxgame.Equipables;
 
 import java.util.ArrayList;
 
+import Utilities.AudioManager;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,10 +22,12 @@ public class Railgun extends CounterMeasure
 {	
 	boolean m_activated = false;
 	int m_activatedFireCountdown;
+	int m_gunSoundIndex = 0;
 	
 	public Railgun(World w, Ship s, ArrayList<ViewedCollidable> aliveThings )
 	{
 		super(w, s, aliveThings, new Image( new Texture(Gdx.files.internal("data/railgun.png") ) ) );
+		m_gunSoundIndex = AudioManager.AddToLibrary("data/railgun.ogg");
 		// TODO Auto-generated constructor stub
 		m_rangeEnablersAndMultipliers[2] = 1f;
 		m_fireFrequency = 60;
@@ -69,12 +73,13 @@ public class Railgun extends CounterMeasure
 			{
 				float centerX = m_ship.m_body.getPosition().x;
 				float centerY = m_ship.m_body.getPosition().y;
-				Projectile p = new Projectile("bullet", 0, m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
+				Projectile p = new Projectile("railgunbullet", 0, m_world, centerX, centerY, m_aliveThings, m_ship.m_factionCode );
 				p.m_stopAtFirstShields = m_activated;
 				p.m_projectileVelocity = -150;
 				p.m_additionalDamage = 100;
 				p.Fire(m_ship, m_target, 0);
 				m_fireCounter = m_fireFrequency;
+				AudioManager.PlaySound(m_gunSoundIndex, false );
 				m_ship.IncreaseDetectionRange( 5f );
 				
 				if(m_activated)
