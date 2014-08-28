@@ -41,6 +41,13 @@ public class MachineGun extends CounterMeasure
 	{
 		return new Image( new Texture(Gdx.files.internal("data/machinegun.png") ) );
 	}
+	
+	@Override
+	public void StopSound()
+	{
+		AudioManager.StopSound(m_gunSoundIndex, m_gunInstanceID);
+		m_gunInstanceID = -1;
+	}
 
 	@Override
 	public void AcquireAndFire( SpriteBatch renderer )
@@ -84,7 +91,11 @@ public class MachineGun extends CounterMeasure
 				
 				if (m_gunInstanceID == -1 )
 				{
-					m_gunInstanceID = AudioManager.PlaySound(m_gunSoundIndex, true );
+					m_gunInstanceID = AudioManager.PlaySound(m_gunSoundIndex, true, m_ship );
+				}
+				else
+				{
+					AudioManager.AdjustSound(m_gunSoundIndex, m_gunInstanceID, m_ship);
 				}
 			}
 			else

@@ -3,6 +3,8 @@ package com.me.mygdxgame.Entities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import Utilities.AudioManager;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -75,6 +77,7 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_chainSaw.m_placement = Placement.Front;
 		m_rightWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
 		m_rightWing.m_placement = Placement.Right;
+		AudioManager.m_player = this;
 	}
 	
 	

@@ -183,7 +183,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         glViewport = new Rectangle(0, 0, WIDTH, HEIGHT);
         w.setContactListener(this);
         //shippy = new EnemyShip( "crazedrammer", 3.5f,w, 0, 50, 0, 50, 2, m_aliveThings );
-        //shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
+        shippy = new CrazedRammer( w, 0, 50, 2, m_aliveThings );
         PoorStation p = new PoorStation(w, 0, -50, 1, m_aliveThings );
         PoorStation p1 = new PoorStation(w, -50, 0, 1, m_aliveThings );
         PoorStation p2 = new PoorStation(w, 50, -50, 1, m_aliveThings );
@@ -195,7 +195,7 @@ public class CombatScreen extends OrionScreen implements ContactListener
         cvs.SetWaypoints(WaypointUpdateType.RadialCoordinates, cvs.GenerateRadialWaypoints(10, 5), player, null);
         cvs.EnterFromSidelines(0, -200);
        // shippy.AddToFighterGroup( new EnemyShip( "stateczek", 0, w, 0, 90, -90, 40, 2, m_aliveThings ) );
-       // shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
+        shippy.AddShortRangeCounterMeasure( new MachineGun( w, shippy, m_aliveThings ) );
         
         /** BOX2D LIGHT STUFF BEGIN */
         RayHandler.setGammaCorrection(true);

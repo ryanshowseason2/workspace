@@ -8,12 +8,14 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
+import com.me.mygdxgame.Entities.PlayerEntity;
+import com.me.mygdxgame.Entities.ViewedCollidable;
 
 public class AudioManager
 {
 	static ArrayList<Sound> m_soundEffects = new ArrayList<Sound>();
 	static ArrayList<String> m_soundEffectLocations = new ArrayList<String>();
-	
+	public static PlayerEntity m_player;
 	public AudioManager()
 	{
 		
@@ -40,20 +42,36 @@ public class AudioManager
 		return index;
 	}
 	
-	public static long PlaySound( int index, boolean looping )
+	public static long PlaySound( int index, boolean looping, ViewedCollidable source )
 	{
 		Sound sound = (Sound)m_soundEffects.get(index);
 		long instanceID = 0;
 		if( looping )
-		{
-			instanceID = sound.loop();
+		{			
+			instanceID = sound.loop();			
 		}
 		else
 		{
 			instanceID = sound.play();
 		}		
 		
+		float adjustedVolume = 35f / m_player.m_body.getPosition().dst(source.m_body.getPosition());
+		float adjustedPan = 35f / ( -1 * ( m_player.m_body.getPosition().x - source.m_body.getPosition().x) );
+		adjustedPan = adjustedPan > 1 ? 1: adjustedPan;
+		adjustedPan = adjustedPan < -1 ? -1: adjustedPan;
+		sound.setPan( instanceID, adjustedPan, adjustedVolume > 1 ? 1 : adjustedVolume );
+		
 		return instanceID;
+	}
+	
+	public static void AdjustSound( int index, long instanceID, ViewedCollidable source )
+	{
+		Sound sound = (Sound)m_soundEffects.get(index);
+		float adjustedVolume = 35f / m_player.m_body.getPosition().dst(source.m_body.getPosition());
+		float adjustedPan = 35f / ( -1 * ( m_player.m_body.getPosition().x - source.m_body.getPosition().x) );
+		adjustedPan = adjustedPan > 1 ? 1: adjustedPan;
+		adjustedPan = adjustedPan < -1 ? -1: adjustedPan;
+		sound.setPan( instanceID, adjustedPan, adjustedVolume > 1 ? 1 : adjustedVolume );
 	}
 	
 	public static void StopSound( int index, long instanceID )

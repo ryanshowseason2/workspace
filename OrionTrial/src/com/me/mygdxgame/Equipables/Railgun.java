@@ -79,7 +79,7 @@ public class Railgun extends CounterMeasure
 				p.m_additionalDamage = 100;
 				p.Fire(m_ship, m_target, 0);
 				m_fireCounter = m_fireFrequency;
-				AudioManager.PlaySound(m_gunSoundIndex, false );
+				AudioManager.PlaySound(m_gunSoundIndex, false, m_ship );
 				m_ship.IncreaseDetectionRange( 5f );
 				
 				if(m_activated)

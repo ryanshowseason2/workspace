@@ -93,6 +93,11 @@ public abstract class CounterMeasure
 	{
 		// Nothing to do in base class
 	}
+	
+	public void StopSound()
+	{
+		// Nothing to do in base class
+	}
 
 	
 }

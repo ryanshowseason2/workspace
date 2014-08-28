@@ -189,6 +189,24 @@ public class Ship extends ViewedCollidable
 			m_longRangeCMS.get(i).AcquireAndFire(renderer);
 		}
 	}
+	
+	public void StopCounterMeasureSound()
+	{
+		for (int i = 0; i < m_shortRangeCMS.size(); i++)
+		{
+			m_shortRangeCMS.get(i).StopSound();
+		}
+
+		for (int i = 0; i < m_mediumRangeCMS.size(); i++)
+		{
+			m_mediumRangeCMS.get(i).StopSound();
+		}
+
+		for (int i = 0; i < m_longRangeCMS.size(); i++)
+		{
+			m_longRangeCMS.get(i).StopSound();
+		}
+	}
 
 	@Override
 	public void Draw(SpriteBatch renderer)
@@ -224,6 +242,10 @@ public class Ship extends ViewedCollidable
 				if( m_weaponsFree > 0 )
 				{
 					ProcessCounterMeasures(renderer);
+				}
+				else
+				{
+					StopCounterMeasureSound();
 				}
 				ce.Draw(renderer);
 				me.Draw(renderer);
@@ -337,6 +359,18 @@ public class Ship extends ViewedCollidable
 		{
 			m_softwareIntegrity = m_softwareIntegrityMax;
 		}
+		return b;
+	}
+	
+	@Override
+	public boolean deathThroesDone() 
+	{
+		boolean b = super.deathThroesDone();
+		if( b )
+		{
+			StopCounterMeasureSound();
+		}
+		
 		return b;
 	}
 
