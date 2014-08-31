@@ -56,7 +56,15 @@ public class AudioManager
 		}		
 		
 		float adjustedVolume = 35f / m_player.m_body.getPosition().dst(source.m_body.getPosition());
-		float adjustedPan = 35f / ( -1 * ( m_player.m_body.getPosition().x - source.m_body.getPosition().x) );
+		float adjustedPan = ( -1 * ( m_player.m_body.getPosition().x - source.m_body.getPosition().x) );
+		if( Math.abs(adjustedPan) < 35 )
+		{
+			adjustedPan = 0;
+		}
+		else
+		{
+			adjustedPan = adjustedPan / 70; 			
+		}
 		adjustedPan = adjustedPan > 1 ? 1: adjustedPan;
 		adjustedPan = adjustedPan < -1 ? -1: adjustedPan;
 		sound.setPan( instanceID, adjustedPan, adjustedVolume > 1 ? 1 : adjustedVolume );
@@ -68,7 +76,16 @@ public class AudioManager
 	{
 		Sound sound = (Sound)m_soundEffects.get(index);
 		float adjustedVolume = 35f / m_player.m_body.getPosition().dst(source.m_body.getPosition());
-		float adjustedPan = 35f / ( -1 * ( m_player.m_body.getPosition().x - source.m_body.getPosition().x) );
+		
+		float adjustedPan = ( -1 * ( m_player.m_body.getPosition().x - source.m_body.getPosition().x) );
+		if( Math.abs(adjustedPan) < 35 )
+		{
+			adjustedPan = 0;
+		}
+		else
+		{
+			adjustedPan = adjustedPan / 70; 			
+		}
 		adjustedPan = adjustedPan > 1 ? 1: adjustedPan;
 		adjustedPan = adjustedPan < -1 ? -1: adjustedPan;
 		sound.setPan( instanceID, adjustedPan, adjustedVolume > 1 ? 1 : adjustedVolume );
