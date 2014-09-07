@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import BodyLoaderPackage.BodyEditorLoader;
+import Utilities.AudioManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,6 +48,7 @@ public abstract class ViewedCollidable
     public static boolean m_inMenu = false;
     public float m_detectionRange = Float.MAX_VALUE;
     public float m_detectionRangeReset = 50f;
+    int m_deathSoundIndex = -1;
     
     float m_organicMatter = 0;
     float m_rareMetals = 0;
@@ -143,7 +145,12 @@ public abstract class ViewedCollidable
 		   if( m_integrity <= 0 )
 		   {
 			   m_pooledDeathEffect.setPosition(m_objectXPosition, m_objectYPosition);
-			   m_pooledDeathEffect.draw(renderer, 1f/60f );   
+			   m_pooledDeathEffect.draw(renderer, 1f/60f );
+			   if( m_deathSoundIndex != -1 )
+			   {
+				   AudioManager.PlaySound(m_deathSoundIndex, false, this );
+				   m_deathSoundIndex = -1;
+			   }
 		   }		   
 	   }
 	   

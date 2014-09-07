@@ -2,6 +2,8 @@ package com.me.mygdxgame.Entities;
 
 import java.util.ArrayList;
 
+import Utilities.AudioManager;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -37,6 +39,8 @@ public class Asteroid extends ViewedCollidable
 		Comet2
 	}
 	
+	
+	
 	public Asteroid(String appearanceLocation, float collisionScale, float drawScale, World world, float startX, float startY, ArrayList<ViewedCollidable> aliveThings ) {
 		super(appearanceLocation, collisionScale, world, startX, startY, aliveThings, 0);
 		// TODO Auto-generated constructor stub
@@ -57,6 +61,8 @@ public class Asteroid extends ViewedCollidable
 		m_damageReductions[0] = 10;
 		
 		m_objectSprite.scale(drawScale);
+		
+		m_deathSoundIndex = AudioManager.AddToLibrary("data/sounds/asteroid death/explosion2.ogg");
 	}
 	
 	public void SetAsteroidTypeAndSize( AsteroidTypes t, AsteroidSizeClass s )
