@@ -48,6 +48,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	public WingBlade m_leftWing;
 	public WingBlade m_rightWing;
 	public WingBlade m_chainSaw;
+	int m_damage5SoundIndex = 0;
+	int m_damage15SoundIndex = 0;
+	int m_damage30SoundIndex = 0;
+	int m_damage100SoundIndex = 0;
 	
 	ArrayList<CounterMeasure> m_availableCMS = new ArrayList< CounterMeasure >();
 	
@@ -78,6 +82,10 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 		m_rightWing = new WingBlade("laserblade", m_world, m_body.getPosition().x + 4f, m_body.getPosition().y - 0f, aliveThings, 1, this );
 		m_rightWing.m_placement = Placement.Right;
 		AudioManager.m_player = this;
+		m_damage5SoundIndex = AudioManager.AddToLibrary("data/sounds/armor hit/0_5percenthit.ogg");
+		m_damage15SoundIndex = AudioManager.AddToLibrary("data/sounds/armor hit/5_15percenthit.ogg");
+		m_damage30SoundIndex = AudioManager.AddToLibrary("data/sounds/armor hit/15_30percenthit.ogg");
+		m_damage100SoundIndex = AudioManager.AddToLibrary("data/sounds/armor hit/30percenthit.ogg");
 	}
 	
 	
@@ -288,8 +296,39 @@ public class PlayerEntity extends Ship implements InputProcessor, RayCastCallbac
 	@Override
 	public void damageIntegrity( ViewedCollidable damageOrigin, float damage , DamageType type)
 	{
+		float integrityBefore = m_integrity;		
+		
 		super.damageIntegrity(damageOrigin, damage, type);
-		m_integrity = m_integrity > 0 ? m_integrity : 1;
+		
+		if( m_shieldIntegrity > 0)
+		{
+			
+		}
+		else
+		{
+			float damageTaken = integrityBefore - m_integrity;
+			float percentageDamage = damageTaken / m_maxIntegrity * 100;
+			if( percentageDamage > 0 )
+			{
+				if(percentageDamage < 5)
+				{
+					AudioManager.PlaySound(m_damage5SoundIndex, false, this );
+				}
+				else if( percentageDamage < 15)
+				{
+					AudioManager.PlaySound(m_damage15SoundIndex, false, this );
+				}
+				else if( percentageDamage < 30)
+				{				
+					AudioManager.PlaySound(m_damage30SoundIndex, false, this );
+				}
+				else
+				{
+					AudioManager.PlaySound(m_damage100SoundIndex, false, this );
+				}
+			}
+		}
+		m_integrity = m_integrity > 0 ? m_integrity : 1000;
 	}
 
 	@Override

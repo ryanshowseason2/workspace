@@ -96,7 +96,7 @@ public class Asteroid extends ViewedCollidable
 		// TODO Auto-generated method stub
 		if( crashVelocity > 3 )
 		{
-			object2.damageIntegrity( this, crashVelocity + m_body.getMass() / 20, DamageType.Collision );
+			object2.damageIntegrity( this, crashVelocity + m_body.getMass() / 17f, DamageType.Collision );
 		}
 	}
 	

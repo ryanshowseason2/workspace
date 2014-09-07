@@ -33,6 +33,7 @@ public abstract class ViewedCollidable
     public double m_angleRadians = 0;
     public float m_drawScale = 29f;
     public float m_integrity = 1000f;
+    public float m_maxIntegrity = 1000f;
     ParticleEffect m_deathEffect = new ParticleEffect();
     ParticleEffectPool m_deathEffectPool;
     PooledEffect m_pooledDeathEffect;
